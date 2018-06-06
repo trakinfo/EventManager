@@ -1,11 +1,11 @@
-﻿using EventManager.Core.Globals;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace EventManager.Core.Domain
 {
-
+	public enum UserRole { User, Operator, Admin}
+	public enum UserStatus { Nieaktywny, Aktywny}
     class User : Entity
     {
 		public string Login { get; protected set; }
@@ -14,13 +14,12 @@ namespace EventManager.Core.Domain
 		public string LastName { get; protected set; }
 		public UserRole Role { get; protected set; }
 		public UserStatus Status { get; protected set; }
-		public Signature Owner { get; protected set; }
 		public Signature Modifier { get; protected set; }
 
 		protected User() { }
 
 		 
-		public User(Guid id, string login, string password, string firstName, string lastName, UserRole role, UserStatus status, Signature owner)
+		public User(Guid id, string login, string password, string firstName, string lastName, UserRole role, UserStatus status, Signature modifier)
 		{
 			Id = id;
 			Login = login;
@@ -28,8 +27,7 @@ namespace EventManager.Core.Domain
 			LastName = lastName;
 			Role = role;
 			Status = status;
-			Owner = owner;
-			Modifier = Owner;
+			Modifier = modifier;
 		}
     }
 }
