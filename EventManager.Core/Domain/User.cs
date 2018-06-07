@@ -28,16 +28,17 @@ namespace EventManager.Core.Domain
 		{
 			Id = id;
 			Login = login;
+			Owner = owner;
+			UpdateUser(password, firstName, lastName, role, status, owner);
+		}
+		public void UpdateUser(string password, string firstName, string lastName, UserRole role, UserStatus status, Signature modifier)
+		{
+			Password = password;
 			FirstName = firstName;
 			LastName = lastName;
 			Role = role;
 			Status = status;
-			Owner = owner;
-			Modifier = Owner;
-		}
-		public void UpdateUser()
-		{
-
+			Modifier = modifier;
 		}
 	}
 }
