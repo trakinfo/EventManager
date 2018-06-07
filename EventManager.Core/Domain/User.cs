@@ -6,8 +6,8 @@ using System.Text;
 namespace EventManager.Core.Domain
 {
 
-    class User : Entity
-    {
+	class User : Entity
+	{
 		public string Login { get; protected set; }
 		public string Password { get; protected set; }
 		public string FirstName { get; protected set; }
@@ -19,8 +19,12 @@ namespace EventManager.Core.Domain
 
 		protected User() { }
 
-		 
+
 		public User(Guid id, string login, string password, string firstName, string lastName, UserRole role, UserStatus status, Signature owner)
+		{
+			AddUser(id, login, password, firstName, lastName, role, status, owner);
+		}
+		private void AddUser(Guid id, string login, string password, string firstName, string lastName, UserRole role, UserStatus status, Signature owner)
 		{
 			Id = id;
 			Login = login;
@@ -31,5 +35,9 @@ namespace EventManager.Core.Domain
 			Owner = owner;
 			Modifier = Owner;
 		}
-    }
+		public void UpdateUser()
+		{
+
+		}
+	}
 }
