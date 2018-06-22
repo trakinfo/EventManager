@@ -4,6 +4,6 @@ using System.Text;
 
 namespace EventManager.Core.Globals
 {
-	public enum UserRole { User, Operator, Admin }
+	public enum UserRole { User, Operator, Administrator }
 	public enum UserStatus { Nieaktywny, Aktywny }
 }

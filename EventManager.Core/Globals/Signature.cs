@@ -4,7 +4,7 @@ using System.Text;
 
 namespace EventManager.Core.Globals
 {
-    class Signature
+    public class Signature
     {
 		public string User { get; set; }
 		public string HostIP { get; set; }
