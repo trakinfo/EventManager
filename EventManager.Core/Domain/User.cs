@@ -2,14 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Encryption;
+
 
 namespace EventManager.Core.Domain
 {
 
-	class User : Entity
+	public class User : Entity
 	{
 		private ISet<Signature> _modifier = new HashSet<Signature>();
+
 		public string Login { get; protected set; }
 		public byte[] Password { get; protected set; }
 		public string FirstName { get; protected set; }
@@ -42,7 +43,8 @@ namespace EventManager.Core.Domain
 		}
 		public void SetPassword(string password)
 		{
-			Password = HashHelper.CreatePassword(password);
+			//todo: zrobić hasło
+			Password = Encoding.UTF8.GetBytes(password);
 		}
 		public void SetRole(UserRole role)
 		{

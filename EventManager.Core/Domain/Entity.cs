@@ -7,9 +7,7 @@ namespace EventManager.Core.Domain
 {
     public abstract class Entity
     {
-		public Guid Id { get; protected set; }
+		public long Id { get; protected set; }
 		public Signature Creator { get; protected set; }
-
-		protected Entity() => Id = Guid.NewGuid();
 	}
 }

@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using EventManager.Core.DataBaseContext;
+using EventManager.Core.Repository;
+using EventManager.Infrastructure.DataBaseContext;
+using EventManager.Infrastructure.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace EventManager.Api
 {
-    public class Startup
+	public class Startup
     {
         public Startup(IConfiguration configuration)
         {
@@ -24,7 +22,11 @@ namespace EventManager.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-        }
+			//services.Add(new ServiceDescriptor(typeof(IDataBaseContext), new MySqlContext(Configuration.GetConnectionString("MySqlConnection"))));
+			services.AddSingleton<IDataBaseContext, MySqlContext>();
+			services.AddScoped<IUserRepository, UserRepository>();
+			services.AddScoped<IEventRepository, EventRepository>();
+		}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -32,6 +34,7 @@ namespace EventManager.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+				
             }
 
             app.UseMvc();
