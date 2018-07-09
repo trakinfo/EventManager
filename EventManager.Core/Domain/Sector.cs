@@ -9,7 +9,7 @@ namespace EventManager.Core.Domain
     {
 		public string Name { get; protected set; }
 		public string Description { get; protected set; }
-		public int SeatingCount { get; protected set; }
+		public IEnumerable<Ticket> Tickets { get; protected set; }
 
 		protected Sector() { }
 		public Sector(long id, string name, string description, int seatingCount, Signature creator)
@@ -17,7 +17,6 @@ namespace EventManager.Core.Domain
 			Id = id;
 			Name = name;
 			Description = description;
-			SeatingCount = seatingCount;
 			Creator = creator;
 		}
     }
