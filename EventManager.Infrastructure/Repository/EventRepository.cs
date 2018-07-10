@@ -1,5 +1,6 @@
 ﻿using EventManager.Core.DataBaseContext;
 using EventManager.Core.Domain;
+using EventManager.Core.Globals;
 using EventManager.Core.Repository;
 using EventManager.Infrastructure.DataBaseContext.SQL;
 using System;
@@ -28,21 +29,27 @@ namespace EventManager.Infrastructure.Repository
 
 		public async Task<IEnumerable<Event>> BrowseAsync(string name = "")
 		{
-			var events = dbContext.FetchDataAsync(EventSql.SelectStudent("1","2017/2018")).Result;
+			var events = dbContext.FetchDataAsync(EventSql.SelectEvent()).Result;
 
 			var eventSet = new HashSet<Event>();
 			foreach (var E in events)
 			{
 				eventSet.Add(new Event
 					(
-						Guid.NewGuid(),
-						E["Imie"].ToString(),
-						E["Nazwisko"].ToString(),
-						null,
-						DateTime.Now,
-						DateTime.Now.AddDays(2),
-						null,
-						null)
+						Convert.ToInt64(E["ID"]),
+						E["Name"].ToString(),
+						E["Description"].ToString(),
+						new Location
+						{
+							Name =E["LocationName"].ToString(),
+							Email =E["Email"].ToString(),
+							PhoneNumber =E["PhoneNumber"].ToString(),
+							WWW =E["Www"].ToString()
+						},
+						Convert.ToDateTime(E["StartDate"]),
+						Convert.ToDateTime(E["EndDate"]),
+						new Signature(E["User"].ToString(), E["HostIP"].ToString(), Convert.ToDateTime(E["Version"]))
+					)
 					);
 
 			}

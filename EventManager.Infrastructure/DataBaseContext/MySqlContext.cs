@@ -11,7 +11,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 {
 	public class MySqlContext : IDataBaseContext
 	{
-		readonly string connectionString = "server=localhost;userid=belfer;password=belfer;database=belfer2;Charset=utf8;Keepalive=15;ssl mode=0;";
+		readonly string connectionString = "server=localhost;userid=manager;password=manager;database=event_manager;Charset=utf8;Keepalive=15;ssl mode=0;";
 
 		//public MySqlContext()
 		//{
@@ -32,23 +32,33 @@ namespace EventManager.Infrastructure.DataBaseContext
 				using (MySqlConnection conn = GetConnection())
 				{
 					conn.Open();
-					using (var R = await new MySqlCommand { CommandText = sqlString, Connection = conn }.ExecuteReaderAsync())
+					var T = conn.BeginTransaction();
+					try
 					{
-						if (!R.HasRows) return HS;
-						while (R.Read())
+						using (var R = await new MySqlCommand { CommandText = sqlString, Connection = conn }.ExecuteReaderAsync())
 						{
-							var D = new Dictionary<string, object>();
-							for (int i = 0; i < R.FieldCount; i++)
+							if (!R.HasRows) return HS;
+							while (R.Read())
 							{
-								D.Add(R.GetName(i), R.GetValue(i));
+								var D = new Dictionary<string, object>();
+								for (int i = 0; i < R.FieldCount; i++)
+								{
+									D.Add(R.GetName(i), R.GetValue(i));
+								}
+								HS.Add(D);
 							}
-							HS.Add(D);
 						}
+						T.Commit();
+					}
+					catch (MySqlException ex)
+					{
+						Console.WriteLine(ex.Message);
+						T.Rollback();
 					}
 				}
 				return await Task.FromResult(HS);
 			}
-			catch (MySqlException exe)
+			catch (Exception exe)
 			{
 				Console.WriteLine(exe.Message);
 				return await Task.FromResult(HS);
