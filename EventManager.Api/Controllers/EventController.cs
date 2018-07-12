@@ -1,4 +1,5 @@
 ﻿using EventManager.Core.Repository;
+using EventManager.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,16 +11,16 @@ namespace EventManager.Api.Controllers
 	[Route("events")]
 	public class EventController : Controller
 	{
-		readonly IEventRepository _eventRepository;
-		public EventController(IEventRepository eventRepository)
+		readonly IEventService _eventService;
+		public EventController(IEventService eventService)
 		{
-			_eventRepository = eventRepository;
+			_eventService = eventService;
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> Get(string name = "")
 		{
-			var events = await _eventRepository.BrowseAsync(name);
+			var events = await _eventService.BrowseAsync(name);
 			return Json(events);
 		}
 	}

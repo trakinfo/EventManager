@@ -8,11 +8,11 @@ namespace EventManager.Core.Repository
 {
     public interface IUserRepository
     {
-		Task<User> GetAsync(Guid userId);
+		Task<User> GetAsync(long userId);
 		Task<User> GetAsync(string login);
 	
 		Task AddAsync(User user);
 		Task UpdateAsync(User user);
-		Task DeleteAsync(Guid userId);
+		Task DeleteAsync(long userId);
 	}
 }

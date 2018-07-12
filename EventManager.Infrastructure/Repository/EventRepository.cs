@@ -17,7 +17,7 @@ namespace EventManager.Infrastructure.Repository
 		{
 			dbContext = context;
 		}
-		public async Task<Event> GetAsync(Guid eventId)
+		public async Task<Event> GetAsync(long eventId)
 		{
 			throw new NotImplementedException();
 		}
@@ -44,7 +44,8 @@ namespace EventManager.Infrastructure.Repository
 							Name =E["LocationName"].ToString(),
 							Email =E["Email"].ToString(),
 							PhoneNumber =E["PhoneNumber"].ToString(),
-							WWW =E["Www"].ToString()
+							WWW =E["Www"].ToString(),
+							Sectors = { new Sector(1, "A", "VIP", 10, null) }
 						},
 						Convert.ToDateTime(E["StartDate"]),
 						Convert.ToDateTime(E["EndDate"]),

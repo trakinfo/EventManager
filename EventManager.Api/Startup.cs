@@ -1,7 +1,9 @@
 ﻿using EventManager.Core.DataBaseContext;
 using EventManager.Core.Repository;
 using EventManager.Infrastructure.DataBaseContext;
+using EventManager.Infrastructure.Mapper;
 using EventManager.Infrastructure.Repository;
+using EventManager.Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +28,8 @@ namespace EventManager.Api
 			services.AddSingleton<IDataBaseContext, MySqlContext>();
 			services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<IEventRepository, EventRepository>();
+			services.AddScoped<IEventService, EventService>();
+			services.AddSingleton(AutoMapperConfig.Initialize());
 		}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

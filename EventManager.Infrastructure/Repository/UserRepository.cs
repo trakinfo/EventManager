@@ -14,12 +14,12 @@ namespace EventManager.Infrastructure.Repository
 			throw new NotImplementedException();
 		}
 
-		public Task DeleteAsync(Guid userId)
+		public Task DeleteAsync(long userId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<User> GetAsync(Guid userId)
+		public Task<User> GetAsync(long userId)
 		{
 			throw new NotImplementedException();
 		}

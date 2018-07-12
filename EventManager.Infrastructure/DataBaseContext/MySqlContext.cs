@@ -35,7 +35,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 					var T = conn.BeginTransaction();
 					try
 					{
-						using (var R = await new MySqlCommand { CommandText = sqlString, Connection = conn }.ExecuteReaderAsync())
+						using (var R = await new MySqlCommand { CommandText = sqlString, Connection = conn, Transaction = T }.ExecuteReaderAsync())
 						{
 							if (!R.HasRows) return HS;
 							while (R.Read())
