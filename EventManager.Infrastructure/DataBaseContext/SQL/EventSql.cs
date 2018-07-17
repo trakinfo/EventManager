@@ -6,13 +6,19 @@ namespace EventManager.Infrastructure.DataBaseContext.SQL
 {
     public static class EventSql
     {
-		internal static string SelectEvent()
+		internal static string SelectEvent(string name)
 		{
-			return $"SELECT e.ID,e.Name,e.Description,e.StartDate,e.EndDate,l.Name As LocationName,l.PhoneNumber,l.Email,l.Www,e.User,e.HostIP,e.Version FROM `event` e INNER JOIN location l ON l.ID=e.IdLocation ORDER BY e.Name;";
+			return $"SELECT e.ID,e.Name,e.Description,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version,l.ID As IdLocation,l.Name As LocationName, l.PhoneNumber, l.Email, l.Www FROM `event` e INNER JOIN location l ON l.ID = e.IdLocation WHERE e.Name LIKE '{name}%' ORDER BY e.Name;";
 		}
-		internal static string SelectEvent(string Name)
+
+		internal static string SelectSector(ulong idLocation)
 		{
-			return $"SELECT e.ID,e.Name,e.Description,e.StartDate,e.EndDate,l.Name,l.PhoneNumber,l.Email,l.Www FROM `event` e INNER JOIN location l ON l.ID=e.IdLocation WHERE e.Name='{Name}' ORDER BY e.Name;";
+			return $"SELECT s.ID,s.Name,s.Descrription,s.SeatingCount FROM sector s WHERE s.IdLocation={idLocation};";
+		}
+
+		internal static string SelectTicket(ulong idEvent)
+		{
+			return $"SELECT t.ID,t.SeatingNumber,t.Price,IdSectior FROM ticket t WHERE IdEvent={idEvent};";
 		}
 		internal static string InsertEvent()
 		{

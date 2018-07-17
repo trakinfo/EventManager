@@ -29,23 +29,43 @@ namespace EventManager.Infrastructure.Repository
 
 		public async Task<IEnumerable<Event>> BrowseAsync(string name = "")
 		{
-			var events = dbContext.FetchDataAsync(EventSql.SelectEvent()).Result;
+			var eventSet = await dbContext.FetchDataAsync(EventSql.SelectEvent(name));
 
-			var eventSet = new HashSet<Event>();
-			foreach (var E in events)
+			var events = new HashSet<Event>();
+			foreach (var E in eventSet)
 			{
-				eventSet.Add(new Event
+				var idEvent = Convert.ToUInt32(E["ID"]);
+				var idLocation = Convert.ToUInt64(E["IdLocation"]);
+				var sectorSet = dbContext.FetchDataAsync(EventSql.SelectSector(idLocation));
+				var ticketSet = dbContext.FetchDataAsync(EventSql.SelectTicket(idEvent));
+
+				var sectors = new HashSet<Sector>();
+
+				foreach (var S in await sectorSet)
+				{
+					var tickets = new HashSet<Ticket>();
+					var idSector = (uint)S["ID"];
+					foreach (var T in ticketSet.Result.ToList().Where(x => (uint)x["IdSectior"]==idSector))
+					{
+						tickets.Add(new Ticket(Convert.ToUInt64(T["ID"]), Convert.ToInt32(T["SeatingNumber"]), Convert.ToDecimal(T["Price"]), null));
+					}
+
+
+					sectors.Add(new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Descrription"].ToString(), Convert.ToUInt32(S["SeatingCount"]), tickets));
+				}
+
+				events.Add(new Event
 					(
-						Convert.ToInt64(E["ID"]),
+						idEvent,
 						E["Name"].ToString(),
 						E["Description"].ToString(),
 						new Location
 						{
-							Name =E["LocationName"].ToString(),
-							Email =E["Email"].ToString(),
-							PhoneNumber =E["PhoneNumber"].ToString(),
-							WWW =E["Www"].ToString(),
-							Sectors = { new Sector(1, "A", "VIP", 10, null) }
+							Name = E["LocationName"].ToString(),
+							Email = E["Email"].ToString(),
+							PhoneNumber = E["PhoneNumber"].ToString(),
+							WWW = E["Www"].ToString(),
+							Sectors = sectors
 						},
 						Convert.ToDateTime(E["StartDate"]),
 						Convert.ToDateTime(E["EndDate"]),
@@ -54,7 +74,7 @@ namespace EventManager.Infrastructure.Repository
 					);
 
 			}
-			return await Task.FromResult(eventSet.AsEnumerable());
+			return await Task.FromResult(events.AsEnumerable());
 		}
 
 		public async Task AddAsync(Event @event)

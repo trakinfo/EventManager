@@ -5,19 +5,21 @@ using System.Text;
 
 namespace EventManager.Core.Domain
 {
-    public class Sector : Entity 
+    public class Sector : Entity
     {
 		public string Name { get; protected set; }
 		public string Description { get; protected set; }
+		public uint SeatingCount { get; set; }
 		public IEnumerable<Ticket> Tickets { get; protected set; }
 
 		protected Sector() { }
-		public Sector(long id, string name, string description, int seatingCount, Signature creator)
+		public Sector(ulong id, string name, string description, uint seatingCount,IEnumerable<Ticket> tickets)
 		{
 			Id = id;
 			Name = name;
 			Description = description;
-			Creator = creator;
+			SeatingCount = seatingCount;
+			Tickets = tickets;
 		}
     }
 }

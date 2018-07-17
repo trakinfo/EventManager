@@ -15,7 +15,7 @@ namespace EventManager.Core.Domain
 
 		protected Ticket() { }
 
-		public Ticket(long id, int seatingNumber, decimal price, Signature creator)
+		public Ticket(ulong id, int seatingNumber, decimal price, Signature creator)
 		{
 			Id = id;
 			SeatingNumber = seatingNumber;
