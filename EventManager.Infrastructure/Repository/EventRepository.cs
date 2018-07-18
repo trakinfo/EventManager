@@ -36,6 +36,7 @@ namespace EventManager.Infrastructure.Repository
 			{
 				var idEvent = Convert.ToUInt32(E["ID"]);
 				var idLocation = Convert.ToUInt64(E["IdLocation"]);
+				//todo: rozbić na mniejsze metody, kwerendy już są
 				var sectorSet = dbContext.FetchDataAsync(EventSql.SelectSector(idLocation));
 				var ticketSet = dbContext.FetchDataAsync(EventSql.SelectTicket(idEvent));
 
@@ -45,13 +46,11 @@ namespace EventManager.Infrastructure.Repository
 				{
 					var tickets = new HashSet<Ticket>();
 					var idSector = (uint)S["ID"];
-					foreach (var T in ticketSet.Result.ToList().Where(x => (uint)x["IdSectior"]==idSector))
+					foreach (var T in ticketSet.Result.ToList().Where(x => (uint)x["IdSector"]==idSector))
 					{
 						tickets.Add(new Ticket(Convert.ToUInt64(T["ID"]), Convert.ToInt32(T["SeatingNumber"]), Convert.ToDecimal(T["Price"]), null));
 					}
-
-
-					sectors.Add(new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Descrription"].ToString(), Convert.ToUInt32(S["SeatingCount"]), tickets));
+					sectors.Add(new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Description"].ToString(), Convert.ToUInt32(S["SeatingCount"]), tickets));
 				}
 
 				events.Add(new Event
@@ -64,8 +63,17 @@ namespace EventManager.Infrastructure.Repository
 							Name = E["LocationName"].ToString(),
 							Email = E["Email"].ToString(),
 							PhoneNumber = E["PhoneNumber"].ToString(),
-							WWW = E["Www"].ToString(),
-							Sectors = sectors
+							WWW = E["www"].ToString(),
+							Sectors = sectors,
+							Address = new Address
+							{
+								PlaceName = E["PlaceName"].ToString(),
+								StreetName = E["StreetName"].ToString(),
+								PropertyNumber = E["PropertyNumber"].ToString(),
+								ApartmentNumber = E["ApartmentNumber"].ToString(),
+								PostalCode = E["PostalCode"].ToString(),
+								PostOffice = E["PostOffice"].ToString()
+							}
 						},
 						Convert.ToDateTime(E["StartDate"]),
 						Convert.ToDateTime(E["EndDate"]),

@@ -17,7 +17,10 @@ namespace EventManager.Infrastructure.Mapper
 			{
 				cfg.CreateMap<Event, EventDto>()
 				.ForMember(DTO => DTO.TicketCount, e => e.MapFrom(p => p.Location.Sectors.Sum(x => x.Tickets.Count())))
-				.ForMember(DTO => DTO.LocationAddress, e=>e.MapFrom(p=>p.Location.Address.ToString()));
+				.ForMember(DTO => DTO.Email, e => e.MapFrom(p => p.Location.Email))
+				.ForMember(DTO => DTO.PhoneNumber, e => e.MapFrom(p => p.Location.PhoneNumber))
+				.ForMember(DTO => DTO.www, e => e.MapFrom(p => p.Location.WWW))
+				.ForMember(DTO => DTO.LocationAddress, e => e.MapFrom(p => p.Location.Address.ToString()));
 			}
 			).CreateMapper();
 		}
