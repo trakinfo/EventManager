@@ -7,7 +7,8 @@ namespace EventManager.Core.DataBaseContext
 {
     public interface IDataBaseContext
     {
-		Task<ISet<Dictionary<string, object>>> FetchDataAsync(string sqlString);
+		Task<ISet<IDictionary<string, object>>> FetchDataSetAsync(string sqlString);
+		Task<IDictionary<string, object>> FetchDataAsync(string sqlString);
 		Task<ISet<T>> FetchValueSetAsync<T>(string sqlString);
 		Task<String> FetchSingleValueAsync(string sqlString);
 		Task<int> AddDataAsync(Dictionary<string, object> sqlParameters, string sqlString);

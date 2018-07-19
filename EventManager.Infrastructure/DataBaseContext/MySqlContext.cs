@@ -13,18 +13,12 @@ namespace EventManager.Infrastructure.DataBaseContext
 	{
 		readonly string connectionString = "server=localhost;userid=manager;password=manager;database=event_manager;Charset=utf8;Keepalive=15;ssl mode=0;";
 
-		//public MySqlContext()
-		//{
-		//	ConnectionString = connectionString;
-
-		//}
-
 		private MySqlConnection GetConnection()
 		{
 			return new MySqlConnection(connectionString);
 		}
 
-		public async Task<ISet<Dictionary<string, object>>> FetchDataAsync(string sqlString)
+		public async Task<ISet<Dictionary<string, object>>> FetchDataSetAsync(string sqlString)
 		{
 			var HS = new HashSet<Dictionary<string, object>>();
 			try
@@ -64,6 +58,11 @@ namespace EventManager.Infrastructure.DataBaseContext
 				return await Task.FromResult(HS);
 			}
 		}
+
+		public async Task<Dictionary<string,object>> FetchDataAsync(string sqlString)
+		{
+
+		}
 		public Task<int> AddDataAsync(Dictionary<string, object> sqlParameters, string sqlString)
 		{
 			throw new NotImplementedException();
@@ -75,9 +74,31 @@ namespace EventManager.Infrastructure.DataBaseContext
 			throw new NotImplementedException();
 		}
 
-		public Task<ISet<T>> FetchValueSetAsync<T>(string sqlString)
+		public async Task<ISet<T>> FetchValueSetAsync<T>(string sqlString)
 		{
-			throw new NotImplementedException();
+			var HS = new HashSet<T>();
+			try
+			{
+				using (var R = await new MySqlCommand { CommandText = sqlString, Connection = get, }.ExecuteReaderAsync())
+				{
+					if (!R.HasRows) return HS;
+					while (R.Read())
+					{
+						HS.Add((T)Convert.ChangeType(R[0], typeof(T)));
+					}
+					return await Task.FromResult(HS);
+				}
+			}
+			catch (MySqlException ex)
+			{
+				Console.WriteLine(ex.Message);
+				
+				return await Task.FromResult(HS);
+			}
+			catch (Exception)
+			{
+				throw;
+			}
 		}
 
 		public Task<int> RemoveDataAsync(Dictionary<string, object> sqlParameters, string sqlString)

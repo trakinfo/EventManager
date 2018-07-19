@@ -17,19 +17,14 @@ namespace EventManager.Infrastructure.Repository
 		{
 			dbContext = context;
 		}
-		public async Task<Event> GetAsync(long eventId)
+		public async Task<Event> GetEventAsync(long eventId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public async Task<Event> GetAsync(string name)
+		public async Task<IEnumerable<Event>> GetEventListAsync(string name = "")
 		{
-			throw new NotImplementedException();
-		}
-
-		public async Task<IEnumerable<Event>> BrowseAsync(string name = "")
-		{
-			var eventSet = await dbContext.FetchDataAsync(EventSql.SelectEvent(name));
+			var eventSet = await dbContext.FetchDataSetAsync(EventSql.SelectEvent(name));
 
 			var events = new HashSet<Event>();
 			foreach (var E in eventSet)
@@ -37,44 +32,46 @@ namespace EventManager.Infrastructure.Repository
 				var idEvent = Convert.ToUInt32(E["ID"]);
 				var idLocation = Convert.ToUInt64(E["IdLocation"]);
 				//todo: rozbić na mniejsze metody, kwerendy już są
-				var sectorSet = dbContext.FetchDataAsync(EventSql.SelectSector(idLocation));
-				var ticketSet = dbContext.FetchDataAsync(EventSql.SelectTicket(idEvent));
 
-				var sectors = new HashSet<Sector>();
+				//var sectorSet = dbContext.FetchDataAsync(EventSql.SelectSector(idLocation));
+				//var ticketSet = dbContext.FetchDataAsync(EventSql.SelectTicket(idEvent));
 
-				foreach (var S in await sectorSet)
-				{
-					var tickets = new HashSet<Ticket>();
-					var idSector = (uint)S["ID"];
-					foreach (var T in ticketSet.Result.ToList().Where(x => (uint)x["IdSector"]==idSector))
-					{
-						tickets.Add(new Ticket(Convert.ToUInt64(T["ID"]), Convert.ToInt32(T["SeatingNumber"]), Convert.ToDecimal(T["Price"]), null));
-					}
-					sectors.Add(new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Description"].ToString(), Convert.ToUInt32(S["SeatingCount"]), tickets));
-				}
+				//var sectors = new HashSet<Sector>();
+
+				//foreach (var S in await sectorSet)
+				//{
+				//	var tickets = new HashSet<Ticket>();
+				//	var idSector = (uint)S["ID"];
+				//	foreach (var T in ticketSet.Result.ToList().Where(x => (uint)x["IdSector"]==idSector))
+				//	{
+				//		tickets.Add(new Ticket(Convert.ToUInt64(T["ID"]), Convert.ToInt32(T["SeatingNumber"]), Convert.ToDecimal(T["Price"]), null));
+				//	}
+				//	sectors.Add(new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Description"].ToString(), Convert.ToUInt32(S["SeatingCount"]), tickets));
+				//}
 
 				events.Add(new Event
 					(
 						idEvent,
 						E["Name"].ToString(),
 						E["Description"].ToString(),
-						new Location
-						{
-							Name = E["LocationName"].ToString(),
-							Email = E["Email"].ToString(),
-							PhoneNumber = E["PhoneNumber"].ToString(),
-							WWW = E["www"].ToString(),
-							Sectors = sectors,
-							Address = new Address
-							{
-								PlaceName = E["PlaceName"].ToString(),
-								StreetName = E["StreetName"].ToString(),
-								PropertyNumber = E["PropertyNumber"].ToString(),
-								ApartmentNumber = E["ApartmentNumber"].ToString(),
-								PostalCode = E["PostalCode"].ToString(),
-								PostOffice = E["PostOffice"].ToString()
-							}
-						},
+						await GetLocationAsync(idLocation),
+						//new Location
+						//{
+						//	Name = E["LocationName"].ToString(),
+						//	Email = E["Email"].ToString(),
+						//	PhoneNumber = E["PhoneNumber"].ToString(),
+						//	WWW = E["www"].ToString(),
+						//	Sectors = sectors,
+						//	Address = new Address
+						//	{
+						//		PlaceName = E["PlaceName"].ToString(),
+						//		StreetName = E["StreetName"].ToString(),
+						//		PropertyNumber = E["PropertyNumber"].ToString(),
+						//		ApartmentNumber = E["ApartmentNumber"].ToString(),
+						//		PostalCode = E["PostalCode"].ToString(),
+						//		PostOffice = E["PostOffice"].ToString()
+						//	}
+						//},
 						Convert.ToDateTime(E["StartDate"]),
 						Convert.ToDateTime(E["EndDate"]),
 						new Signature(E["User"].ToString(), E["HostIP"].ToString(), Convert.ToDateTime(E["Version"]))
@@ -84,18 +81,43 @@ namespace EventManager.Infrastructure.Repository
 			}
 			return await Task.FromResult(events.AsEnumerable());
 		}
+		async Task<Location> GetLocationAsync(ulong idLocation)
+		{
+			var locationData = dbContext.FetchDataAsync(EventSql.SelectLocation(idLocation));
+		}
+		async Task<ISet<Sector>> GetSectorList(ulong idLocation)
+		{
+			var sectorSet = dbContext.FetchDataSetAsync(EventSql.SelectSector(idLocation));
+			var sectors = new HashSet<Sector>();
 
-		public async Task AddAsync(Event @event)
+			foreach (var S in await sectorSet)
+			{
+
+				var idSector = (uint)S["ID"];
+
+				sectors.Add(new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Description"].ToString(), Convert.ToUInt32(S["SeatingCount"]), await GetTicketListAsync((ulong)1,idSector)));
+			}
+		}
+		async Task<ISet<Ticket>> GetTicketListAsync(ulong idEvent, ulong idSector)
+		{
+			var ticketSet = dbContext.FetchDataSetAsync(EventSql.SelectTicket(idEvent));
+			var tickets = new HashSet<Ticket>();
+			foreach (var T in ticketSet.Result.ToList().Where(x => (uint)x["IdSector"] == idSector))
+			{
+				tickets.Add(new Ticket(Convert.ToUInt64(T["ID"]), Convert.ToInt32(T["SeatingNumber"]), Convert.ToDecimal(T["Price"]), null));
+			}
+		}
+		public async Task AddEventAsync(Event @event)
 		{
 			throw new NotImplementedException();
 		}
 
-		public async Task UpdateAsync(Event @event)
+		public async Task UpdateEventAsync(Event @event)
 		{
 			throw new NotImplementedException();
 		}
 
-		public async Task DeleteAsync(Guid eventId)
+		public async Task DeleteEventAsync(Guid eventId)
 		{
 			throw new NotImplementedException();
 		}

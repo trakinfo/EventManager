@@ -24,20 +24,13 @@ namespace EventManager.Infrastructure.Services
 
 		public async Task<EventDto> GetAsync(long id)
 		{
-			var @event = await _eventRepository.GetAsync(id);
+			var @event = await _eventRepository.GetEventAsync(id);
 			return _mapper.Map<EventDto>(@event);
 		}
-
-		public async Task<EventDto> GetAsync(string name)
-		{
-			var @event = await _eventRepository.GetAsync(name);
-			return _mapper.Map<EventDto>(@event);
-		}
-
 
 		public async Task<IEnumerable<EventDto>> BrowseAsync(string name = null)
 		{
-			var events = await _eventRepository.BrowseAsync(name);
+			var events = await _eventRepository.GetEventListAsync(name);
 			return _mapper.Map<IEnumerable<EventDto>>(events);
 		}
 
