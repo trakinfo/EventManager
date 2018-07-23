@@ -8,18 +8,21 @@ namespace EventManager.Infrastructure.DataBaseContext.SQL
     {
 		internal static string SelectEvent(string name)
 		{
-			//todo: Pamiętać o modyfikacji i usunięciu złączeń z lokalizacją oraz adresem
-			return $"SELECT e.ID,e.Name,e.Description,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version,l.ID As IdLocation,l.Name As LocationName, l.PhoneNumber, l.Email, l.www, a.PlaceName, a.StreetName, a.PropertyNumber, a.ApartmentNumber, a.PostalCode, a.PostOffice FROM `event` e LEFT JOIN location l ON l.ID = e.IdLocation LEFT JOIN address a ON a.ID=l.IdAddress WHERE e.Name LIKE '{name}%' ORDER BY e.Name;";
+			return $"SELECT e.ID,e.Name,e.Description,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.Name LIKE '{name}%' ORDER BY e.Name;";
+		}
+		internal static string SelectEvent(ulong id)
+		{
+			return $"SELECT e.ID,e.Name,e.Description,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.ID={id};";
 		}
 
 		internal static string SelectLocation(ulong idEvent)
 		{
-			return $"SELECT l.Name, l.PhoneNumber, l.Email, l.www FROM location l INNER JOIN event e ON l.ID=e.IdLocation WHERE e.ID={idEvent}";
+			return $"SELECT l.ID,l.Name, l.PhoneNumber, l.Email, l.www FROM location l INNER JOIN event e ON l.ID=e.IdLocation WHERE e.ID={idEvent};";
 		}
 
 		internal static string SelectAddress(ulong IdLocation)
 		{
-			return $"SELECT a.PlaceName, a.StreetName, a.PropertyNumber, a.ApartmentNumber, a.PostalCode, a.PostOffice FROM address a INNER JOIN location l ON a.ID=l.IdAddress WHERE l.ID={IdLocation}";
+			return $"SELECT a.PlaceName, a.StreetName, a.PropertyNumber, a.ApartmentNumber, a.PostalCode, a.PostOffice FROM address a INNER JOIN location l ON a.ID=l.IdAddress WHERE l.ID={IdLocation};";
 		}
 
 		internal static string SelectSector(ulong idLocation)

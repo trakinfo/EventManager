@@ -18,9 +18,9 @@ namespace EventManager.Infrastructure.DataBaseContext
 			return new MySqlConnection(connectionString);
 		}
 
-		public async Task<ISet<Dictionary<string, object>>> FetchDataSetAsync(string sqlString)
+		public async Task<ISet<IDictionary<string, object>>> FetchDataSetAsync(string sqlString)
 		{
-			var HS = new HashSet<Dictionary<string, object>>();
+			var HS = new HashSet<IDictionary<string, object>>();
 			try
 			{
 				using (MySqlConnection conn = GetConnection())
@@ -59,9 +59,42 @@ namespace EventManager.Infrastructure.DataBaseContext
 			}
 		}
 
-		public async Task<Dictionary<string,object>> FetchDataAsync(string sqlString)
+		public async Task<IDictionary<string, object>> FetchDataRowAsync(string sqlString)
 		{
-
+			var DR = new Dictionary<string, object>();
+			try
+			{
+				using (MySqlConnection conn = GetConnection())
+				{
+					conn.Open();
+					var T = conn.BeginTransaction();
+					try
+					{
+						using (var R = await new MySqlCommand { CommandText = sqlString, Connection = conn, Transaction = T }.ExecuteReaderAsync())
+						{
+							if (R.Read())
+							{
+								for (int i = 0; i < R.FieldCount; i++)
+								{
+									DR.Add(R.GetName(i), R.GetValue(i));
+								}
+							}
+						}
+						T.Commit();
+					}
+					catch (MySqlException ex)
+					{
+						Console.WriteLine(ex.Message);
+						T.Rollback();
+					}
+				}
+				return await Task.FromResult(DR);
+			}
+			catch (Exception exe)
+			{
+				Console.WriteLine(exe.Message);
+				return await Task.FromResult(DR);
+			}
 		}
 		public Task<int> AddDataAsync(Dictionary<string, object> sqlParameters, string sqlString)
 		{
@@ -79,7 +112,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 			var HS = new HashSet<T>();
 			try
 			{
-				using (var R = await new MySqlCommand { CommandText = sqlString, Connection = get, }.ExecuteReaderAsync())
+				using (var R = await new MySqlCommand { CommandText = sqlString, Connection = GetConnection(), }.ExecuteReaderAsync())
 				{
 					if (!R.HasRows) return HS;
 					while (R.Read())
@@ -92,7 +125,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 			catch (MySqlException ex)
 			{
 				Console.WriteLine(ex.Message);
-				
+
 				return await Task.FromResult(HS);
 			}
 			catch (Exception)
