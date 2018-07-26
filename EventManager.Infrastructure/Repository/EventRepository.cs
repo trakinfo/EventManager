@@ -17,14 +17,27 @@ namespace EventManager.Infrastructure.Repository
 		{
 			dbContext = context;
 		}
-		public async Task<Event> GetEventAsync(long eventId)
+		public async Task<Event> GetEventAsync(ulong eventId)
 		{
-			throw new NotImplementedException();
+			var eventDR = await dbContext.FetchDataRowAsync(EventSql.SelectEvent(eventId));
+			var idEvent = Convert.ToUInt64(eventDR["ID"]);
+			
+			var _event = new Event
+				(
+					idEvent,
+					eventDR["Name"].ToString(),
+					eventDR["Description"].ToString(),
+					await GetLocationAsync(idEvent),
+					Convert.ToDateTime(eventDR["StartDate"]),
+					Convert.ToDateTime(eventDR["EndDate"]),
+					new Signature(eventDR["User"].ToString(), eventDR["HostIP"].ToString(), Convert.ToDateTime(eventDR["Version"]))
+				);
+			return await Task.FromResult(_event);
 		}
 
 		public async Task<IEnumerable<Event>> GetEventListAsync(string name = "")
 		{
-			var eventSet = await dbContext.FetchDataSetAsync(EventSql.SelectEvent(name));
+			var eventSet = await dbContext.FetchDataRowSetAsync(EventSql.SelectEvent(name));
 
 			var events = new HashSet<Event>();
 			foreach (var E in eventSet)
@@ -78,7 +91,7 @@ namespace EventManager.Infrastructure.Repository
 
 		async Task<ISet<Sector>> GetSectorList(ulong idEvent, ulong idLocation)
 		{
-			var sectorSet = dbContext.FetchDataSetAsync(EventSql.SelectSector(idLocation));
+			var sectorSet = dbContext.FetchDataRowSetAsync(EventSql.SelectSector(idLocation));
 			var sectors = new HashSet<Sector>();
 
 			foreach (var S in await sectorSet)
@@ -91,7 +104,7 @@ namespace EventManager.Infrastructure.Repository
 		}
 		async Task<ISet<Ticket>> GetTicketListAsync(ulong idEvent, ulong idSector)
 		{
-			var ticketSet = dbContext.FetchDataSetAsync(EventSql.SelectTicket(idEvent, idSector));
+			var ticketSet = dbContext.FetchDataRowSetAsync(EventSql.SelectTicket(idEvent, idSector));
 			var tickets = new HashSet<Ticket>();
 			foreach (var T in ticketSet.Result)
 			{

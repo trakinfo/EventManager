@@ -22,7 +22,7 @@ namespace EventManager.Infrastructure.Services
 			_mapper = mapper;
 		}
 
-		public async Task<EventDto> GetAsync(long id)
+		public async Task<EventDto> GetAsync(ulong id)
 		{
 			var @event = await _eventRepository.GetEventAsync(id);
 			return _mapper.Map<EventDto>(@event);
@@ -54,7 +54,7 @@ namespace EventManager.Infrastructure.Services
 			throw new NotImplementedException();
 		}
 
-		public Task DeleteAsync(long id)
+		public Task DeleteAsync(ulong id)
 		{
 			throw new NotImplementedException();
 		}

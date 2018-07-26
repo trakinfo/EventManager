@@ -18,7 +18,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 			return new MySqlConnection(connectionString);
 		}
 
-		public async Task<ISet<IDictionary<string, object>>> FetchDataSetAsync(string sqlString)
+		public async Task<ISet<IDictionary<string, object>>> FetchDataRowSetAsync(string sqlString)
 		{
 			var HS = new HashSet<IDictionary<string, object>>();
 			try

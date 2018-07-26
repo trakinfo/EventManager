@@ -8,7 +8,7 @@ namespace EventManager.Core.Repository
 {
     public interface IEventRepository
     {
-		Task<Event> GetEventAsync(long eventId);
+		Task<Event> GetEventAsync(ulong eventId);
 		Task<IEnumerable<Event>> GetEventListAsync(string name="");
 		Task AddEventAsync(Event @event);
 		Task UpdateEventAsync(Event @event);

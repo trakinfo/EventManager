@@ -10,7 +10,7 @@ namespace EventManager.Infrastructure.Services
 {
     public interface IEventService
     {
-		Task<EventDto> GetAsync(long id);
+		Task<EventDto> GetAsync(ulong id);
 		Task<EventDto> CreateAsync(string name, Location location, DateTime startDate, DateTime endDate, Signature creator, ISet<Ticket> tickets);
 		Task<IEnumerable<EventDto>> BrowseAsync(string name = null);
 		Task<Ticket> CreateTicketAsync(int seatingNumber, Sector sector, decimal price, Signature creator);
@@ -18,6 +18,6 @@ namespace EventManager.Infrastructure.Services
 		Task<ISet<Ticket>> CreateTicketsCollectionAsync();
 		Task UpdateAsync(string name, string description, Location location, DateTime startDate, DateTime endDate, Signature modifier);
 		Task DeleteTicketsAsync(ISet<Ticket> tickets);
-		Task DeleteAsync(long id);
+		Task DeleteAsync(ulong id);
     }
 }
