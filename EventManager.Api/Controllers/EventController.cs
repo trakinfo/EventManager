@@ -1,4 +1,5 @@
-﻿using EventManager.Core.Repository;
+﻿using EventManager.Core.Domain;
+using EventManager.Core.Repository;
 using EventManager.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -23,5 +24,17 @@ namespace EventManager.Api.Controllers
 			var events = await _eventService.BrowseAsync(name);
 			return Json(events);
 		}
+		//[HttpPost]
+		//public async Task<IActionResult> Post([FromBody] Event @event)
+		//{
+		//	await _eventService.CreateAsync(
+		//		@event.Name,
+		//		@event.Location,
+		//		@event.StartDate,
+		//		@event.EndDate,
+		//		@event.Creator
+		//		);
+		//	return Created();
+		//}
 	}
 }

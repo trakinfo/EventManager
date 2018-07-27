@@ -34,7 +34,7 @@ namespace EventManager.Infrastructure.Services
 			return _mapper.Map<IEnumerable<EventDto>>(events);
 		}
 
-		public Task<EventDto> CreateAsync(string name, Location location, DateTime startDate, DateTime endDate, Signature creator, ISet<Ticket> tickets)
+		public Task<EventDto> CreateAsync(string name, Location location, DateTime startDate, DateTime endDate, Signature creator)
 		{
 			throw new NotImplementedException();
 		}

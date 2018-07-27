@@ -12,6 +12,6 @@ namespace EventManager.Core.Repository
 		Task<IEnumerable<Event>> GetEventListAsync(string name="");
 		Task AddEventAsync(Event @event);
 		Task UpdateEventAsync(Event @event);
-		Task DeleteEventAsync(Guid eventId);
+		Task DeleteEventAsync(ulong eventId);
     }
 }

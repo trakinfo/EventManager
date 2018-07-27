@@ -2,6 +2,7 @@
 using EventManager.Core.Domain;
 using EventManager.Core.Globals;
 using EventManager.Core.Repository;
+using EventManager.Infrastructure.DataBaseContext.MySql.SQL;
 using EventManager.Infrastructure.DataBaseContext.SQL;
 using System;
 using System.Collections.Generic;
@@ -13,9 +14,12 @@ namespace EventManager.Infrastructure.Repository
 	public class EventRepository : IEventRepository
 	{
 		IDataBaseContext dbContext;
-		public EventRepository(IDataBaseContext context)
+		ILocationRepository locationRepository;
+
+		public EventRepository(IDataBaseContext context, ILocationRepository locationRepo)
 		{
 			dbContext = context;
+			locationRepository = locationRepo;
 		}
 		public async Task<Event> GetEventAsync(ulong eventId)
 		{
@@ -27,7 +31,7 @@ namespace EventManager.Infrastructure.Repository
 					idEvent,
 					eventDR["Name"].ToString(),
 					eventDR["Description"].ToString(),
-					await GetLocationAsync(idEvent),
+					await GetLocationAsync(idEvent, Convert.ToUInt64(eventDR["IdLocation"])),
 					Convert.ToDateTime(eventDR["StartDate"]),
 					Convert.ToDateTime(eventDR["EndDate"]),
 					new Signature(eventDR["User"].ToString(), eventDR["HostIP"].ToString(), Convert.ToDateTime(eventDR["Version"]))
@@ -37,18 +41,19 @@ namespace EventManager.Infrastructure.Repository
 
 		public async Task<IEnumerable<Event>> GetEventListAsync(string name = "")
 		{
-			var eventSet = await dbContext.FetchDataRowSetAsync(EventSql.SelectEvent(name));
+			var eventSet = await dbContext.FetchDataRowSetAsync(EventSql.SelectEvents(name));
 
 			var events = new HashSet<Event>();
 			foreach (var E in eventSet)
 			{
-				var idEvent = Convert.ToUInt32(E["ID"]);
+				var idEvent = Convert.ToUInt64(E["ID"]);
+				var idLocation = Convert.ToUInt64(E["IdLocation"]);
 				events.Add(new Event
 					(
 						idEvent,
 						E["Name"].ToString(),
 						E["Description"].ToString(),
-						await GetLocationAsync(idEvent),
+						await GetLocationAsync(idEvent, idLocation),
 						Convert.ToDateTime(E["StartDate"]),
 						Convert.ToDateTime(E["EndDate"]),
 						new Signature(E["User"].ToString(), E["HostIP"].ToString(), Convert.ToDateTime(E["Version"]))
@@ -57,51 +62,17 @@ namespace EventManager.Infrastructure.Repository
 			}
 			return await Task.FromResult(events.AsEnumerable());
 		}
-		async Task<Location> GetLocationAsync(ulong idEvent)
+		async Task<Location> GetLocationAsync(ulong idEvent, ulong idLocation)
 		{
-			var locationDR = await dbContext.FetchDataRowAsync(EventSql.SelectLocation(idEvent));
-			var idLocation = Convert.ToUInt64(locationDR["ID"]);
-			var location = new Location()
+			var location = await locationRepository.GetAsync(idLocation);
+
+			foreach (var S in location.Sectors)
 			{
-				Name = locationDR["Name"].ToString(),
-				Email = locationDR["Email"].ToString(),
-				PhoneNumber = locationDR["PhoneNumber"].ToString(),
-				WWW = locationDR["www"].ToString(),
-				Sectors = await GetSectorList(idEvent, idLocation),
-				Address = await GetLocationAddressAsync(idLocation)
-			};
+				S.Tickets = await GetTicketListAsync(idEvent, S.Id);
+			}
 			return await Task.FromResult(location);
 		}
 
-		async Task<Address> GetLocationAddressAsync(ulong idLocation)
-		{
-			var addressDR = await dbContext.FetchDataRowAsync(EventSql.SelectAddress(idLocation));
-			var address = new Address()
-			{
-				PlaceName = addressDR["PlaceName"].ToString(),
-				StreetName = addressDR["StreetName"].ToString(),
-				PropertyNumber = addressDR["PropertyNumber"].ToString(),
-				ApartmentNumber = addressDR["ApartmentNumber"].ToString(),
-				PostalCode = addressDR["PostalCode"].ToString(),
-				PostOffice = addressDR["PostOffice"].ToString()
-
-			};
-			return await Task.FromResult(address);
-		}
-
-		async Task<ISet<Sector>> GetSectorList(ulong idEvent, ulong idLocation)
-		{
-			var sectorSet = dbContext.FetchDataRowSetAsync(EventSql.SelectSector(idLocation));
-			var sectors = new HashSet<Sector>();
-
-			foreach (var S in await sectorSet)
-			{
-				var idSector = (uint)S["ID"];
-
-				sectors.Add(new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Description"].ToString(), Convert.ToUInt32(S["SeatingCount"]), await GetTicketListAsync(idEvent, idSector)));
-			}
-			return await Task.FromResult(sectors);
-		}
 		async Task<ISet<Ticket>> GetTicketListAsync(ulong idEvent, ulong idSector)
 		{
 			var ticketSet = dbContext.FetchDataRowSetAsync(EventSql.SelectTicket(idEvent, idSector));
@@ -112,6 +83,7 @@ namespace EventManager.Infrastructure.Repository
 			}
 			return await Task.FromResult(tickets);
 		}
+
 		public async Task AddEventAsync(Event @event)
 		{
 			throw new NotImplementedException();
@@ -122,7 +94,7 @@ namespace EventManager.Infrastructure.Repository
 			throw new NotImplementedException();
 		}
 
-		public async Task DeleteEventAsync(Guid eventId)
+		public async Task DeleteEventAsync(ulong eventId)
 		{
 			throw new NotImplementedException();
 		}

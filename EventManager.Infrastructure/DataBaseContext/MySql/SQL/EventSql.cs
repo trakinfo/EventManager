@@ -6,28 +6,18 @@ namespace EventManager.Infrastructure.DataBaseContext.SQL
 {
     public static class EventSql
     {
-		internal static string SelectEvent(string name)
+		internal static string SelectEvents(string name)
 		{
-			return $"SELECT e.ID,e.Name,e.Description,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.Name LIKE '{name}%' ORDER BY e.Name;";
+			return $"SELECT e.ID,e.Name,e.Description,e.IdLocation,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.Name LIKE '{name}%' ORDER BY e.Name;";
 		}
 		internal static string SelectEvent(ulong id)
 		{
 			return $"SELECT e.ID,e.Name,e.Description,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.ID={id};";
 		}
 
-		internal static string SelectLocation(ulong idEvent)
+		internal static string SelectEvent(string name)
 		{
-			return $"SELECT l.ID,l.Name, l.PhoneNumber, l.Email, l.www FROM location l INNER JOIN event e ON l.ID=e.IdLocation WHERE e.ID={idEvent};";
-		}
-
-		internal static string SelectAddress(ulong IdLocation)
-		{
-			return $"SELECT a.PlaceName, a.StreetName, a.PropertyNumber, a.ApartmentNumber, a.PostalCode, a.PostOffice FROM address a INNER JOIN location l ON a.ID=l.IdAddress WHERE l.ID={IdLocation};";
-		}
-
-		internal static string SelectSector(ulong idLocation)
-		{
-			return $"SELECT s.ID,s.Name,s.Description,s.SeatingCount FROM sector s WHERE s.IdLocation={idLocation};";
+			return $"SELECT e.ID,e.Name,e.Description,e.IdLocation,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.Name='{name}';";
 		}
 
 		internal static string SelectTicket(ulong idEvent, ulong idSector)

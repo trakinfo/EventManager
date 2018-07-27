@@ -28,6 +28,7 @@ namespace EventManager.Api
 			services.AddSingleton<IDataBaseContext, MySqlContext>();
 			services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<IEventRepository, EventRepository>();
+			services.AddScoped<ILocationRepository, LocationRepository>();
 			services.AddScoped<IEventService, EventService>();
 			services.AddSingleton(AutoMapperConfig.Initialize());
 		}
