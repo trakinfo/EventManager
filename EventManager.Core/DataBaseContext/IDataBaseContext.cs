@@ -11,8 +11,8 @@ namespace EventManager.Core.DataBaseContext
 		Task<IDictionary<string, object>> FetchDataRowAsync(string sqlString);
 		Task<ISet<T>> FetchValueSetAsync<T>(string sqlString);
 		Task<String> FetchSingleValueAsync(string sqlString);
-		Task<int> AddDataAsync(Dictionary<string, object> sqlParameters, string sqlString);
-		Task<int> UpdateDataAsync(Dictionary<string, object> sqlParameters, string sqlString);
-		Task<int> RemoveDataAsync(Dictionary<string, object> sqlParameters, string sqlString);
+		Task<long> AddDataAsync(IDictionary<string, object> sqlParameters, string sqlString);
+		Task<int> UpdateDataAsync(IDictionary<string, object> sqlParameters, string sqlString);
+		Task<int> RemoveDataAsync(IDictionary<string, object> sqlParameters, string sqlString);
 	}
 }

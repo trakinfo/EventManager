@@ -96,52 +96,92 @@ namespace EventManager.Infrastructure.DataBaseContext
 				return await Task.FromResult(DR);
 			}
 		}
-		public Task<int> AddDataAsync(Dictionary<string, object> sqlParameters, string sqlString)
+		public async Task<long> AddDataAsync(IDictionary<string, object> sqlParameters, string sqlString)
 		{
-			throw new NotImplementedException();
-		}
-
-
-		public Task<string> FetchSingleValueAsync(string sqlString)
-		{
-			throw new NotImplementedException();
-		}
-
-		public async Task<ISet<T>> FetchValueSetAsync<T>(string sqlString)
-		{
-			var HS = new HashSet<T>();
 			try
 			{
-				using (var R = await new MySqlCommand { CommandText = sqlString, Connection = GetConnection(), }.ExecuteReaderAsync())
+				using (MySqlConnection conn = GetConnection())
 				{
-					if (!R.HasRows) return HS;
-					while (R.Read())
+					conn.Open();
+					var T = conn.BeginTransaction();
+					using (var cmd = new MySqlCommand() { CommandText = sqlString, Connection = conn, Transaction = T })
 					{
-						HS.Add((T)Convert.ChangeType(R[0], typeof(T)));
+						try
+						{
+							cmd.Parameters.Clear();
+							cmd.Transaction = T;
+							foreach (var P in sqlParameters)
+							{
+								var myParam = new MySqlParameter(P.Key, P.Value);
+								cmd.Parameters.Add(myParam);
+							}
+							await cmd.ExecuteNonQueryAsync();
+							T.Commit();
+							return await Task.FromResult(cmd.LastInsertedId);
+						}
+						catch (MySqlException ex)
+						{
+							Console.WriteLine(ex.Message);
+							T.Rollback();
+							return -1;
+						}
+						catch (Exception)
+						{
+							throw;
+						}
 					}
-					return await Task.FromResult(HS);
 				}
-			}
-			catch (MySqlException ex)
-			{
-				Console.WriteLine(ex.Message);
-
-				return await Task.FromResult(HS);
 			}
 			catch (Exception)
 			{
+
 				throw;
 			}
+
+		
 		}
 
-		public Task<int> RemoveDataAsync(Dictionary<string, object> sqlParameters, string sqlString)
-		{
-			throw new NotImplementedException();
-		}
 
-		public Task<int> UpdateDataAsync(Dictionary<string, object> sqlParameters, string sqlString)
+	public Task<string> FetchSingleValueAsync(string sqlString)
+	{
+		throw new NotImplementedException();
+	}
+
+	public async Task<ISet<T>> FetchValueSetAsync<T>(string sqlString)
+	{
+		var HS = new HashSet<T>();
+		try
 		{
-			throw new NotImplementedException();
+			using (var R = await new MySqlCommand { CommandText = sqlString, Connection = GetConnection(), }.ExecuteReaderAsync())
+			{
+				if (!R.HasRows) return HS;
+				while (R.Read())
+				{
+					HS.Add((T)Convert.ChangeType(R[0], typeof(T)));
+				}
+				return await Task.FromResult(HS);
+			}
+		}
+		catch (MySqlException ex)
+		{
+			Console.WriteLine(ex.Message);
+
+			return await Task.FromResult(HS);
+		}
+		catch (Exception)
+		{
+			throw;
 		}
 	}
+
+	public Task<int> RemoveDataAsync(IDictionary<string, object> sqlParameters, string sqlString)
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task<int> UpdateDataAsync(IDictionary<string, object> sqlParameters, string sqlString)
+	{
+		throw new NotImplementedException();
+	}
+}
 }

@@ -34,9 +34,28 @@ namespace EventManager.Infrastructure.Services
 			return _mapper.Map<IEnumerable<EventDto>>(events);
 		}
 
-		public Task<EventDto> CreateAsync(string name, Location location, DateTime startDate, DateTime endDate, Signature creator)
+		public async Task<long> CreateAsync(string name, string description, ulong? idLocation, DateTime startDate, DateTime endDate, string creator, string hostIP)
 		{
-			throw new NotImplementedException();
+			try
+			{
+				
+				var SqlParams = new Dictionary<string, object>();
+				
+				SqlParams.Add("?Name", name);
+				SqlParams.Add("?Description", description);
+				SqlParams.Add("?IdLocation", idLocation);
+				SqlParams.Add("?StartDate", startDate);
+				SqlParams.Add("?EndDate", endDate);
+				SqlParams.Add("?User", creator);
+				SqlParams.Add("?HostIP", hostIP);
+
+				return await _eventRepository.AddEventAsync(SqlParams);
+			}
+
+			catch (Exception)
+			{
+				throw;
+			}
 		}
 
 		public Task<Sector> CreateSectorAsync(string name, string description, int seatingCount, Signature creator)

@@ -12,6 +12,7 @@ namespace EventManager.Core.Domain
 		public string Email { get; protected set; }
 		public string WWW { get; protected set; }
 
+		public Location() { }
 		public Location(ulong id, string name, Address address, IEnumerable<Sector> sectors, string phoneNmuber, string email, string www, Signature creator)
 		{
 			Id = id;

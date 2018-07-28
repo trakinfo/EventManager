@@ -11,7 +11,7 @@ namespace EventManager.Infrastructure.Services
     public interface IEventService
     {
 		Task<EventDto> GetAsync(ulong id);
-		Task<EventDto> CreateAsync(string name, Location location, DateTime startDate, DateTime endDate, Signature creator);
+		Task<long> CreateAsync(string name, string descripion, ulong? idLocation, DateTime startDate, DateTime endDate, string creator, string hostIP);
 		Task<IEnumerable<EventDto>> BrowseAsync(string name = null);
 		Task<Ticket> CreateTicketAsync(int seatingNumber, Sector sector, decimal price, Signature creator);
 		Task<Sector> CreateSectorAsync(string name, string description, int seatingCount, Signature creator);

@@ -39,6 +39,24 @@ namespace EventManager.Infrastructure.Repository
 			return await Task.FromResult(_event);
 		}
 
+		//public async Task<Event> GetEventAsync(string name)
+		//{
+		//	var eventDR = await dbContext.FetchDataRowAsync(EventSql.SelectEvent(name));
+		//	var idEvent = Convert.ToUInt64(eventDR["ID"]);
+
+		//	var _event = new Event
+		//		(
+		//			idEvent,
+		//			eventDR["Name"].ToString(),
+		//			eventDR["Description"].ToString(),
+		//			await GetLocationAsync(idEvent, Convert.ToUInt64(eventDR["IdLocation"])),
+		//			Convert.ToDateTime(eventDR["StartDate"]),
+		//			Convert.ToDateTime(eventDR["EndDate"]),
+		//			new Signature(eventDR["User"].ToString(), eventDR["HostIP"].ToString(), Convert.ToDateTime(eventDR["Version"]))
+		//		);
+		//	return await Task.FromResult(_event);
+		//}
+
 		public async Task<IEnumerable<Event>> GetEventListAsync(string name = "")
 		{
 			var eventSet = await dbContext.FetchDataRowSetAsync(EventSql.SelectEvents(name));
@@ -47,7 +65,7 @@ namespace EventManager.Infrastructure.Repository
 			foreach (var E in eventSet)
 			{
 				var idEvent = Convert.ToUInt64(E["ID"]);
-				var idLocation = Convert.ToUInt64(E["IdLocation"]);
+				ulong? idLocation =  E["IdLocation"]==null ? null : Convert.ToUInt64(E["IdLocation"]);
 				events.Add(new Event
 					(
 						idEvent,
@@ -62,8 +80,10 @@ namespace EventManager.Infrastructure.Repository
 			}
 			return await Task.FromResult(events.AsEnumerable());
 		}
-		async Task<Location> GetLocationAsync(ulong idEvent, ulong idLocation)
+		async Task<Location> GetLocationAsync(ulong idEvent, ulong? idLocation)
 		{
+			if (String.IsNullOrEmpty(idLocation.ToString())) return await Task.FromResult(new Location());
+
 			var location = await locationRepository.GetAsync(idLocation);
 
 			foreach (var S in location.Sectors)
@@ -84,9 +104,12 @@ namespace EventManager.Infrastructure.Repository
 			return await Task.FromResult(tickets);
 		}
 
-		public async Task AddEventAsync(Event @event)
+		public async Task<long> AddEventAsync(IDictionary<string,object> sqlParams)
 		{
-			throw new NotImplementedException();
+			var newEventId = await dbContext.AddDataAsync(sqlParams, EventSql.InsertEvent());
+
+
+			return await Task.FromResult(newEventId);
 		}
 
 		public async Task UpdateEventAsync(Event @event)
