@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using EventManager.Core.DataBaseContext;
+using EventManager.Core.DataBaseContext.SQL;
 using EventManager.Core.Domain;
 using EventManager.Core.Globals;
 using EventManager.Core.Repository;
@@ -13,9 +14,12 @@ namespace EventManager.Infrastructure.Repository
 	public class LocationRepository : ILocationRepository
 	{
 		IDataBaseContext dbContext;
-		public LocationRepository(IDataBaseContext context)
+		ILocationSql sql;
+
+		public LocationRepository(IDataBaseContext context, ILocationSql locationSql)
 		{
 			dbContext = context;
+			sql = locationSql;
 		}
 		public Task AddAsync(Location location)
 		{
@@ -29,7 +33,7 @@ namespace EventManager.Infrastructure.Repository
 
 		public async Task<Location> GetAsync(ulong locationId)
 		{
-			var locationDR = await dbContext.FetchDataRowAsync(LocationSql.SelectLocation(locationId));
+			var locationDR = await dbContext.FetchDataRowAsync(sql.SelectLocation(locationId));
 
 			var location = new Location
 				(
@@ -57,7 +61,7 @@ namespace EventManager.Infrastructure.Repository
 
 		async Task<Address> GetLocationAddressAsync(ulong idLocation)
 		{
-			var addressDR = await dbContext.FetchDataRowAsync(LocationSql.SelectAddress(idLocation));
+			var addressDR = await dbContext.FetchDataRowAsync(sql.SelectAddress(idLocation));
 			var address = new Address()
 			{
 				PlaceName = addressDR["PlaceName"].ToString(),
@@ -73,7 +77,7 @@ namespace EventManager.Infrastructure.Repository
 
 		async Task<ISet<Sector>> GetSectorListAsync(ulong idLocation)
 		{
-			var sectorSet = dbContext.FetchDataRowSetAsync(LocationSql.SelectSector(idLocation));
+			var sectorSet = dbContext.FetchDataRowSetAsync(sql.SelectSector(idLocation));
 			var sectors = new HashSet<Sector>();
 
 			foreach (var S in await sectorSet)

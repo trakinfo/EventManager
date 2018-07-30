@@ -1,9 +1,8 @@
 ﻿using EventManager.Core.DataBaseContext;
+using EventManager.Core.DataBaseContext.SQL;
 using EventManager.Core.Domain;
 using EventManager.Core.Globals;
 using EventManager.Core.Repository;
-using EventManager.Infrastructure.DataBaseContext.MySql.SQL;
-using EventManager.Infrastructure.DataBaseContext.SQL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,23 +14,28 @@ namespace EventManager.Infrastructure.Repository
 	{
 		IDataBaseContext dbContext;
 		ILocationRepository locationRepository;
+		IEventSql sql;
 
-		public EventRepository(IDataBaseContext context, ILocationRepository locationRepo)
+		public EventRepository(IDataBaseContext context, ILocationRepository locationRepo, IEventSql eventSql)
 		{
 			dbContext = context;
 			locationRepository = locationRepo;
+			sql = eventSql;
 		}
 		public async Task<Event> GetEventAsync(ulong eventId)
 		{
-			var eventDR = await dbContext.FetchDataRowAsync(EventSql.SelectEvent(eventId));
+			var eventDR = await dbContext.FetchDataRowAsync(sql.SelectEvent(eventId));
 			var idEvent = Convert.ToUInt64(eventDR["ID"]);
-			
+			Location location = null;
+			if (!string.IsNullOrEmpty(eventDR["IdLocation"].ToString()))
+				location = await GetLocationAsync(idEvent, Convert.ToUInt64(eventDR["IdLocation"]));
+
 			var _event = new Event
 				(
 					idEvent,
 					eventDR["Name"].ToString(),
 					eventDR["Description"].ToString(),
-					await GetLocationAsync(idEvent, Convert.ToUInt64(eventDR["IdLocation"])),
+					location,
 					Convert.ToDateTime(eventDR["StartDate"]),
 					Convert.ToDateTime(eventDR["EndDate"]),
 					new Signature(eventDR["User"].ToString(), eventDR["HostIP"].ToString(), Convert.ToDateTime(eventDR["Version"]))
@@ -39,39 +43,45 @@ namespace EventManager.Infrastructure.Repository
 			return await Task.FromResult(_event);
 		}
 
-		//public async Task<Event> GetEventAsync(string name)
-		//{
-		//	var eventDR = await dbContext.FetchDataRowAsync(EventSql.SelectEvent(name));
-		//	var idEvent = Convert.ToUInt64(eventDR["ID"]);
+		public async Task<Event> GetEventAsync(string name)
+		{
+			var eventDR = await dbContext.FetchDataRowAsync(sql.SelectEvent(name));
+			var idEvent = Convert.ToUInt64(eventDR["ID"]);
+			Location location = null;
+			if (!string.IsNullOrEmpty(eventDR["IdLocation"].ToString()))
+				location = await GetLocationAsync(idEvent, Convert.ToUInt64(eventDR["IdLocation"]));
 
-		//	var _event = new Event
-		//		(
-		//			idEvent,
-		//			eventDR["Name"].ToString(),
-		//			eventDR["Description"].ToString(),
-		//			await GetLocationAsync(idEvent, Convert.ToUInt64(eventDR["IdLocation"])),
-		//			Convert.ToDateTime(eventDR["StartDate"]),
-		//			Convert.ToDateTime(eventDR["EndDate"]),
-		//			new Signature(eventDR["User"].ToString(), eventDR["HostIP"].ToString(), Convert.ToDateTime(eventDR["Version"]))
-		//		);
-		//	return await Task.FromResult(_event);
-		//}
+			var _event = new Event
+				(
+					idEvent,
+					eventDR["Name"].ToString(),
+					eventDR["Description"].ToString(),
+					location,
+					Convert.ToDateTime(eventDR["StartDate"]),
+					Convert.ToDateTime(eventDR["EndDate"]),
+					new Signature(eventDR["User"].ToString(), eventDR["HostIP"].ToString(), Convert.ToDateTime(eventDR["Version"]))
+				);
+			return await Task.FromResult(_event);
+		}
 
 		public async Task<IEnumerable<Event>> GetEventListAsync(string name = "")
 		{
-			var eventSet = await dbContext.FetchDataRowSetAsync(EventSql.SelectEvents(name));
+			var eventSet = await dbContext.FetchDataRowSetAsync(sql.SelectEvents(name));
 
 			var events = new HashSet<Event>();
 			foreach (var E in eventSet)
 			{
 				var idEvent = Convert.ToUInt64(E["ID"]);
-				ulong? idLocation =  E["IdLocation"]==null ? null : Convert.ToUInt64(E["IdLocation"]);
+				Location location = null;
+				if (!string.IsNullOrEmpty(E["IdLocation"].ToString()))
+					location = await GetLocationAsync(idEvent, Convert.ToUInt64(E["IdLocation"]));
+
 				events.Add(new Event
 					(
 						idEvent,
 						E["Name"].ToString(),
 						E["Description"].ToString(),
-						await GetLocationAsync(idEvent, idLocation),
+						location,
 						Convert.ToDateTime(E["StartDate"]),
 						Convert.ToDateTime(E["EndDate"]),
 						new Signature(E["User"].ToString(), E["HostIP"].ToString(), Convert.ToDateTime(E["Version"]))
@@ -80,10 +90,8 @@ namespace EventManager.Infrastructure.Repository
 			}
 			return await Task.FromResult(events.AsEnumerable());
 		}
-		async Task<Location> GetLocationAsync(ulong idEvent, ulong? idLocation)
+		async Task<Location> GetLocationAsync(ulong idEvent, ulong idLocation)
 		{
-			if (String.IsNullOrEmpty(idLocation.ToString())) return await Task.FromResult(new Location());
-
 			var location = await locationRepository.GetAsync(idLocation);
 
 			foreach (var S in location.Sectors)
@@ -95,7 +103,7 @@ namespace EventManager.Infrastructure.Repository
 
 		async Task<ISet<Ticket>> GetTicketListAsync(ulong idEvent, ulong idSector)
 		{
-			var ticketSet = dbContext.FetchDataRowSetAsync(EventSql.SelectTicket(idEvent, idSector));
+			var ticketSet = dbContext.FetchDataRowSetAsync(sql.SelectTicket(idEvent, idSector));
 			var tickets = new HashSet<Ticket>();
 			foreach (var T in ticketSet.Result)
 			{
@@ -104,11 +112,9 @@ namespace EventManager.Infrastructure.Repository
 			return await Task.FromResult(tickets);
 		}
 
-		public async Task<long> AddEventAsync(IDictionary<string,object> sqlParams)
+		public async Task<long> AddEventAsync(IDictionary<string, object> sqlParams)
 		{
-			var newEventId = await dbContext.AddDataAsync(sqlParams, EventSql.InsertEvent());
-
-
+			var newEventId = await dbContext.AddDataAsync(sqlParams, sql.InsertEvent());
 			return await Task.FromResult(newEventId);
 		}
 

@@ -1,6 +1,8 @@
 ﻿using EventManager.Core.DataBaseContext;
+using EventManager.Core.DataBaseContext.SQL;
 using EventManager.Core.Repository;
 using EventManager.Infrastructure.DataBaseContext;
+using EventManager.Infrastructure.DataBaseContext.MySql.SQL;
 using EventManager.Infrastructure.Mapper;
 using EventManager.Infrastructure.Repository;
 using EventManager.Infrastructure.Services;
@@ -30,6 +32,8 @@ namespace EventManager.Api
 			services.AddScoped<IEventRepository, EventRepository>();
 			services.AddScoped<ILocationRepository, LocationRepository>();
 			services.AddScoped<IEventService, EventService>();
+			services.AddSingleton<IEventSql, EventSql>();
+			services.AddSingleton<ILocationSql, LocationSql>();
 			services.AddSingleton(AutoMapperConfig.Initialize());
 		}
 

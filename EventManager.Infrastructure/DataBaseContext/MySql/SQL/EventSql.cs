@@ -1,42 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EventManager.Core.DataBaseContext.SQL;
 
-namespace EventManager.Infrastructure.DataBaseContext.SQL
+namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 {
-    public static class EventSql
+	public class EventSql : IEventSql
     {
-		internal static string SelectEvents(string name)
+		public string SelectEvents(string name)
 		{
-			return $"SELECT e.ID,e.Name,e.Description,e.IdLocation,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.Name LIKE '{name}%' ORDER BY e.Name;";
+			return $"SELECT e.ID,e.Name,e.Description,e.IdLocation,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.Name LIKE '{name}%' ORDER BY e.StartDate DESC,e.Name;";
 		}
-		internal static string SelectEvent(ulong id)
+		public string SelectEvent(ulong id)
 		{
-			return $"SELECT e.ID,e.Name,e.Description,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.ID={id};";
+			return $"SELECT e.ID,e.Name,e.Description,e.IdLocation,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.ID={id};";
 		}
 
-		internal static string SelectEvent(string name)
+		public string SelectEvent(string name)
 		{
 			return $"SELECT e.ID,e.Name,e.Description,e.IdLocation,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.Name='{name}';";
 		}
 
-		internal static string SelectTicket(ulong idEvent, ulong idSector)
+		public string SelectTicket(ulong idEvent, ulong idSector)
 		{
 			return $"SELECT t.ID,t.SeatingNumber,t.Price,IdSector FROM ticket t WHERE t.IdEvent={idEvent} AND t.IdSector={idSector};";
 		}
-		internal static string InsertEvent()
+		public string InsertEvent()
 		{
 			return "INSERT INTO event VALUES(null,?Name,?Description,?IdLocation,?StartDate,?EndDate,?User,?HostIP,NULL);";
 		}
 
-		internal static string UpdateEvent()
+		public string UpdateEvent()
 		{
-			return "UPDATE uczen SET Nazwisko=?Nazwisko, Imie=?Imie, Imie2=?Imie2, NrArkusza=?NrArkusza, ImieOjca=?ImieOjca, NazwiskoOjca=?NazwiskoOjca, ImieMatki=?ImieMatki, NazwiskoMatki=?NazwiskoMatki, DataUr=?DataUr, Pesel=?Pesel, IdMiejsceUr=?IdMiejsceUr, IdMiejsceZam=?IdMiejsceZam, Ulica=?Ulica, NrDomu=?NrDomu, NrMieszkania=?NrMieszkania, Tel=?Tel, TelKom1=?TelKom1, TelKom2=?TelKom2, Man=?Man, User=?User, ComputerIP=?IP WHERE ID=?ID;";
+			return "UPDATE event SET Name=?Name, Description=?Description, StartDate=?StartDate, EndDate=?EndDate, User=?User, HostIP=?HostIP WHERE ID=?ID;";
 		}
 
-		internal static string DeleteEvent()
+		public string UpdateEventLocation()
 		{
-			return "DELETE FROM uczen WHERE ID=?ID";
+			return "UPDATE event SET IdLocation=?IdLocation, User=?User, HostIP=?HostIP WHERE ID=?ID;";
+		}
+
+		public string DeleteEvent()
+		{
+			return "DELETE FROM event WHERE ID=?ID";
 		}
 	}
 }
