@@ -12,7 +12,7 @@ namespace EventManager.Core.DataBaseContext
 		Task<ISet<T>> FetchValueSetAsync<T>(string sqlString);
 		Task<String> FetchSingleValueAsync(string sqlString);
 		Task<long> AddDataAsync(IDictionary<string, object> sqlParameters, string sqlString);
-		Task<int> UpdateDataAsync(IDictionary<string, object> sqlParameters, string sqlString);
-		Task<int> RemoveDataAsync(IDictionary<string, object> sqlParameters, string sqlString);
+		Task<int> ExecuteCommandAsync(IDictionary<string, object> sqlParameters, string sqlString);
+		//Task<int> RemoveDataAsync(IDictionary<string, object> sqlParameters, string sqlString);
 	}
 }

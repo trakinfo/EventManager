@@ -118,14 +118,14 @@ namespace EventManager.Infrastructure.Repository
 			return await Task.FromResult(newEventId);
 		}
 
-		public async Task UpdateEventAsync(Event @event)
+		public async Task UpdateEventAsync(IDictionary<string, object> sqlParams)
 		{
-			throw new NotImplementedException();
+			await dbContext.ExecuteCommandAsync(sqlParams, sql.UpdateEvent());
 		}
 
-		public async Task DeleteEventAsync(ulong eventId)
+		public async Task DeleteEventAsync(IDictionary<string, object> sqlParams)
 		{
-			throw new NotImplementedException();
+			await dbContext.ExecuteCommandAsync(sqlParams, sql.DeleteEvent());
 		}
 	}
 }

@@ -38,7 +38,6 @@ namespace EventManager.Infrastructure.Services
 		{
 			try
 			{
-				
 				var SqlParams = new Dictionary<string, object>();
 				
 				SqlParams.Add("?Name", name);
@@ -73,9 +72,21 @@ namespace EventManager.Infrastructure.Services
 			throw new NotImplementedException();
 		}
 
-		public Task DeleteAsync(ulong id)
+		public async Task DeleteAsync(ulong id)
 		{
-			throw new NotImplementedException();
+			try
+			{
+				var SqlParams = new Dictionary<string, object>();
+
+				SqlParams.Add("?ID", id);
+				
+				await _eventRepository.DeleteEventAsync(SqlParams);
+			}
+
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+			}
 		}
 
 		public Task DeleteTicketsAsync(ISet<Ticket> tickets)
@@ -85,9 +96,28 @@ namespace EventManager.Infrastructure.Services
 
 
 
-		public Task UpdateAsync(string name, string description, Location location, DateTime startDate, DateTime endDate, Signature modifier)
+		public async Task UpdateAsync(ulong id, string name, string description, ulong? idLocation, DateTime startDate, DateTime endDate, string modifier, string hostIP)
 		{
-			throw new NotImplementedException();
+			try
+			{
+				var SqlParams = new Dictionary<string, object>();
+
+				SqlParams.Add("?ID", id);
+				SqlParams.Add("?Name", name);
+				SqlParams.Add("?Description", description);
+				SqlParams.Add("?IdLocation", idLocation);
+				SqlParams.Add("?StartDate", startDate);
+				SqlParams.Add("?EndDate", endDate);
+				SqlParams.Add("?User", modifier);
+				SqlParams.Add("?HostIP", hostIP);
+
+				await _eventRepository.UpdateEventAsync(SqlParams);
+			}
+
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+			}
 		}
 	}
 }

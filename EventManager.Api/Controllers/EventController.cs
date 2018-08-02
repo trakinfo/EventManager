@@ -39,5 +39,28 @@ namespace EventManager.Api.Controllers
 				);
 			return Created($"/events/{insertedId}", null);
 		}
+
+		[HttpPut("{eventId}")]
+		public async Task<IActionResult> Put(ulong eventId, [FromBody] NewEvent Event)
+		{
+			await _eventService.UpdateAsync(
+				eventId,
+				Event.Name,
+				Event.Description,
+				Event.IdLocation,
+				Event.StartDate,
+				Event.EndDate,
+				Event.Creator,
+				Event.HostIP
+				);
+			return NoContent();
+		}
+
+		[HttpDelete("{eventId}")]
+		public async Task<IActionResult> Delete(ulong eventId)
+		{
+			await _eventService.DeleteAsync(eventId);
+			return NoContent();
+		}
 	}
 }

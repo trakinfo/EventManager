@@ -29,7 +29,7 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 
 		public string UpdateEvent()
 		{
-			return "UPDATE event SET Name=?Name, Description=?Description, StartDate=?StartDate, EndDate=?EndDate, User=?User, HostIP=?HostIP WHERE ID=?ID;";
+			return "UPDATE event SET Name=?Name, Description=?Description, IdLocation=?IdLocation, StartDate=?StartDate, EndDate=?EndDate, User=?User, HostIP=?HostIP WHERE ID=?ID;";
 		}
 
 		public string UpdateEventLocation()

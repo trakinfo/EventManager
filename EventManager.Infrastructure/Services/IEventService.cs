@@ -16,7 +16,7 @@ namespace EventManager.Infrastructure.Services
 		Task<Ticket> CreateTicketAsync(int seatingNumber, Sector sector, decimal price, Signature creator);
 		Task<Sector> CreateSectorAsync(string name, string description, int seatingCount, Signature creator);
 		Task<ISet<Ticket>> CreateTicketsCollectionAsync();
-		Task UpdateAsync(string name, string description, Location location, DateTime startDate, DateTime endDate, Signature modifier);
+		Task UpdateAsync(ulong id, string name, string description, ulong? idLocation, DateTime startDate, DateTime endDate, string modifier, string hostIP);
 		Task DeleteTicketsAsync(ISet<Ticket> tickets);
 		Task DeleteAsync(ulong id);
     }

@@ -12,7 +12,7 @@ namespace EventManager.Core.Repository
 		Task<Event> GetEventAsync(string name);
 		Task<IEnumerable<Event>> GetEventListAsync(string name="");
 		Task<long> AddEventAsync(IDictionary<string,object> sqlParams);
-		Task UpdateEventAsync(Event @event);
-		Task DeleteEventAsync(ulong eventId);
+		Task UpdateEventAsync(IDictionary<string, object> sqlParams);
+		Task DeleteEventAsync(IDictionary<string, object> sqlParams);
     }
 }

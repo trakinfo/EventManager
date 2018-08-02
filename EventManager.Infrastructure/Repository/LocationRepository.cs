@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using EventManager.Core.DataBaseContext;
 using EventManager.Core.DataBaseContext.SQL;
 using EventManager.Core.Domain;
 using EventManager.Core.Globals;
 using EventManager.Core.Repository;
-using EventManager.Infrastructure.DataBaseContext.MySql.SQL;
 
 namespace EventManager.Infrastructure.Repository
 {
