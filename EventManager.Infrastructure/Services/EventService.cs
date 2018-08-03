@@ -51,23 +51,19 @@ namespace EventManager.Infrastructure.Services
 				return await _eventRepository.AddEventAsync(SqlParams);
 			}
 
-			catch (Exception)
+			catch (Exception e)
 			{
-				throw;
+				Console.WriteLine(e.Message);
+				return await Task.FromResult(-1);
 			}
 		}
 
-		public Task<Sector> CreateSectorAsync(string name, string description, int seatingCount, Signature creator)
-		{
-			throw new NotImplementedException();
-		}
+		//public Task<Ticket> CreateTicketAsync(int seatingNumber, ulong idSector, decimal price, string creator, string hostIP)
+		//{
+		//	throw new NotImplementedException();
+		//}
 
-		public Task<Ticket> CreateTicketAsync(int seatingNumber, Sector sector, decimal price, Signature creator)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<ISet<Ticket>> CreateTicketsCollectionAsync()
+		public Task<ISet<Ticket>> CreateTicketCollectionAsync(ulong eventId)
 		{
 			throw new NotImplementedException();
 		}

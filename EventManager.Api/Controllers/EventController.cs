@@ -40,6 +40,13 @@ namespace EventManager.Api.Controllers
 			return Created($"/events/{insertedId}", null);
 		}
 
+		[HttpPost("{eventId}")]
+		public async Task<IActionResult> Post(ulong eventId)
+		{
+			await _eventService.CreateTicketCollectionAsync(eventId);
+			return Created();
+		}
+
 		[HttpPut("{eventId}")]
 		public async Task<IActionResult> Put(ulong eventId, [FromBody] NewEvent Event)
 		{
