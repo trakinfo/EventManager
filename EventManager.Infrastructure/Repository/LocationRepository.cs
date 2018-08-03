@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using EventManager.Core.DataBaseContext;
 using EventManager.Core.DataBaseContext.SQL;
@@ -13,15 +14,16 @@ namespace EventManager.Infrastructure.Repository
 	{
 		IDataBaseContext dbContext;
 		ILocationSql sql;
-
+		
 		public LocationRepository(IDataBaseContext context, ILocationSql locationSql)
 		{
 			dbContext = context;
 			sql = locationSql;
 		}
-		public Task AddAsync(Location location)
+		public async Task<long> AddAsync(IDictionary<string, object> sqlParams)
 		{
-			throw new NotImplementedException();
+			var newLocationId = await dbContext.AddDataAsync(sqlParams, sql.InsertLocation());
+			return await Task.FromResult(newLocationId);
 		}
 
 		public Task DeleteAsync(ulong locationId)
@@ -47,12 +49,35 @@ namespace EventManager.Infrastructure.Repository
 			return await Task.FromResult(location);
 		}
 
-		public Task<IEnumerable<Location>> GetListAsync(string name = "")
+		public async Task<IEnumerable<Location>> GetListAsync(string name = "")
 		{
-			throw new NotImplementedException();
+			var locations = await dbContext.FetchDataRowSetAsync(sql.SelectLocations(name));
+
+			var locationSet = new HashSet<Location>();
+			foreach (var L in locations)
+			{
+				var idLocation = Convert.ToUInt64(L["ID"]);
+				Address address = null;
+				if (!string.IsNullOrEmpty(L["IdAddress"].ToString()))
+					address = await GetLocationAddressAsync(idLocation);
+
+				locationSet.Add(new Location
+					(
+						idLocation,
+						L["Name"].ToString(),
+						address,
+						await GetSectorListAsync(idLocation),
+						L["PhoneNumber"].ToString(),
+						L["Email"].ToString(),
+						L["www"].ToString(),
+						new Signature(L["User"].ToString(), L["HostIP"].ToString(), Convert.ToDateTime(L["Version"]))
+					)
+					);
+			}
+			return await Task.FromResult(locationSet.AsEnumerable());
 		}
 
-		public Task UpdateAsync(Location location)
+		public Task UpdateAsync(IDictionary<string, object> sqlParams)
 		{
 			throw new NotImplementedException();
 		}

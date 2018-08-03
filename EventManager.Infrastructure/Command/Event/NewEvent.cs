@@ -1,11 +1,8 @@
-﻿using EventManager.Core.Globals;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace EventManager.Infrastructure.Command.Event
 {
-    public class NewEvent
+	public class NewEvent
     {
 		public string Name { get; set; }
 		public string Description { get; set; }

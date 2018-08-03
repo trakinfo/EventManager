@@ -10,8 +10,8 @@ namespace EventManager.Core.Repository
     {
 		Task<Location> GetAsync(ulong LocationId);
 		Task<IEnumerable<Location>> GetListAsync(string name = "");
-		Task AddAsync(Location location);
-		Task UpdateAsync(Location location);
+		Task<long> AddAsync(IDictionary<string, object> sqlParams);
+		Task UpdateAsync(IDictionary<string, object> sqlParams);
 		Task DeleteAsync(ulong locationId);
 	}
 }

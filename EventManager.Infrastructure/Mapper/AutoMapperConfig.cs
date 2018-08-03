@@ -21,6 +21,9 @@ namespace EventManager.Infrastructure.Mapper
 				.ForMember(DTO => DTO.PhoneNumber, e => e.MapFrom(p => p.Location.PhoneNumber))
 				.ForMember(DTO => DTO.www, e => e.MapFrom(p => p.Location.WWW))
 				.ForMember(DTO => DTO.LocationAddress, e => e.MapFrom(p => p.Location.Address));
+				cfg.CreateMap<Location, LocationDto>()
+				.ForMember(DTO => DTO.Address, l => l.MapFrom(p => p.Address));
+
 			}
 			).CreateMapper();
 		}

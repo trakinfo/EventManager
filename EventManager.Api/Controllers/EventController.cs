@@ -1,11 +1,6 @@
-﻿using EventManager.Core.Domain;
-using EventManager.Core.Repository;
-using EventManager.Infrastructure.Command.Event;
+﻿using EventManager.Infrastructure.Command.Event;
 using EventManager.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace EventManager.Api.Controllers
@@ -44,7 +39,7 @@ namespace EventManager.Api.Controllers
 		public async Task<IActionResult> Post(ulong eventId)
 		{
 			await _eventService.CreateTicketCollectionAsync(eventId);
-			return Created();
+			return Created($"/events/{eventId}/tickets", null);
 		}
 
 		[HttpPut("{eventId}")]

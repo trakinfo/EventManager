@@ -32,6 +32,7 @@ namespace EventManager.Api
 			services.AddScoped<IEventRepository, EventRepository>();
 			services.AddScoped<ILocationRepository, LocationRepository>();
 			services.AddScoped<IEventService, EventService>();
+			services.AddScoped<ILocationService, LocationService>();
 			services.AddSingleton<IEventSql, EventSql>();
 			services.AddSingleton<ILocationSql, LocationSql>();
 			services.AddSingleton(AutoMapperConfig.Initialize());
