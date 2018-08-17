@@ -58,25 +58,31 @@ namespace EventManager.Infrastructure.Services
 			}
 		}
 
-		//public Task<Ticket> CreateTicketAsync(int seatingNumber, ulong idSector, decimal price, string creator, string hostIP)
-		//{
-		//	throw new NotImplementedException();
-		//}
 
-		public Task<ISet<Ticket>> CreateTicketCollectionAsync(ulong eventId)
+		public async Task CreateTicketCollectionAsync(ulong eventId)
 		{
-			throw new NotImplementedException();
+			var _event = await _eventRepository.GetEventAsync(eventId);
+			if (_event.Location == null && _event.Location.Sectors == null) return;
+			var HS = new HashSet<Ticket>();
+			foreach (var S in _event.Location.Sectors)
+			{
+				var sqlParams= new Dictionary<string, object>();
+				sqlParams.Add("?IdEvent", eventId);
+				sqlParams.Add("?IdSector", S.Id);
+				sqlParams.Add("?Price", S.SeatingPrice);
+				await _eventRepository.AddTickets(sqlParams,S.SeatingCount);
+			}
 		}
 
 		public async Task DeleteAsync(ulong id)
 		{
 			try
 			{
-				var SqlParams = new Dictionary<string, object>();
+				var sqlParams = new Dictionary<string, object>();
 
-				SqlParams.Add("?ID", id);
+				sqlParams.Add("?ID", id);
 				
-				await _eventRepository.DeleteEventAsync(SqlParams);
+				await _eventRepository.DeleteEventAsync(sqlParams);
 			}
 
 			catch (Exception e)

@@ -41,5 +41,10 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 		{
 			return "DELETE FROM event WHERE ID=?ID";
 		}
+
+		public string InsertTicket()
+		{
+			return "INSERT INTO ticket VALUES(null,?IdSector,?IdEvent,?SeatingNumber,?Price);";
+		}
 	}
 }

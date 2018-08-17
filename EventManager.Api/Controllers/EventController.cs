@@ -39,7 +39,7 @@ namespace EventManager.Api.Controllers
 		public async Task<IActionResult> Post(ulong eventId)
 		{
 			await _eventService.CreateTicketCollectionAsync(eventId);
-			return Created($"/events/{eventId}/tickets", null);
+			return Created(string.Empty, null);
 		}
 
 		[HttpPut("{eventId}")]

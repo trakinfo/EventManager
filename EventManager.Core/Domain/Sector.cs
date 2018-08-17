@@ -10,15 +10,17 @@ namespace EventManager.Core.Domain
 		public string Name { get; protected set; }
 		public string Description { get; protected set; }
 		public uint SeatingCount { get; protected set; }
+		public decimal SeatingPrice { get; protected set; }
 		public IEnumerable<Ticket> Tickets { get; set; }
 
 		protected Sector() { }
-		public Sector(ulong id, string name, string description, uint seatingCount)
+		public Sector(ulong id, string name, string description, uint seatingCount, decimal seatingPrice)
 		{
 			Id = id;
 			Name = name;
 			Description = description;
 			SeatingCount = seatingCount;
+			SeatingPrice = seatingPrice;
 		}
     }
 }

@@ -15,5 +15,6 @@ namespace EventManager.Core.DataBaseContext.SQL
 		string UpdateEvent();
 		string UpdateEventLocation();
 		string DeleteEvent();
-    }
+		string InsertTicket();
+	}
 }

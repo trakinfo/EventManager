@@ -14,5 +14,6 @@ namespace EventManager.Core.Repository
 		Task<long> AddEventAsync(IDictionary<string,object> sqlParams);
 		Task UpdateEventAsync(IDictionary<string, object> sqlParams);
 		Task DeleteEventAsync(IDictionary<string, object> sqlParams);
-    }
+		Task AddTickets(Dictionary<string, object> sqlParams, uint seatingCount);
+	}
 }

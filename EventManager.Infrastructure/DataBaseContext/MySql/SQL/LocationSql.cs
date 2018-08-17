@@ -29,7 +29,7 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 
 		public string SelectSector(ulong idLocation)
 		{
-			return $"SELECT s.ID,s.Name,s.Description,s.SeatingCount FROM sector s WHERE s.IdLocation={idLocation};";
+			return $"SELECT s.ID,s.Name,s.Description,s.SeatingCount,s.SeatingPrice FROM sector s WHERE s.IdLocation={idLocation};";
 		}
 
 		public string UpdateLocation()

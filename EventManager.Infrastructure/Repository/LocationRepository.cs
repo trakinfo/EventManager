@@ -105,7 +105,7 @@ namespace EventManager.Infrastructure.Repository
 
 			foreach (var S in await sectorSet)
 			{
-				sectors.Add(new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Description"].ToString(), Convert.ToUInt32(S["SeatingCount"])));
+				sectors.Add(new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Description"].ToString(), Convert.ToUInt32(S["SeatingCount"]), Convert.ToUInt32(S["SeatingPrice"])));
 			}
 			return await Task.FromResult(sectors);
 		}

@@ -127,5 +127,15 @@ namespace EventManager.Infrastructure.Repository
 		{
 			await dbContext.ExecuteCommandAsync(sqlParams, sql.DeleteEvent());
 		}
+
+		public async Task AddTickets(Dictionary<string, object> sqlParams, uint seatingCount)
+		{
+			sqlParams.Add("?SeatingNumber", 0);
+			for (int i = 0; i < seatingCount; i++)
+			{
+				sqlParams["?SeatingNumber"] = i+1;
+				await dbContext.AddDataAsync(sqlParams, sql.InsertTicket());
+			}
+		}
 	}
 }

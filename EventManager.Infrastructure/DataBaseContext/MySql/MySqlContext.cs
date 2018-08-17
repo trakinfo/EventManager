@@ -1,29 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Text;
+using System.Data;
 using System.Threading.Tasks;
 using EventManager.Core.DataBaseContext;
-using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 
 namespace EventManager.Infrastructure.DataBaseContext
 {
 	public class MySqlContext : IDataBaseContext
 	{
-		readonly string connectionString = "server=localhost;userid=manager;password=manager;database=event_manager;Charset=utf8;Keepalive=15;ssl mode=0;";
+		public string ConnectionString { get; }
 
-		private MySqlConnection GetConnection()
+		public IDbConnection GetConnection()
 		{
-			return new MySqlConnection(connectionString);
+			IDbConnection dbConn = new MySqlConnection(ConnectionString);
+			return dbConn;
 		}
-
+		public MySqlContext(string connectionString)
+		{
+			ConnectionString = connectionString;
+		}
 		public async Task<ISet<IDictionary<string, object>>> FetchDataRowSetAsync(string sqlString)
 		{
 			var HS = new HashSet<IDictionary<string, object>>();
 			try
 			{
-				using (MySqlConnection conn = GetConnection())
+				using (MySqlConnection conn = (MySqlConnection) GetConnection())
 				{
 					conn.Open();
 					var T = conn.BeginTransaction();
@@ -64,7 +67,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 			var DR = new Dictionary<string, object>();
 			try
 			{
-				using (MySqlConnection conn = GetConnection())
+				using (MySqlConnection conn = (MySqlConnection)GetConnection())
 				{
 					conn.Open();
 					var T = conn.BeginTransaction();
@@ -98,7 +101,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 		}
 		public async Task<long> AddDataAsync(IDictionary<string, object> sqlParameters, string sqlString)
 		{
-			using (MySqlConnection conn = GetConnection())
+			using (MySqlConnection conn = (MySqlConnection)GetConnection())
 			{
 				conn.Open();
 				var T = conn.BeginTransaction();
@@ -138,7 +141,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 			var HS = new HashSet<T>();
 			try
 			{
-				using (var R = await new MySqlCommand { CommandText = sqlString, Connection = GetConnection(), }.ExecuteReaderAsync())
+				using (var R = await new MySqlCommand { CommandText = sqlString, Connection = (MySqlConnection)GetConnection(), }.ExecuteReaderAsync())
 				{
 					if (!R.HasRows) return HS;
 					while (R.Read())
@@ -167,7 +170,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 
 		public async Task<int> ExecuteCommandAsync(IDictionary<string, object> sqlParameters, string sqlString)
 		{
-			using (MySqlConnection conn = GetConnection())
+			using (MySqlConnection conn = (MySqlConnection)GetConnection())
 			{
 				conn.Open();
 				var T = conn.BeginTransaction();
@@ -195,5 +198,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 				}
 			}
 		}
+
+
 	}
 }

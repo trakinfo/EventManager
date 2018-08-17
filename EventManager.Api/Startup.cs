@@ -26,8 +26,8 @@ namespace EventManager.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-			//services.Add(new ServiceDescriptor(typeof(IDataBaseContext), new MySqlContext(Configuration.GetConnectionString("MySqlConnection"))));
-			services.AddSingleton<IDataBaseContext, MySqlContext>();
+			services.Add(new ServiceDescriptor(typeof(IDataBaseContext), new MySqlContext(Configuration.GetConnectionString("MySqlConnection"))));
+			//services.AddSingleton<IDataBaseContext, MySqlContext>();
 			services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<IEventRepository, EventRepository>();
 			services.AddScoped<ILocationRepository, LocationRepository>();
