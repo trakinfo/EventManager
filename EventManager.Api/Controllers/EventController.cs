@@ -20,49 +20,49 @@ namespace EventManager.Api.Controllers
 			var events = await _eventService.BrowseAsync(name);
 			return Json(events);
 		}
-		[HttpPost]
-		public async Task<IActionResult> Post([FromBody] NewEvent newEvent)
-		{
-			var insertedId = await _eventService.CreateAsync(
-				newEvent.Name,
-				newEvent.Description,
-				newEvent.IdLocation,
-				newEvent.StartDate,
-				newEvent.EndDate,
-				newEvent.Creator,
-				newEvent.HostIP
-				);
-			return Created($"/events/{insertedId}", null);
-		}
+		//[HttpPost]
+		//public async Task<IActionResult> Post([FromBody] NewEvent newEvent)
+		//{
+		//	var insertedId = await _eventService.CreateAsync(
+		//		newEvent.Name,
+		//		newEvent.Description,
+		//		newEvent.IdLocation,
+		//		newEvent.StartDate,
+		//		newEvent.EndDate,
+		//		newEvent.Creator,
+		//		newEvent.HostIP
+		//		);
+		//	return Created($"/events/{insertedId}", null);
+		//}
 
-		[HttpPost("{eventId}")]
-		public async Task<IActionResult> Post(ulong eventId)
-		{
-			await _eventService.CreateTicketCollectionAsync(eventId);
-			return Created(string.Empty, null);
-		}
+		//[HttpPost("{eventId}")]
+		//public async Task<IActionResult> Post(ulong eventId)
+		//{
+		//	await _eventService.CreateTicketCollectionAsync(eventId);
+		//	return Created(string.Empty, null);
+		//}
 
-		[HttpPut("{eventId}")]
-		public async Task<IActionResult> Put(ulong eventId, [FromBody] NewEvent Event)
-		{
-			await _eventService.UpdateAsync(
-				eventId,
-				Event.Name,
-				Event.Description,
-				Event.IdLocation,
-				Event.StartDate,
-				Event.EndDate,
-				Event.Creator,
-				Event.HostIP
-				);
-			return NoContent();
-		}
+		//[HttpPut("{eventId}")]
+		//public async Task<IActionResult> Put(ulong eventId, [FromBody] NewEvent Event)
+		//{
+		//	await _eventService.UpdateAsync(
+		//		eventId,
+		//		Event.Name,
+		//		Event.Description,
+		//		Event.IdLocation,
+		//		Event.StartDate,
+		//		Event.EndDate,
+		//		Event.Creator,
+		//		Event.HostIP
+		//		);
+		//	return NoContent();
+		//}
 
-		[HttpDelete("{eventId}")]
-		public async Task<IActionResult> Delete(ulong eventId)
-		{
-			await _eventService.DeleteAsync(eventId);
-			return NoContent();
-		}
+		//[HttpDelete("{eventId}")]
+		//public async Task<IActionResult> Delete(ulong eventId)
+		//{
+		//	await _eventService.DeleteAsync(eventId);
+		//	return NoContent();
+		//}
 	}
 }
