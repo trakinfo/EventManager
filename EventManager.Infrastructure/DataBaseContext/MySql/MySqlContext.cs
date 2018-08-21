@@ -21,46 +21,42 @@ namespace EventManager.Infrastructure.DataBaseContext
 		{
 			ConnectionString = connectionString;
 		}
-		//public async Task<ISet<IDictionary<string, object>>> FetchDataRowSetAsync(string sqlString)
-		//{
-		//	var HS = new HashSet<IDictionary<string, object>>();
-		//	try
-		//	{
-		//		using (MySqlConnection conn = (MySqlConnection) GetConnection())
-		//		{
-		//			conn.Open();
-		//			var T = conn.BeginTransaction();
-		//			try
-		//			{
-		//				using (var R = await new MySqlCommand { CommandText = sqlString, Connection = conn, Transaction = T }.ExecuteReaderAsync())
-		//				{
-		//					if (!R.HasRows) return HS;
-		//					while (R.Read())
-		//					{
-		//						var D = new Dictionary<string, object>();
-		//						for (int i = 0; i < R.FieldCount; i++)
-		//						{
-		//							D.Add(R.GetName(i), R.GetValue(i));
-		//						}
-		//						HS.Add(D);
-		//					}
-		//				}
-		//				T.Commit();
-		//			}
-		//			catch (MySqlException ex)
-		//			{
-		//				Console.WriteLine(ex.Message);
-		//				T.Rollback();
-		//			}
-		//		}
-		//		return await Task.FromResult(HS);
-		//	}
-		//	catch (Exception exe)
-		//	{
-		//		Console.WriteLine(exe.Message);
-		//		return await Task.FromResult(HS);
-		//	}
-		//}
+		public async Task<ISet<T>> FetchDataRowSetAsync<T>(string sqlString, GetData<T> GetDataRow)
+		{
+			var HS = new HashSet<T>();
+			try
+			{
+				using (var conn = (MySqlConnection)GetConnection())
+				{
+					conn.Open();
+					var t = conn.BeginTransaction();
+					try
+					{
+						using (var R = await new MySqlCommand { CommandText = sqlString, Connection = conn, Transaction = t }.ExecuteReaderAsync())
+						{
+							if (!R.HasRows) return HS;
+							while (R.Read())
+							{
+								var D = GetDataRow(R);
+								HS.Add(D);
+							}
+						}
+						t.Commit();
+					}
+					catch (MySqlException ex)
+					{
+						Console.WriteLine(ex.Message);
+						t.Rollback();
+					}
+				}
+				return await Task.FromResult(HS);
+			}
+			catch (Exception exe)
+			{
+				Console.WriteLine(exe.Message);
+				return await Task.FromResult(HS);
+			}
+		}
 
 		//public async Task<IDictionary<string, object>> FetchDataRowAsync(string sqlString)
 		//{

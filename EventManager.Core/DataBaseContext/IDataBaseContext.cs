@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace EventManager.Core.DataBaseContext
 {
-    public interface IDataBaseContext
+	public delegate T GetData<T>(IDataReader R);
+	public interface IDataBaseContext
     {
 		string ConnectionString { get; }
 		IDbConnection GetConnection();
-		//Task<ISet<IDictionary<string, object>>> FetchDataRowSetAsync(string sqlString);
+		Task<ISet<T>> FetchDataRowSetAsync<T>(string sqlString, GetData<T> GetDataRow);
 		//Task<IDictionary<string, object>> FetchDataRowAsync(string sqlString);
 		//Task<ISet<T>> FetchValueSetAsync<T>(string sqlString);
 		//Task<String> FetchSingleValueAsync(string sqlString);

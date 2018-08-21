@@ -5,6 +5,7 @@ using EventManager.Core.Globals;
 using EventManager.Core.Repository;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -67,48 +68,67 @@ namespace EventManager.Infrastructure.Repository
 		public async Task<IEnumerable<Event>> GetEventListAsync(string name = "")
 		{
 			var events = new HashSet<Event>();
-			using (var conn = dbContext.GetConnection())
-			{
-				conn.Open();
-				var T = conn.BeginTransaction();
-				var cmd = conn.CreateCommand();
-				cmd.CommandText = sql.SelectEvents(name);
-				cmd.Transaction = T;
-				try
-				{
-					using (var R = cmd.ExecuteReader())
-					{
-						while (R.Read())
-						{
-							var idEvent = Convert.ToUInt64(R["ID"]);
-							Location location = null;
-							
-							if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
-								location = await GetLocationAsync(idEvent, Convert.ToUInt64(R["IdLocation"]));
+			events = dbContext.FetchDataRowSetAsync(sql.SelectEvents(name), GetEvent).Result as HashSet<Event>;
+			//using (var conn = dbContext.GetConnection())
+			//{
+			//	conn.Open();
+			//	var T = conn.BeginTransaction();
+			//	var cmd = conn.CreateCommand();
+			//	cmd.CommandText = sql.SelectEvents(name);
+			//	cmd.Transaction = T;
+			//	try
+			//	{
+			//		using (var R = cmd.ExecuteReader())
+			//		{
+			//			while (R.Read())
+			//			{
+			//				var idEvent = Convert.ToUInt64(R["ID"]);
+			//				Location location = null;
 
-							events.Add(new Event
-								(
-									idEvent,
-									R["Name"].ToString(),
+			//				if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
+			//					location = await GetLocationAsync(idEvent, Convert.ToUInt64(R["IdLocation"]));
+
+			//				events.Add(new Event
+			//					(
+			//						idEvent,
+			//						R["Name"].ToString(),
+			//						R["Description"].ToString(),
+			//						location,
+			//						Convert.ToDateTime(R["StartDate"]),
+			//						Convert.ToDateTime(R["EndDate"]),
+			//						new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
+			//					)
+			//					);
+			//			}
+			//		}
+			//		T.Commit();
+			//	}
+			//	catch (Exception ex)
+			//	{
+			//		T.Rollback();
+			//		Console.WriteLine(ex.Message);
+			//	}
+
+			//}
+			return await Task.FromResult(events.AsEnumerable());
+		}
+		Event GetEvent(IDataReader R)
+		{
+			var idEvent = Convert.ToUInt64(R["ID"]);
+			Location location = null;
+
+			if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
+				location = GetLocationAsync(idEvent, Convert.ToUInt64(R["IdLocation"])).Result;
+			return new Event
+				(
+					idEvent,
+					R["Name"].ToString(),
 									R["Description"].ToString(),
 									location,
 									Convert.ToDateTime(R["StartDate"]),
 									Convert.ToDateTime(R["EndDate"]),
 									new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
-								)
-								);
-						}
-					}
-					T.Commit();
-				}
-				catch (Exception ex)
-				{
-					T.Rollback();
-					Console.WriteLine(ex.Message);
-				}
-
-			}
-			return await Task.FromResult(events.AsEnumerable());
+				);
 		}
 		async Task<Location> GetLocationAsync(ulong idEvent, ulong idLocation)
 		{
@@ -124,7 +144,7 @@ namespace EventManager.Infrastructure.Repository
 		async Task<ISet<Ticket>> GetTicketListAsync(ulong idEvent, ulong idSector)
 		{
 			var tickets = new HashSet<Ticket>();
-			
+
 			using (var conn = dbContext.GetConnection())
 			{
 				conn.Open();
