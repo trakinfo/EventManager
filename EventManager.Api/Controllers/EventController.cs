@@ -20,20 +20,26 @@ namespace EventManager.Api.Controllers
 			var events = await _eventService.BrowseAsync(name);
 			return Json(events);
 		}
-		//[HttpPost]
-		//public async Task<IActionResult> Post([FromBody] NewEvent newEvent)
-		//{
-		//	var insertedId = await _eventService.CreateAsync(
-		//		newEvent.Name,
-		//		newEvent.Description,
-		//		newEvent.IdLocation,
-		//		newEvent.StartDate,
-		//		newEvent.EndDate,
-		//		newEvent.Creator,
-		//		newEvent.HostIP
-		//		);
-		//	return Created($"/events/{insertedId}", null);
-		//}
+		[HttpGet("{eventId}")]
+		public async Task<IActionResult> Get(ulong eventId)
+		{
+			var _event = await _eventService.GetAsync(eventId);
+			return Json(_event);
+		}
+		[HttpPost]
+		public async Task<IActionResult> Post([FromBody] NewEvent newEvent)
+		{
+			await _eventService.CreateAsync(
+				newEvent.Name,
+				newEvent.Description,
+				newEvent.IdLocation,
+				newEvent.StartDate,
+				newEvent.EndDate,
+				newEvent.Creator,
+				newEvent.HostIP
+				);
+			return Created(string.Empty, null);
+		}
 
 		//[HttpPost("{eventId}")]
 		//public async Task<IActionResult> Post(ulong eventId)

@@ -8,10 +8,10 @@ namespace EventManager.Core.Repository
 {
     public interface IEventRepository
     {
-		//Task<Event> GetEventAsync(ulong eventId);
-		//Task<Event> GetEventAsync(string name);
+		Task<Event> GetEventAsync(ulong eventId);
+		Task<Event> GetEventAsync(string name);
 		Task<IEnumerable<Event>> GetEventListAsync(string name="");
-		//Task<long> AddEventAsync(IDictionary<string,object> sqlParams);
+		Task AddEventAsync(object[] sqlParamValue);
 		//Task UpdateEventAsync(IDictionary<string, object> sqlParams);
 		//Task DeleteEventAsync(IDictionary<string, object> sqlParams);
 		//Task AddTickets(Dictionary<string, object> sqlParams, uint seatingCount);

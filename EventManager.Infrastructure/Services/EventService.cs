@@ -22,11 +22,11 @@ namespace EventManager.Infrastructure.Services
 			_mapper = mapper;
 		}
 
-		//public async Task<EventDto> GetAsync(ulong id)
-		//{
-		//	var @event = await _eventRepository.GetEventAsync(id);
-		//	return _mapper.Map<EventDto>(@event);
-		//}
+		public async Task<EventDto> GetAsync(ulong id)
+		{
+			var @event = await _eventRepository.GetEventAsync(id);
+			return _mapper.Map<EventDto>(@event);
+		}
 
 		public async Task<IEnumerable<EventDto>> BrowseAsync(string name = null)
 		{
@@ -34,29 +34,29 @@ namespace EventManager.Infrastructure.Services
 			return _mapper.Map<IEnumerable<EventDto>>(events);
 		}
 
-		//public async Task<long> CreateAsync(string name, string description, ulong? idLocation, DateTime startDate, DateTime endDate, string creator, string hostIP)
-		//{
-		//	try
-		//	{
-		//		var SqlParams = new Dictionary<string, object>();
-				
-		//		SqlParams.Add("?Name", name);
-		//		SqlParams.Add("?Description", description);
-		//		SqlParams.Add("?IdLocation", idLocation);
-		//		SqlParams.Add("?StartDate", startDate);
-		//		SqlParams.Add("?EndDate", endDate);
-		//		SqlParams.Add("?User", creator);
-		//		SqlParams.Add("?HostIP", hostIP);
+		public async Task CreateAsync(string name, string description, ulong? idLocation, DateTime startDate, DateTime endDate, string creator, string hostIP)
+		{
+			try
+			{
+				var sqlParamValue = new object[] { name, description, idLocation, startDate, endDate, creator, hostIP };
 
-		//		return await _eventRepository.AddEventAsync(SqlParams);
-		//	}
+				//SqlParams.Add("?Name", name);
+				//SqlParams.Add("?Description", description);
+				//SqlParams.Add("?IdLocation", idLocation);
+				//SqlParams.Add("?StartDate", startDate);
+				//SqlParams.Add("?EndDate", endDate);
+				//SqlParams.Add("?User", creator);
+				//SqlParams.Add("?HostIP", hostIP);
 
-		//	catch (Exception e)
-		//	{
-		//		Console.WriteLine(e.Message);
-		//		return await Task.FromResult(-1);
-		//	}
-		//}
+				await _eventRepository.AddEventAsync(sqlParamValue);
+			}
+
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+				//return await Task.FromResult(-1);
+			}
+		}
 
 
 		//public async Task CreateTicketCollectionAsync(ulong eventId)
@@ -81,7 +81,7 @@ namespace EventManager.Infrastructure.Services
 		//		var sqlParams = new Dictionary<string, object>();
 
 		//		sqlParams.Add("?ID", id);
-				
+
 		//		await _eventRepository.DeleteEventAsync(sqlParams);
 		//	}
 

@@ -23,52 +23,52 @@ namespace EventManager.Infrastructure.Repository
 			locationRepository = locationRepo;
 			sql = eventSql;
 		}
-		//public async Task<Event> GetEventAsync(ulong eventId)
-		//{
-		//var eventDR = await dbContext.FetchDataRowAsync(sql.SelectEvent(eventId));
-		//var idEvent = Convert.ToUInt64(eventDR["ID"]);
-		//Location location = null;
-		//if (!string.IsNullOrEmpty(eventDR["IdLocation"].ToString()))
-		//	location = await GetLocationAsync(idEvent, Convert.ToUInt64(eventDR["IdLocation"]));
+		public async Task<Event> GetEventAsync(ulong eventId)
+		{
+			var eventDR = dbContext.FetchDataRowAsync(sql.SelectEvent(eventId), GetEvent);
+			//var idEvent = Convert.ToUInt64(eventDR["ID"]);
+			//Location location = null;
+			//if (!string.IsNullOrEmpty(eventDR["IdLocation"].ToString()))
+			//	location = await GetLocationAsync(idEvent, Convert.ToUInt64(eventDR["IdLocation"]));
 
-		//var _event = new Event
-		//	(
-		//		idEvent,
-		//		eventDR["Name"].ToString(),
-		//		eventDR["Description"].ToString(),
-		//		location,
-		//		Convert.ToDateTime(eventDR["StartDate"]),
-		//		Convert.ToDateTime(eventDR["EndDate"]),
-		//		new Signature(eventDR["User"].ToString(), eventDR["HostIP"].ToString(), Convert.ToDateTime(eventDR["Version"]))
-		//	);
-		//return await Task.FromResult(_event);
-		//}
+			//var _event = new Event
+			//	(
+			//		idEvent,
+			//		eventDR["Name"].ToString(),
+			//		eventDR["Description"].ToString(),
+			//		location,
+			//		Convert.ToDateTime(eventDR["StartDate"]),
+			//		Convert.ToDateTime(eventDR["EndDate"]),
+			//		new Signature(eventDR["User"].ToString(), eventDR["HostIP"].ToString(), Convert.ToDateTime(eventDR["Version"]))
+			//	);
+			return await eventDR;
+		}
 
-		//public async Task<Event> GetEventAsync(string name)
-		//{
-		//var eventDR = await dbContext.FetchDataRowAsync(sql.SelectEvent(name));
-		//var idEvent = Convert.ToUInt64(eventDR["ID"]);
-		//Location location = null;
-		//if (!string.IsNullOrEmpty(eventDR["IdLocation"].ToString()))
-		//	location = await GetLocationAsync(idEvent, Convert.ToUInt64(eventDR["IdLocation"]));
+		public async Task<Event> GetEventAsync(string name)
+		{
+			var eventDR = dbContext.FetchDataRowAsync(sql.SelectEvent(name), GetEvent);
+			//var idEvent = Convert.ToUInt64(eventDR["ID"]);
+			//Location location = null;
+			//if (!string.IsNullOrEmpty(eventDR["IdLocation"].ToString()))
+			//	location = await GetLocationAsync(idEvent, Convert.ToUInt64(eventDR["IdLocation"]));
 
-		//var _event = new Event
-		//	(
-		//		idEvent,
-		//		eventDR["Name"].ToString(),
-		//		eventDR["Description"].ToString(),
-		//		location,
-		//		Convert.ToDateTime(eventDR["StartDate"]),
-		//		Convert.ToDateTime(eventDR["EndDate"]),
-		//		new Signature(eventDR["User"].ToString(), eventDR["HostIP"].ToString(), Convert.ToDateTime(eventDR["Version"]))
-		//	);
-		//return await Task.FromResult(_event);
-		//}
+			//var _event = new Event
+			//	(
+			//		idEvent,
+			//		eventDR["Name"].ToString(),
+			//		eventDR["Description"].ToString(),
+			//		location,
+			//		Convert.ToDateTime(eventDR["StartDate"]),
+			//		Convert.ToDateTime(eventDR["EndDate"]),
+			//		new Signature(eventDR["User"].ToString(), eventDR["HostIP"].ToString(), Convert.ToDateTime(eventDR["Version"]))
+			//	);
+			return await eventDR;
+		}
 
 		public async Task<IEnumerable<Event>> GetEventListAsync(string name = "")
 		{
-			var events = new HashSet<Event>();
-			events = dbContext.FetchDataRowSetAsync(sql.SelectEvents(name), GetEvent).Result as HashSet<Event>;
+			//var events = new HashSet<Event>();
+			var events = await dbContext.FetchDataRowSetAsync(sql.SelectEvents(name), GetEvent);
 			//using (var conn = dbContext.GetConnection())
 			//{
 			//	conn.Open();
@@ -112,24 +112,7 @@ namespace EventManager.Infrastructure.Repository
 			//}
 			return await Task.FromResult(events.AsEnumerable());
 		}
-		Event GetEvent(IDataReader R)
-		{
-			var idEvent = Convert.ToUInt64(R["ID"]);
-			Location location = null;
 
-			if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
-				location = GetLocationAsync(idEvent, Convert.ToUInt64(R["IdLocation"])).Result;
-			return new Event
-				(
-					idEvent,
-					R["Name"].ToString(),
-									R["Description"].ToString(),
-									location,
-									Convert.ToDateTime(R["StartDate"]),
-									Convert.ToDateTime(R["EndDate"]),
-									new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
-				);
-		}
 		async Task<Location> GetLocationAsync(ulong idEvent, ulong idLocation)
 		{
 			var location = await locationRepository.GetAsync(idLocation);
@@ -143,40 +126,65 @@ namespace EventManager.Infrastructure.Repository
 
 		async Task<ISet<Ticket>> GetTicketListAsync(ulong idEvent, ulong idSector)
 		{
-			var tickets = new HashSet<Ticket>();
-
-			using (var conn = dbContext.GetConnection())
-			{
-				conn.Open();
-				var T = conn.BeginTransaction();
-				var cmd = conn.CreateCommand();
-				cmd.CommandText = sql.SelectTicket(idEvent, idSector);
-				cmd.Transaction = T;
-				try
-				{
-					using (var R = cmd.ExecuteReader())
-					{
-						while (R.Read())
-						{
-							tickets.Add(new Ticket(Convert.ToUInt64(R["ID"]), Convert.ToInt32(R["SeatingNumber"]), Convert.ToDecimal(R["Price"]), null));
-						}
-					}
-					T.Commit();
-				}
-				catch (Exception ex)
-				{
-					T.Rollback();
-					Console.WriteLine(ex.Message);
-				}
-			}
-			return await Task.FromResult(tickets);
+			//var tickets = new HashSet<Ticket>();
+			var tickets = dbContext.FetchDataRowSetAsync(sql.SelectTicket(idEvent, idSector), GetTicket);
+			//using (var conn = dbContext.GetConnection())
+			//{
+			//	conn.Open();
+			//	var T = conn.BeginTransaction();
+			//	var cmd = conn.CreateCommand();
+			//	cmd.CommandText = sql.SelectTicket(idEvent, idSector);
+			//	cmd.Transaction = T;
+			//	try
+			//	{
+			//		using (var R = cmd.ExecuteReader())
+			//		{
+			//			while (R.Read())
+			//			{
+			//				tickets.Add(new Ticket(Convert.ToUInt64(R["ID"]), Convert.ToInt32(R["SeatingNumber"]), Convert.ToDecimal(R["Price"]), null));
+			//			}
+			//		}
+			//		T.Commit();
+			//	}
+			//	catch (Exception ex)
+			//	{
+			//		T.Rollback();
+			//		Console.WriteLine(ex.Message);
+			//	}
+			//}
+			return await tickets;
 		}
 
-		//public async Task<long> AddEventAsync(IDictionary<string, object> sqlParams)
-		//{
-		//var newEventId = await dbContext.AddDataAsync(sqlParams, sql.InsertEvent());
-		//return await Task.FromResult(newEventId);
-		//}
+		public async Task AddEventAsync(object[] paramValue)
+		{
+			await dbContext.AddDataAsync(sql.InsertEvent(), paramValue, CreateParams);
+			//return await Task.FromResult(newEventId);
+		}
+		void CreateParams(IDbCommand cmd)
+		{
+			var p = cmd.CreateParameter();
+
+			p.ParameterName = "?Name";
+			cmd.Parameters.Add(p);
+			p = cmd.CreateParameter();
+			p.ParameterName = "?Description";
+			cmd.Parameters.Add(p);
+			p = cmd.CreateParameter();
+			p.ParameterName = "?IdLocation";
+			cmd.Parameters.Add(p);
+			p = cmd.CreateParameter();
+			p.ParameterName = "?StartDate";
+			cmd.Parameters.Add(p);
+			p = cmd.CreateParameter();
+			p.ParameterName = "?EndDate";
+			cmd.Parameters.Add(p);
+			p = cmd.CreateParameter();
+			p.ParameterName = "?User";
+			cmd.Parameters.Add(p);
+			p = cmd.CreateParameter();
+			p.ParameterName = "?HostIP";
+			cmd.Parameters.Add(p);
+		}
 
 		//public async Task UpdateEventAsync(IDictionary<string, object> sqlParams)
 		//{
@@ -197,5 +205,29 @@ namespace EventManager.Infrastructure.Repository
 		//		await dbContext.AddDataAsync(sqlParams, sql.InsertTicket());
 		//	}
 		//}
+
+		Event GetEvent(IDataReader R)
+		{
+			var idEvent = Convert.ToUInt64(R["ID"]);
+			Location location = null;
+
+			if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
+				location = GetLocationAsync(idEvent, Convert.ToUInt64(R["IdLocation"])).Result;
+			return new Event
+				(
+					idEvent,
+					R["Name"].ToString(),
+					R["Description"].ToString(),
+					location,
+					Convert.ToDateTime(R["StartDate"]),
+					Convert.ToDateTime(R["EndDate"]),
+					new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
+				);
+		}
+
+		Ticket GetTicket(IDataReader R)
+		{
+			return new Ticket(Convert.ToUInt64(R["ID"]), Convert.ToInt32(R["SeatingNumber"]), Convert.ToDecimal(R["Price"]), null);
+		}
 	}
 }

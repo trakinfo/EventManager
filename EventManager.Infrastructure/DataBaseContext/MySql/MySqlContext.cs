@@ -34,7 +34,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 					{
 						using (var R = await new MySqlCommand { CommandText = sqlString, Connection = conn, Transaction = t }.ExecuteReaderAsync())
 						{
-							if (!R.HasRows) return HS;
+							//if (!R.HasRows) return HS;
 							while (R.Read())
 							{
 								var D = GetDataRow(R);
@@ -58,73 +58,70 @@ namespace EventManager.Infrastructure.DataBaseContext
 			}
 		}
 
-		//public async Task<IDictionary<string, object>> FetchDataRowAsync(string sqlString)
-		//{
-		//	var DR = new Dictionary<string, object>();
-		//	try
-		//	{
-		//		using (MySqlConnection conn = (MySqlConnection)GetConnection())
-		//		{
-		//			conn.Open();
-		//			var T = conn.BeginTransaction();
-		//			try
-		//			{
-		//				using (var R = await new MySqlCommand { CommandText = sqlString, Connection = conn, Transaction = T }.ExecuteReaderAsync())
-		//				{
-		//					if (R.Read())
-		//					{
-		//						for (int i = 0; i < R.FieldCount; i++)
-		//						{
-		//							DR.Add(R.GetName(i), R.GetValue(i));
-		//						}
-		//					}
-		//				}
-		//				T.Commit();
-		//			}
-		//			catch (MySqlException ex)
-		//			{
-		//				Console.WriteLine(ex.Message);
-		//				T.Rollback();
-		//			}
-		//		}
-		//		return await Task.FromResult(DR);
-		//	}
-		//	catch (Exception exe)
-		//	{
-		//		Console.WriteLine(exe.Message);
-		//		return await Task.FromResult(DR);
-		//	}
-		//}
-		//public async Task<long> AddDataAsync(IDictionary<string, object> sqlParameters, string sqlString)
-		//{
-		//	using (MySqlConnection conn = (MySqlConnection)GetConnection())
-		//	{
-		//		conn.Open();
-		//		var T = conn.BeginTransaction();
-		//		using (var cmd = new MySqlCommand() { CommandText = sqlString, Connection = conn, Transaction = T })
-		//		{
-		//			try
-		//			{
-		//				cmd.Parameters.Clear();
-		//				cmd.Transaction = T;
-		//				foreach (var P in sqlParameters)
-		//				{
-		//					var myParam = new MySqlParameter(P.Key, P.Value);
-		//					cmd.Parameters.Add(myParam);
-		//				}
-		//				await cmd.ExecuteNonQueryAsync();
-		//				T.Commit();
-		//				return await Task.FromResult(cmd.LastInsertedId);
-		//			}
-		//			catch (MySqlException ex)
-		//			{
-		//				Console.WriteLine(ex.Message);
-		//				T.Rollback();
-		//				return await Task.FromResult(-1);
-		//			}
-		//		}
-		//	}
-		//}
+		public async Task<T> FetchDataRowAsync<T>(string sqlString, GetData<T> GetDataRow)
+		{
+			T DR = default(T);
+			try
+			{
+				using (var conn = (MySqlConnection)GetConnection())
+				{
+					conn.Open();
+					var t = conn.BeginTransaction();
+					try
+					{
+						using (var R = await new MySqlCommand { CommandText = sqlString, Connection = conn, Transaction = t }.ExecuteReaderAsync())
+						{
+							if (R.Read())
+							{
+								DR = GetDataRow(R);
+							}
+						}
+						t.Commit();
+					}
+					catch (MySqlException ex)
+					{
+						Console.WriteLine(ex.Message);
+						t.Rollback();
+					}
+				}
+				return await Task.FromResult(DR);
+			}
+			catch (Exception exe)
+			{
+				Console.WriteLine(exe.Message);
+				return await Task.FromResult(DR);
+			}
+		}
+		public async Task AddDataAsync(string sqlString, object[] sqlParamValue, AddData createParams)
+		{
+			using (var conn = GetConnection())
+			{
+				conn.Open();
+				var T = conn.BeginTransaction();
+				var cmd = conn.CreateCommand();
+				cmd.CommandType = CommandType.Text;
+				cmd.CommandText = sqlString;
+				cmd.Transaction = T;
+				using (cmd)
+				{
+					try
+					{
+						createParams(cmd);
+						for (int i = 0; i < sqlParamValue.Length; i++)
+						{
+							((MySqlCommand)cmd).Parameters[i].Value = sqlParamValue[i];
+						}
+						await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
+						T.Commit();
+					}
+					catch (MySqlException ex)
+					{
+						Console.WriteLine(ex.Message);
+						T.Rollback();
+					}
+				}
+			}
+		}
 
 
 		//public Task<string> FetchSingleValueAsync(string sqlString)
