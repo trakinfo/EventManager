@@ -11,9 +11,9 @@ namespace EventManager.Core.Repository
 		Task<Event> GetEventAsync(ulong eventId);
 		Task<Event> GetEventAsync(string name);
 		Task<IEnumerable<Event>> GetEventListAsync(string name="");
-		Task AddEventAsync(object[] sqlParamValue);
+		Task AddEventAsync(ISet<object[]> sqlParamValue);
 		//Task UpdateEventAsync(IDictionary<string, object> sqlParams);
 		//Task DeleteEventAsync(IDictionary<string, object> sqlParams);
-		//Task AddTickets(Dictionary<string, object> sqlParams, uint seatingCount);
+		Task<int> AddTickets(Object[] sqlParamValue, uint seatingCount);
 	}
 }

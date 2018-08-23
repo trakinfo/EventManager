@@ -41,12 +41,17 @@ namespace EventManager.Api.Controllers
 			return Created(string.Empty, null);
 		}
 
-		//[HttpPost("{eventId}")]
-		//public async Task<IActionResult> Post(ulong eventId)
-		//{
-		//	await _eventService.CreateTicketCollectionAsync(eventId);
-		//	return Created(string.Empty, null);
-		//}
+		[HttpPost("{eventId}")]
+		public async Task<IActionResult> Post(ulong eventId)
+		{
+			var count = await _eventService.CreateTicketCollectionAsync(eventId);
+			if (count>0)
+			{
+			return Created(string.Empty, null);
+
+			}
+			return BadRequest();
+		}
 
 		//[HttpPut("{eventId}")]
 		//public async Task<IActionResult> Put(ulong eventId, [FromBody] NewEvent Event)

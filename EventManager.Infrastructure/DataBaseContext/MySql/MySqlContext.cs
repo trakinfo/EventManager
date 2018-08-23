@@ -92,7 +92,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 				return await Task.FromResult(DR);
 			}
 		}
-		public async Task AddDataAsync(string sqlString, object[] sqlParamValue, AddData createParams)
+		public async Task<int> AddDataAsync(string sqlString, ISet<object[]> sqlParamValue, AddDataParameters createParams)
 		{
 			using (var conn = GetConnection())
 			{
@@ -107,22 +107,33 @@ namespace EventManager.Infrastructure.DataBaseContext
 					try
 					{
 						createParams(cmd);
-						for (int i = 0; i < sqlParamValue.Length; i++)
+						int recordAffected = 0;
+						foreach (var p in sqlParamValue)
 						{
-							((MySqlCommand)cmd).Parameters[i].Value = sqlParamValue[i];
+							for (int i = 0; i < p.Length; i++) ((MySqlCommand)cmd).Parameters[i].Value = p[i];
+							 recordAffected+= await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
 						}
-						await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
 						T.Commit();
+						return recordAffected;
 					}
 					catch (MySqlException ex)
 					{
 						Console.WriteLine(ex.Message);
 						T.Rollback();
+						return 0;
 					}
 				}
 			}
 		}
 
+		public IDataParameter CreateParameter(string name, DbType type, IDbCommand cmd)
+		{
+			var p = cmd.CreateParameter();
+			p.ParameterName = name;
+			p.DbType = type;
+
+			return p;
+		}
 
 		//public Task<string> FetchSingleValueAsync(string sqlString)
 		//{

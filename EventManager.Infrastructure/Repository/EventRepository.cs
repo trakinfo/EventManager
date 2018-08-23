@@ -155,35 +155,20 @@ namespace EventManager.Infrastructure.Repository
 			return await tickets;
 		}
 
-		public async Task AddEventAsync(object[] paramValue)
+		public async Task AddEventAsync(ISet<object[]> paramValue)
 		{
-			await dbContext.AddDataAsync(sql.InsertEvent(), paramValue, CreateParams);
+			await dbContext.AddDataAsync(sql.InsertEvent(), paramValue, CreateEventParams);
 			//return await Task.FromResult(newEventId);
 		}
-		void CreateParams(IDbCommand cmd)
+		void CreateEventParams(IDbCommand cmd)
 		{
-			var p = cmd.CreateParameter();
-
-			p.ParameterName = "?Name";
-			cmd.Parameters.Add(p);
-			p = cmd.CreateParameter();
-			p.ParameterName = "?Description";
-			cmd.Parameters.Add(p);
-			p = cmd.CreateParameter();
-			p.ParameterName = "?IdLocation";
-			cmd.Parameters.Add(p);
-			p = cmd.CreateParameter();
-			p.ParameterName = "?StartDate";
-			cmd.Parameters.Add(p);
-			p = cmd.CreateParameter();
-			p.ParameterName = "?EndDate";
-			cmd.Parameters.Add(p);
-			p = cmd.CreateParameter();
-			p.ParameterName = "?User";
-			cmd.Parameters.Add(p);
-			p = cmd.CreateParameter();
-			p.ParameterName = "?HostIP";
-			cmd.Parameters.Add(p);
+			cmd.Parameters.Add(dbContext.CreateParameter("?Name", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?Description", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?IdLocation", DbType.Int64, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?StartDate", DbType.DateTime, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?EndDate", DbType.DateTime, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?User", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?HostIP", DbType.String, cmd));
 		}
 
 		//public async Task UpdateEventAsync(IDictionary<string, object> sqlParams)
@@ -196,15 +181,27 @@ namespace EventManager.Infrastructure.Repository
 		//	await dbContext.ExecuteCommandAsync(sqlParams, sql.DeleteEvent());
 		//}
 
-		//public async Task AddTickets(Dictionary<string, object> sqlParams, uint seatingCount)
-		//{
-		//	sqlParams.Add("?SeatingNumber", 0);
-		//	for (int i = 0; i < seatingCount; i++)
-		//	{
-		//		sqlParams["?SeatingNumber"] = i + 1;
-		//		await dbContext.AddDataAsync(sqlParams, sql.InsertTicket());
-		//	}
-		//}
+		public async Task<int> AddTickets(object[] sqlParamValue, uint seatingCount)
+		{
+			var HS = new HashSet<object[]>();
+			//object[] sqlParamValueSet = new object[4];
+			//sqlParamValue.CopyTo(sqlParamValueSet, 0);
+			Array.Resize(ref sqlParamValue, sqlParamValue.Length + 1);
+			for (int i = 0; i < seatingCount; i++)
+			{
+				sqlParamValue[3] = i + 1;
+				HS.Add(sqlParamValue.ToArray());
+			}
+			return await dbContext.AddDataAsync(sql.InsertTicket(), HS, CreateTicketParams);
+		}
+
+		private void CreateTicketParams(IDbCommand cmd)
+		{
+			cmd.Parameters.Add(dbContext.CreateParameter("?IdEvent", DbType.Int64, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?IdSector", DbType.Int64, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?Price", DbType.Decimal, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?SeatingNumber", DbType.Int32, cmd));
+		}
 
 		Event GetEvent(IDataReader R)
 		{

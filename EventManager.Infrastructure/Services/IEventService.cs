@@ -13,9 +13,9 @@ namespace EventManager.Infrastructure.Services
 		Task<EventDto> GetAsync(ulong id);
 		Task CreateAsync(string name, string descripion, ulong? idLocation, DateTime startDate, DateTime endDate, string creator, string hostIP);
 		Task<IEnumerable<EventDto>> BrowseAsync(string name = null);
-		//Task CreateTicketCollectionAsync(ulong eventId);
+		Task<int> CreateTicketCollectionAsync(ulong eventId);
 		//Task UpdateAsync(ulong id, string name, string description, ulong? idLocation, DateTime startDate, DateTime endDate, string modifier, string hostIP);
 		//Task DeleteTicketsAsync(ISet<Ticket> tickets);
 		//Task DeleteAsync(ulong id);
-    }
+	}
 }

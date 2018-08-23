@@ -47,8 +47,9 @@ namespace EventManager.Infrastructure.Services
 				//SqlParams.Add("?EndDate", endDate);
 				//SqlParams.Add("?User", creator);
 				//SqlParams.Add("?HostIP", hostIP);
-
-				await _eventRepository.AddEventAsync(sqlParamValue);
+				var HS = new HashSet<object[]>();
+				HS.Add(sqlParamValue);
+				await _eventRepository.AddEventAsync(HS);
 			}
 
 			catch (Exception e)
@@ -59,20 +60,27 @@ namespace EventManager.Infrastructure.Services
 		}
 
 
-		//public async Task CreateTicketCollectionAsync(ulong eventId)
-		//{
-		//	var _event = await _eventRepository.GetEventAsync(eventId);
-		//	if (_event.Location == null && _event.Location.Sectors == null) return;
-		//	var HS = new HashSet<Ticket>();
-		//	foreach (var S in _event.Location.Sectors)
-		//	{
-		//		var sqlParams= new Dictionary<string, object>();
-		//		sqlParams.Add("?IdEvent", eventId);
-		//		sqlParams.Add("?IdSector", S.Id);
-		//		sqlParams.Add("?Price", S.SeatingPrice);
-		//		await _eventRepository.AddTickets(sqlParams,S.SeatingCount);
-		//	}
-		//}
+		public async Task<int> CreateTicketCollectionAsync(ulong eventId)
+		{
+
+			var _event = await _eventRepository.GetEventAsync(eventId);
+			if (_event.Location == null) return 0;
+			if (_event.Location.Sectors == null) return 0;
+
+			var HS = new HashSet<Ticket>();
+			int ticketCount=0;
+			foreach (var S in _event.Location.Sectors)
+			{
+				//var sqlParams = new Dictionary<string, object>();
+				//sqlParams.Add("?IdEvent", eventId);
+				//sqlParams.Add("?IdSector", S.Id);
+				//sqlParams.Add("?Price", S.SeatingPrice);
+				var sqlParamValue = new object[] { eventId, S.Id, S.SeatingPrice };
+				ticketCount = await _eventRepository.AddTickets(sqlParamValue, S.SeatingCount);
+			}
+			return ticketCount;
+
+		}
 
 		//public async Task DeleteAsync(ulong id)
 		//{
