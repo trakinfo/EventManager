@@ -45,35 +45,30 @@ namespace EventManager.Api.Controllers
 		public async Task<IActionResult> Post(ulong eventId)
 		{
 			var count = await _eventService.CreateTicketCollectionAsync(eventId);
-			if (count>0)
-			{
-			return Created(string.Empty, null);
-
-			}
-			return BadRequest();
+			return Created(string.Empty, count);
 		}
 
-		//[HttpPut("{eventId}")]
-		//public async Task<IActionResult> Put(ulong eventId, [FromBody] NewEvent Event)
-		//{
-		//	await _eventService.UpdateAsync(
-		//		eventId,
-		//		Event.Name,
-		//		Event.Description,
-		//		Event.IdLocation,
-		//		Event.StartDate,
-		//		Event.EndDate,
-		//		Event.Creator,
-		//		Event.HostIP
-		//		);
-		//	return NoContent();
-		//}
+		[HttpPut("{eventId}")]
+		public async Task<IActionResult> Put(ulong eventId, [FromBody] NewEvent Event)
+		{
+			await _eventService.UpdateAsync(
+				eventId,
+				Event.Name,
+				Event.Description,
+				Event.IdLocation,
+				Event.StartDate,
+				Event.EndDate,
+				Event.Creator,
+				Event.HostIP
+				);
+			return NoContent();
+		}
 
-		//[HttpDelete("{eventId}")]
-		//public async Task<IActionResult> Delete(ulong eventId)
-		//{
-		//	await _eventService.DeleteAsync(eventId);
-		//	return NoContent();
-		//}
+		[HttpDelete("{eventId}")]
+		public async Task<IActionResult> Delete(ulong eventId)
+		{
+			await _eventService.DeleteAsync(eventId);
+			return NoContent();
+		}
 	}
 }

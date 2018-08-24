@@ -71,10 +71,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 					{
 						using (var R = await new MySqlCommand { CommandText = sqlString, Connection = conn, Transaction = t }.ExecuteReaderAsync())
 						{
-							if (R.Read())
-							{
-								DR = GetDataRow(R);
-							}
+							if (R.Read()) DR = GetDataRow(R);
 						}
 						t.Commit();
 					}
@@ -92,7 +89,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 				return await Task.FromResult(DR);
 			}
 		}
-		public async Task<int> AddDataAsync(string sqlString, ISet<object[]> sqlParamValue, AddDataParameters createParams)
+		public async Task<int> PostDataAsync(string sqlString, ISet<object[]> sqlParamValue, AddDataParameters createParams)
 		{
 			using (var conn = GetConnection())
 			{
@@ -110,8 +107,9 @@ namespace EventManager.Infrastructure.DataBaseContext
 						int recordAffected = 0;
 						foreach (var p in sqlParamValue)
 						{
-							for (int i = 0; i < p.Length; i++) ((MySqlCommand)cmd).Parameters[i].Value = p[i];
-							 recordAffected+= await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
+							for (int i = 0; i < p.Length; i++)
+								((MySqlCommand)cmd).Parameters[i].Value = p[i];
+							recordAffected += await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
 						}
 						T.Commit();
 						return recordAffected;
@@ -121,6 +119,35 @@ namespace EventManager.Infrastructure.DataBaseContext
 						Console.WriteLine(ex.Message);
 						T.Rollback();
 						return 0;
+					}
+				}
+			}
+		}
+
+		public async Task PostDataAsync(string sqlString, object[] sqlParamValue, AddDataParameters createParams)
+		{
+			using (var conn = GetConnection())
+			{
+				conn.Open();
+				var T = conn.BeginTransaction();
+				var cmd = conn.CreateCommand();
+				cmd.CommandType = CommandType.Text;
+				cmd.CommandText = sqlString;
+				cmd.Transaction = T;
+				using (cmd)
+				{
+					try
+					{
+						createParams(cmd);
+						for (int i = 0; i < sqlParamValue.Length; i++)
+							((MySqlCommand)cmd).Parameters[i].Value = sqlParamValue[i];
+						await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
+						T.Commit();
+					}
+					catch (MySqlException ex)
+					{
+						Console.WriteLine(ex.Message);
+						T.Rollback();
 					}
 				}
 			}

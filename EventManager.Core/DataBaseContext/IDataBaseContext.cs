@@ -17,12 +17,11 @@ namespace EventManager.Core.DataBaseContext
 		IDataParameter CreateParameter(string name, DbType type, IDbCommand cmd);
 		Task<ISet<T>> FetchDataRowSetAsync<T>(string sqlString, GetData<T> GetDataRow);
 		Task<T> FetchDataRowAsync<T>(string sqlString, GetData<T> GetDataRow);
+		Task<int> PostDataAsync(string sqlString,ISet<object[]> sqlParameterValue, AddDataParameters AddParams);
+		Task PostDataAsync(string sqlString, object[] sqlParameterValue, AddDataParameters AddParams);
 		//Task<ISet<T>> FetchValueSetAsync<T>(string sqlString);
 		//Task<String> FetchSingleValueAsync(string sqlString);
-		Task<int> AddDataAsync(string sqlString,ISet<object[]> sqlParameterValue, AddDataParameters AddParams);
-		//Task<int> AddDataSetAsync(string sqlString, AddDataSet AddData);
-		//Task AddRecordAsync(string sqlString, AddData AddRecord);
 		//Task<int> ExecuteCommandAsync(IDictionary<string, object> sqlParameters, string sqlString);
-		//Task<int> RemoveDataAsync(IDictionary<string, object> sqlParameters, string sqlString);
+		//Task<int> RemoveDataAsync(string sqlString, ISet<object[]> sqlParameterValue, AddDataParameters AddParams);
 	}
 }
