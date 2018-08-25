@@ -25,19 +25,19 @@ namespace EventManager.Infrastructure.Repository
 		}
 		public async Task<Event> GetEventAsync(ulong eventId)
 		{
-			var eventDR = dbContext.FetchDataRowAsync(sql.SelectEvent(eventId), GetEvent);
+			var eventDR = dbContext.FetchRecordAsync(sql.SelectEvent(eventId), GetEvent);
 			return await eventDR;
 		}
 
 		public async Task<Event> GetEventAsync(string name)
 		{
-			var eventDR = dbContext.FetchDataRowAsync(sql.SelectEvent(name), GetEvent);
+			var eventDR = dbContext.FetchRecordAsync(sql.SelectEvent(name), GetEvent);
 			return await eventDR;
 		}
 
 		public async Task<IEnumerable<Event>> GetEventListAsync(string name = "")
 		{
-			var events = await dbContext.FetchDataRowSetAsync(sql.SelectEvents(name), GetEvent);
+			var events = await dbContext.FetchRecordSetAsync(sql.SelectEvents(name), GetEvent);
 			return await Task.FromResult(events.AsEnumerable());
 		}
 
@@ -54,23 +54,23 @@ namespace EventManager.Infrastructure.Repository
 
 		async Task<ISet<Ticket>> GetTicketListAsync(ulong idEvent, ulong idSector)
 		{
-			var tickets = dbContext.FetchDataRowSetAsync(sql.SelectTicket(idEvent, idSector), GetTicket);
+			var tickets = dbContext.FetchRecordSetAsync(sql.SelectTicket(idEvent, idSector), GetTicket);
 			return await tickets;
 		}
 
 		public async Task AddEventAsync(object[] paramValue)
 		{
-			await dbContext.PostDataAsync(sql.InsertEvent(), paramValue, CreateEventParams);
+			await dbContext.AddRecordAsync(sql.InsertEvent(), paramValue, CreateEventParams);
 		}
 
 		public async Task UpdateEventAsync(object[] paramValue)
 		{
-			await dbContext.PostDataAsync(sql.UpdateEvent(), paramValue, CreateUpdateParams);
+			await dbContext.UpdateRecordAsync(sql.UpdateEvent(), paramValue, CreateUpdateParams);
 		}
 
 		public async Task DeleteEventAsync(object[] paramValue)
 		{
-			await dbContext.PostDataAsync(sql.DeleteEvent(), paramValue, CreateDeleteParams);
+			await dbContext.RemoveRecordAsync(sql.DeleteEvent(), paramValue, CreateDeleteParams);
 		}
 
 		void CreateEventParams(IDbCommand cmd)
@@ -104,7 +104,7 @@ namespace EventManager.Infrastructure.Repository
 				sqlParamValue[3] = i + 1;
 				HS.Add(sqlParamValue.ToArray());
 			}
-			return await dbContext.PostDataAsync(sql.InsertTicket(), HS, CreateTicketParams);
+			return await dbContext.AddManyRecordsAsync(sql.InsertTicket(), HS, CreateTicketParams);
 		}
 
 		private void CreateTicketParams(IDbCommand cmd)

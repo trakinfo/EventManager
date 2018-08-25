@@ -21,7 +21,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 		{
 			ConnectionString = connectionString;
 		}
-		public async Task<ISet<T>> FetchDataRowSetAsync<T>(string sqlString, GetData<T> GetDataRow)
+		public async Task<ISet<T>> FetchRecordSetAsync<T>(string sqlString, GetData<T> GetDataRow)
 		{
 			var HS = new HashSet<T>();
 			try
@@ -58,7 +58,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 			}
 		}
 
-		public async Task<T> FetchDataRowAsync<T>(string sqlString, GetData<T> GetDataRow)
+		public async Task<T> FetchRecordAsync<T>(string sqlString, GetData<T> GetDataRow)
 		{
 			T DR = default(T);
 			try
@@ -89,7 +89,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 				return await Task.FromResult(DR);
 			}
 		}
-		public async Task<int> PostDataAsync(string sqlString, ISet<object[]> sqlParamValue, AddDataParameters createParams)
+		public async Task<int> AddManyRecordsAsync(string sqlString, ISet<object[]> sqlParamValue, AddDataParameters createParams)
 		{
 			using (var conn = GetConnection())
 			{
@@ -124,7 +124,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 			}
 		}
 
-		public async Task PostDataAsync(string sqlString, object[] sqlParamValue, AddDataParameters createParams)
+		public async Task AddRecordAsync(string sqlString, object[] sqlParamValue, AddDataParameters createParams)
 		{
 			using (var conn = GetConnection())
 			{
@@ -153,6 +153,16 @@ namespace EventManager.Infrastructure.DataBaseContext
 			}
 		}
 
+		public async Task UpdateRecordAsync(string sqlString, object[] sqlParameterValue, AddDataParameters AddParams)
+		{
+			await AddRecordAsync(sqlString, sqlParameterValue, AddParams);
+		}
+
+		public async Task RemoveRecordAsync(string sqlString, object[] sqlParameterValue, AddDataParameters AddParams)
+		{
+			await AddRecordAsync(sqlString, sqlParameterValue, AddParams);
+		}
+
 		public IDataParameter CreateParameter(string name, DbType type, IDbCommand cmd)
 		{
 			var p = cmd.CreateParameter();
@@ -161,6 +171,8 @@ namespace EventManager.Infrastructure.DataBaseContext
 
 			return p;
 		}
+
+
 
 		//public Task<string> FetchSingleValueAsync(string sqlString)
 		//{
