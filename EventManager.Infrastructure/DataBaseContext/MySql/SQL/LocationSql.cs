@@ -5,22 +5,22 @@ using System.Text;
 
 namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 {
-    public class LocationSql:ILocationSql
+    public class LocationSql : ILocationSql
     {
-		public string SelectLocations(string name)
-		{
-			return $"SELECT l.ID,l.Name,l.IdAddress,l.PhoneNumber,l.Email,l.www,l.User,l.HostIP,l.Version FROM location l WHERE l.Name LIKE '{name}%' ORDER BY l.Name;";
-		}
+		//public string SelectLocations(string name)
+		//{
+		//	return $"SELECT l.ID,l.Name,l.IdAddress,l.PhoneNumber,l.Email,l.www,l.User,l.HostIP,l.Version FROM location l WHERE l.Name LIKE '{name}%' ORDER BY l.Name;";
+		//}
 
-		public string SelectLocation(string name)
-		{
-			throw new NotImplementedException();
-		}
+		//public string SelectLocation(string name)
+		//{
+		//	throw new NotImplementedException();
+		//}
 
-		public string SelectLocation(ulong idLocation)
-		{
-			return $"SELECT l.ID,l.Name, l.IdAddress, l.PhoneNumber, l.Email, l.www, l.User,l.HostIP,l.Version FROM location l WHERE l.ID={idLocation};";
-		}
+		//public string SelectLocation(ulong idLocation)
+		//{
+		//	return $"SELECT l.ID,l.Name, l.IdAddress, l.PhoneNumber, l.Email, l.www, l.User,l.HostIP,l.Version FROM location l WHERE l.ID={idLocation};";
+		//}
 
 		public string SelectAddress(ulong idLocation)
 		{
@@ -32,21 +32,44 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 			return $"SELECT s.ID,s.Name,s.Description,s.SeatingCount,s.SeatingPrice FROM sector s WHERE s.IdLocation={idLocation};";
 		}
 
-		public string UpdateLocation()
+		//public string UpdateLocation()
+		//{
+		//	throw new NotImplementedException();
+		//}
+
+		//public string InsertLocation()
+		//{
+		//	return "INSERT INTO location VALUES(null,?Name,?IdAddress,?PhoneNumber,?Email,?www,?User,?HostIP,NULL);";
+		//}
+
+		//public string DeleteLocation()
+		//{
+		//	return "DELETE FROM location WHERE ID=?ID;";
+		//}
+
+		public string SelectMany(string name)
+		{
+			return $"SELECT l.ID,l.Name,l.IdAddress,l.PhoneNumber,l.Email,l.www,l.User,l.HostIP,l.Version FROM location l WHERE l.Name LIKE '{name}%' ORDER BY l.Name;";
+		}
+
+		public string Select(ulong idLocation)
+		{
+			return $"SELECT l.ID,l.Name, l.IdAddress, l.PhoneNumber, l.Email, l.www, l.User,l.HostIP,l.Version FROM location l WHERE l.ID={idLocation};";
+		}
+
+		public string Insert()
+		{
+			return "INSERT INTO location VALUES(null,?Name,?IdAddress,?PhoneNumber,?Email,?www,?User,?HostIP,NULL);";
+		}
+
+		public string Update()
 		{
 			throw new NotImplementedException();
 		}
 
-		public string InsertLocation()
-		{
-			return "INSERT INTO location VALUES(null,?Name,?IdAddress,?PhoneNumber,?Email,?www,?User,?HostIP,NULL);";
-		}
-		
-		public string DeleteLocation()
+		public string Delete()
 		{
 			return "DELETE FROM location WHERE ID=?ID;";
 		}
-
-
 	}
 }

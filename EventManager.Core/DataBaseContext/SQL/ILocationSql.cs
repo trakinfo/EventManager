@@ -4,15 +4,15 @@ using System.Text;
 
 namespace EventManager.Core.DataBaseContext.SQL
 {
-    public interface ILocationSql
+    public interface ILocationSql : ISql
     {
-		string SelectLocations(string name);
-		string SelectLocation(ulong id);
-		string SelectLocation(string name);
+		//string SelectLocations(string name);
+		//string SelectLocation(ulong id);
+		//string SelectLocation(string name);
 		string SelectAddress(ulong id);
 		string SelectSector(ulong id);
-		string InsertLocation();
-		string UpdateLocation();
-		string DeleteLocation();
+		//string InsertLocation();
+		//string UpdateLocation();
+		//string DeleteLocation();
 	}
 }
