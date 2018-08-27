@@ -29,7 +29,7 @@ namespace EventManager.Api.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Post([FromBody] NewLocation location)
 		{
-			var insertedId = await locationService.CreateAsync(
+			await locationService.CreateAsync(
 				location.Name,
 				location.IdAddress,
 				location.PhoneNumber,
@@ -38,7 +38,7 @@ namespace EventManager.Api.Controllers
 				location.Creator,
 				location.HostIP
 				);
-			return Created($"/locations/{insertedId}", null);
+			return Created($"", null);
 		}
     }
 }

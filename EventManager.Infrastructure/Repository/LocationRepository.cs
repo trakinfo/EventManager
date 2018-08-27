@@ -13,53 +13,60 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class LocationRepository : GenericRepository, ILocationRepository
 	{
-		//IDataBaseContext dbContext;
-		//new ILocationSql sql;
+		public LocationRepository(IDataBaseContext context, ILocationSql locationSql) : base(context, locationSql) { }
 
-		public LocationRepository(IDataBaseContext context, ILocationSql locationSql) : base(context,locationSql)
+		async Task<Address> GetLocationAddressAsync(ulong idLocation)
 		{
-			//dbContext = context;
-
-			//sql = locationSql;
+			var address = await dbContext.FetchRecordAsync(((ILocationSql)sql).SelectAddress(idLocation), GetAddressModel);
+			return await Task.FromResult(address);
 		}
-		public async Task AddAsync(object[] paramValue)
+		
+		async Task<ISet<Sector>> GetSectorListAsync(ulong idLocation)
 		{
-			await dbContext.AddRecordAsync(sql.Insert(), paramValue, CreateLocationParams);
-			//using (var conn = dbContext.GetConnection())
-			//{
-			//	conn.Open();
-			//	var T = conn.BeginTransaction();
-			//	var cmd = conn.CreateCommand();
-			//	cmd.CommandType = CommandType.Text;
-			//	cmd.CommandText = sql.InsertLocation();
-			//	cmd.Transaction = T;
-			//	using (cmd)
-			//	{
-			//		try
-			//		{
-			//			cmd.Parameters.Clear();
-			//			foreach (var P in sqlParams)
-			//			{
-			//				var myParam = cmd.CreateParameter();
-			//				myParam.ParameterName = P.Key;
-			//				myParam.Value = P.Value;
-			//				cmd.Parameters.Add(myParam);
-			//			}
-			//			var nr = cmd.ExecuteNonQuery();
-			//			T.Commit();
-			//			return await Task.FromResult(nr);
-			//		}
-			//		catch (Exception ex)
-			//		{
-			//			Console.WriteLine(ex.Message);
-			//			T.Rollback();
-			//			return await Task.FromResult(-1);
-			//		}
-			//	}
-			//}
+			var sectors = await dbContext.FetchRecordSetAsync(((ILocationSql)sql).SelectSector(idLocation), GetSectorModel);
+			return await Task.FromResult(sectors);
 		}
 
-		private void CreateLocationParams(IDbCommand cmd)
+		public Location GetLocationModel(IDataReader R)
+		{
+			var idLocation = Convert.ToUInt64(R["ID"]);
+			Address address = null;
+
+			if (!string.IsNullOrEmpty(R["IdAddress"].ToString()))
+				address = GetLocationAddressAsync(idLocation).Result;
+
+			return new Location
+				(
+					idLocation,
+					R["Name"].ToString(),
+					address,
+					GetSectorListAsync(idLocation).Result,
+					R["PhoneNumber"].ToString(),
+					R["Email"].ToString(),
+					R["www"].ToString(),
+					new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
+				);
+		}
+
+		private Address GetAddressModel(IDataReader R)
+		{
+			return new Address()
+			{
+				PlaceName = R["PlaceName"].ToString(),
+				StreetName = R["StreetName"].ToString(),
+				PropertyNumber = R["PropertyNumber"].ToString(),
+				ApartmentNumber = R["ApartmentNumber"].ToString(),
+				PostalCode = R["PostalCode"].ToString(),
+				PostOffice = R["PostOffice"].ToString()
+			};
+		}
+
+		private Sector GetSectorModel(IDataReader S)
+		{
+			return new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Description"].ToString(), Convert.ToUInt32(S["SeatingCount"]), Convert.ToUInt32(S["SeatingPrice"]));
+		}
+
+		public void CreateLocationParams(IDbCommand cmd)
 		{
 			cmd.Parameters.Add(dbContext.CreateParameter("?Name", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("?IdAddress", DbType.Int64, cmd));
@@ -69,208 +76,5 @@ namespace EventManager.Infrastructure.Repository
 			cmd.Parameters.Add(dbContext.CreateParameter("?User", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("?HostIP", DbType.String, cmd));
 		}
-		public Task<Location> GetLocationModelAsync(IDataReader R)
-		{
-			var idLocation = Convert.ToUInt64(R["ID"]);
-			Address address = null;
-
-			if (!string.IsNullOrEmpty(R["IdAddress"].ToString()))
-				address = await GetLocationAddressAsync(idLocation);
-
-			return new Location
-				(
-					idLocation,
-					R["Name"].ToString(),
-					address,
-					await GetSectorListAsync(locationId),
-					R["PhoneNumber"].ToString(),
-					R["Email"].ToString(),
-					R["www"].ToString(),
-					new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
-				);
-		
-	
-	}
-
-		//public async Task<Location> GetAsync(string sqlString, GetData<Location> Get)
-		//{
-		//	Location location = null;
-		//	using (var conn = dbContext.GetConnection())
-		//	{
-		//		conn.Open();
-		//		var T = conn.BeginTransaction();
-		//		var cmd = conn.CreateCommand();
-		//		cmd.CommandText = sql.SelectLocation(locationId);
-		//		cmd.Transaction = T;
-		//		try
-		//		{
-		//			using (var R = cmd.ExecuteReader())
-		//			{
-		//				while (R.Read())
-		//				{
-		//					var idLocation = Convert.ToUInt64(R["ID"]);
-		//					Address address = null;
-
-		//					if (!string.IsNullOrEmpty(R["IdAddress"].ToString()))
-		//						address = await GetLocationAddressAsync(idLocation);
-
-		//					location = new Location
-		//						(
-		//							idLocation,
-		//							R["Name"].ToString(),
-		//							address,
-		//							await GetSectorListAsync(locationId),
-		//							R["PhoneNumber"].ToString(),
-		//							R["Email"].ToString(),
-		//							R["www"].ToString(),
-		//							new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
-		//						);
-		//				}
-		//			}
-		//			T.Commit();
-		//		}
-		//		catch (Exception ex)
-		//		{
-		//			T.Rollback();
-		//			Console.WriteLine(ex.Message);
-		//		}
-		//		return await Task.FromResult(location);
-		//	}
-		//}
-
-		//public async Task<IEnumerable<Location>> GetListAsync(string name = "")
-		//{
-		//	var locations = new HashSet<Location>();
-		//	using (var conn = dbContext.GetConnection())
-		//	{
-		//		conn.Open();
-		//		var Tr = conn.BeginTransaction();
-		//		var cmd = conn.CreateCommand();
-		//		cmd.CommandText = sql.SelectLocations(name);
-		//		cmd.Transaction = Tr;
-		//		try
-		//		{
-		//			using (var R = cmd.ExecuteReader())
-		//			{
-		//				while (R.Read())
-		//				{
-							
-		//					var idLocation = Convert.ToUInt64(R["ID"]);
-							
-		//					Address address = null;
-		//					if (!string.IsNullOrEmpty(R["IdAddress"].ToString()))
-		//						address = await GetLocationAddressAsync(idLocation);
-
-		//					locations.Add(new Location
-		//						(
-		//							idLocation,
-		//							R["Name"].ToString(),
-		//							address,
-		//							await GetSectorListAsync(idLocation),
-		//							R["PhoneNumber"].ToString(),
-		//							R["Email"].ToString(),
-		//							R["www"].ToString(),
-		//							new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
-		//						)
-		//						);
-		//				}
-		//			}
-		//			Tr.Commit();
-		//		}
-		//		catch (Exception ex)
-		//		{
-		//			Tr.Rollback();
-		//			Console.WriteLine(ex.Message);
-		//		}
-
-		//	}
-		//	return await Task.FromResult(locations.AsEnumerable());
-		//}
-
-
-		async Task<Address> GetLocationAddressAsync(ulong idLocation)
-		{
-			Address address = null;
-			using (var conn = dbContext.GetConnection())
-			{
-				conn.Open();
-				var T = conn.BeginTransaction();
-				var cmd = conn.CreateCommand();
-				cmd.CommandText = ((ILocationSql)sql).SelectAddress(idLocation);
-				cmd.Transaction = T;
-				try
-				{
-					using (var R = cmd.ExecuteReader())
-					{
-						while (R.Read())
-						{
-							address = new Address()
-							{
-								PlaceName = R["PlaceName"].ToString(),
-								StreetName = R["StreetName"].ToString(),
-								PropertyNumber = R["PropertyNumber"].ToString(),
-								ApartmentNumber = R["ApartmentNumber"].ToString(),
-								PostalCode = R["PostalCode"].ToString(),
-								PostOffice = R["PostOffice"].ToString()
-							};
-						}
-					}
-					T.Commit();
-				}
-				catch (Exception ex)
-				{
-					T.Rollback();
-					Console.WriteLine(ex.Message);
-				}
-				return await Task.FromResult(address);
-			}
-
-		}
-
-		async Task<ISet<Sector>> GetSectorListAsync(ulong idLocation)
-		{
-			var sectors = new HashSet<Sector>();
-
-			using (var conn = dbContext.GetConnection())
-			{
-				conn.Open();
-				var T = conn.BeginTransaction();
-				var cmd = conn.CreateCommand();
-				cmd.CommandText = sql.SelectSector(idLocation);
-				cmd.Transaction = T;
-				try
-				{
-					using (var S = cmd.ExecuteReader())
-					{
-						while (S.Read())
-						{
-							sectors.Add(new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Description"].ToString(), Convert.ToUInt32(S["SeatingCount"]), Convert.ToUInt32(S["SeatingPrice"])));
-						}
-					}
-					T.Commit();
-				}
-				catch (Exception ex)
-				{
-					T.Rollback();
-					Console.WriteLine(ex.Message);
-				}
-				return await Task.FromResult(sectors);
-			}
-		}
-
-		//public Task<IEnumerable<T>> GetListAsync<T>(string name = "")
-		//{
-		//	throw new NotImplementedException();
-		//}
-
-		//public Task UpdateAsync(object[] sqlParamValue)
-		//{
-		//	throw new NotImplementedException();
-		//}
-
-		//public Task DeleteAsync(object[] sqlParamValue)
-		//{
-		//	throw new NotImplementedException();
-		//}
 	}
 }

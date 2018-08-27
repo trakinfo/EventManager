@@ -19,14 +19,14 @@ namespace EventManager.Infrastructure.Repository
 			sql = _sql;
 		}
 
-		public async Task AddAsync<T>(object[] sqlParamValue,AddDataParameters createParams)
+		public async Task AddAsync<T>(object[] sqlParamValue, AddDataParameters createParams)
 		{
 			await dbContext.AddRecordAsync(sql.Insert(), sqlParamValue, createParams);
 		}
 
-		public Task DeleteAsync<T>(object[] sqlParamValue, AddDataParameters createParams)
+		public async Task DeleteAsync<T>(object[] sqlParamValue, AddDataParameters createParams)
 		{
-			throw new NotImplementedException();
+			await dbContext.RemoveRecordAsync(sql.Update(), sqlParamValue, createParams);
 		}
 
 		public async Task<T> GetAsync<T>(ulong id, GetData<T> Get)
@@ -34,14 +34,14 @@ namespace EventManager.Infrastructure.Repository
 			return await dbContext.FetchRecordAsync(sql.Select(id), Get);
 		}
 
-		public async Task<IEnumerable<T>> GetListAsync<T>(string sqlString, GetData<T> Get)
+		public async Task<IEnumerable<T>> GetListAsync<T>(string name, GetData<T> Get)
 		{
-			return await dbContext.FetchRecordSetAsync(sqlString, Get);
+			return await dbContext.FetchRecordSetAsync(sql.SelectMany(name), Get);
 		}
 
-		public Task UpdateAsync<T>(object[] sqlParamValue, AddDataParameters createParams)
+		public async Task UpdateAsync<T>(object[] sqlParamValue, AddDataParameters createParams)
 		{
-			throw new NotImplementedException();
+			await dbContext.UpdateRecordAsync(sql.Update(), sqlParamValue, createParams);
 		}
 	}
 }

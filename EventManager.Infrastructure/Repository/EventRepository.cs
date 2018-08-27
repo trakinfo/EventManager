@@ -43,7 +43,7 @@ namespace EventManager.Infrastructure.Repository
 
 		async Task<Location> GetLocationAsync(ulong idEvent, ulong idLocation)
 		{
-			var location = await locationRepository.GetAsync(idLocation);
+			var location = await locationRepository.GetAsync(idLocation, locationRepository.GetLocationModel);
 
 			foreach (var S in location.Sectors)
 			{
@@ -98,7 +98,7 @@ namespace EventManager.Infrastructure.Repository
 		public async Task<int> AddTickets(object[] sqlParamValue, uint seatingCount)
 		{
 			var HS = new HashSet<object[]>();
-			
+
 			for (int i = 0; i < seatingCount; i++)
 			{
 				sqlParamValue[3] = i + 1;

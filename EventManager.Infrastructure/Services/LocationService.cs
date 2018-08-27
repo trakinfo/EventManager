@@ -21,7 +21,7 @@ namespace EventManager.Infrastructure.Services
 		}
 		public async Task<IEnumerable<LocationDto>> BrowseAsync(string name = null)
 		{
-			var locationList = await locationRepo.GetListAsync<Location>(name);
+			var locationList = await locationRepo.GetListAsync(name, locationRepo.GetLocationModel);
 			return mapper.Map<IEnumerable<LocationDto>>(locationList);
 		}
 
@@ -37,7 +37,7 @@ namespace EventManager.Infrastructure.Services
 			//SqlParams.Add("?User", creator);
 			//SqlParams.Add("?HostIP", hostIP);
 			var sqlParamValue = new object[] { name, idAddress, phoneNumber, email, www, creator, hostIP };
-			await locationRepo.AddAsync(sqlParamValue);
+			await locationRepo.AddAsync<Location>(sqlParamValue, locationRepo.CreateLocationParams);
 			//return await locationRepo.AddAsync(SqlParams);
 		}
 
@@ -58,7 +58,7 @@ namespace EventManager.Infrastructure.Services
 
 		public async Task<LocationDto> GetAsync(ulong id)
 		{
-			var location = await locationRepo.GetAsync(locationRepo.sql.SelectLocation(id), locationRepo.GetLocationModelAsync);
+			var location = await locationRepo.GetAsync(id, locationRepo.GetLocationModel);
 			return mapper.Map<LocationDto>(location);
 		}
 

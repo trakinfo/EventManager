@@ -11,9 +11,9 @@
 
 		public override string ToString()
 		{
-			var address = $"{PlaceName}, ".TrimStart(", ".ToCharArray());
+			var address = $"{PlaceName} ".TrimStart(" ".ToCharArray());
 
-			address += $"ul. {StreetName}".TrimEnd("ul. ".ToCharArray());
+			address += $", ul. {StreetName}".TrimEnd(", ul. ".ToCharArray());
 			address += $" {PropertyNumber}/{ApartmentNumber}".Trim(" /".ToCharArray());
 			address += $", {PostalCode}".TrimEnd(", ".ToCharArray());
 			address += $" {PostOffice}".TrimEnd(" ".ToCharArray());
