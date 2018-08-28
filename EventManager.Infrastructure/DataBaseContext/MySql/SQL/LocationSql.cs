@@ -37,10 +37,10 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 		//	throw new NotImplementedException();
 		//}
 
-		//public string InsertLocation()
-		//{
-		//	return "INSERT INTO location VALUES(null,?Name,?IdAddress,?PhoneNumber,?Email,?www,?User,?HostIP,NULL);";
-		//}
+		public string InsertAddress()
+		{
+			return "INSERT INTO address VALUES(null,?placeName,?streetName,?propertyNumber,?apartmentNumber,?postalCode,?postOffice);";
+		}
 
 		//public string DeleteLocation()
 		//{

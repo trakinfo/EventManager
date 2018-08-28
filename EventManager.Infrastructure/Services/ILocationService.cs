@@ -12,6 +12,7 @@ namespace EventManager.Infrastructure.Services
 		Task<LocationDto> GetAsync(ulong id);
 		Task<IEnumerable<LocationDto>> BrowseAsync(string name = null);
 		Task CreateAsync(string name, ulong? idAddress, string phoneNumber, string email, string www, string creator, string hostIP);
+		Task CreateAddressAsync(string placeName, string streetName, string propertyNumber, string apartmentNumber, string postalCode, string postOffice);
 		Task<ISet<Sector>> CreateSectorCollectionAsync(ulong locationId);
 		Task UpdateAsync(ulong id, string name, ulong? idAddress, string phoneNumber, string email, string www, string modifier, string hostIP);
 		Task DeleteSectorsAsync(ISet<Sector> Sectors);

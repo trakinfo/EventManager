@@ -17,17 +17,17 @@ namespace EventManager.Infrastructure.Repository
 
 		async Task<Address> GetLocationAddressAsync(ulong idLocation)
 		{
-			var address = await dbContext.FetchRecordAsync(((ILocationSql)sql).SelectAddress(idLocation), GetAddressModel);
+			var address = await dbContext.FetchRecordAsync(((ILocationSql)sql).SelectAddress(idLocation), GetAddress);
 			return await Task.FromResult(address);
 		}
-		
+
 		async Task<ISet<Sector>> GetSectorListAsync(ulong idLocation)
 		{
 			var sectors = await dbContext.FetchRecordSetAsync(((ILocationSql)sql).SelectSector(idLocation), GetSectorModel);
 			return await Task.FromResult(sectors);
 		}
 
-		public Location GetLocationModel(IDataReader R)
+		public Location GetLocation(IDataReader R)
 		{
 			var idLocation = Convert.ToUInt64(R["ID"]);
 			Address address = null;
@@ -48,7 +48,7 @@ namespace EventManager.Infrastructure.Repository
 				);
 		}
 
-		private Address GetAddressModel(IDataReader R)
+		private Address GetAddress(IDataReader R)
 		{
 			return new Address()
 			{
@@ -75,6 +75,19 @@ namespace EventManager.Infrastructure.Repository
 			cmd.Parameters.Add(dbContext.CreateParameter("?www", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("?User", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("?HostIP", DbType.String, cmd));
+		}
+		public void CreateAddressParams(IDbCommand cmd)
+		{
+			cmd.Parameters.Add(dbContext.CreateParameter("?PlaceName", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?StreetName", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?PropertyNumber", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?ApartmentNumber", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?PostalCode", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?PostOffice", DbType.String, cmd));
+		}
+		public async Task AddAddressAsync(object[] sqlParamValues)
+		{
+			await dbContext.AddRecordAsync(((ILocationSql)sql).InsertAddress(), sqlParamValues, CreateAddressParams);
 		}
 	}
 }

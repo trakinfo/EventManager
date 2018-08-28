@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using EventManager.Core.Domain;
-using EventManager.Core.Globals;
 using EventManager.Core.Repository;
 using EventManager.Infrastructure.DTO;
 
@@ -26,7 +23,7 @@ namespace EventManager.Infrastructure.Services
 		{
 			try
 			{
-				var @event = await _eventRepository.GetEventAsync(id);
+				var @event = await _eventRepository.GetAsync(id, _eventRepository.GetEvent);
 				return _mapper.Map<EventDto>(@event);
 			}
 			catch (Exception e)
@@ -40,7 +37,7 @@ namespace EventManager.Infrastructure.Services
 		{
 			try
 			{
-				var events = await _eventRepository.GetEventListAsync(name);
+				var events = await _eventRepository.GetListAsync(name, _eventRepository.GetEvent);
 				return _mapper.Map<IEnumerable<EventDto>>(events);
 			}
 			catch (Exception e)
@@ -55,7 +52,7 @@ namespace EventManager.Infrastructure.Services
 			try
 			{
 				var sqlParamValue = new object[] { name, description, idLocation, startDate, endDate, creator, hostIP };
-				await _eventRepository.AddEventAsync(sqlParamValue);
+				await _eventRepository.AddAsync<Event>(sqlParamValue, _eventRepository.CreateEventParams);
 			}
 
 			catch (Exception e)
@@ -70,7 +67,7 @@ namespace EventManager.Infrastructure.Services
 			int ticketCount = 0;
 			try
 			{
-				var _event = await _eventRepository.GetEventAsync(eventId);
+				var _event = await _eventRepository.GetAsync(eventId,_eventRepository.GetEvent);
 				if (_event.Location == null || _event.Location.Sectors == null) return 0;
 
 				var HS = new HashSet<Ticket>();
@@ -93,7 +90,7 @@ namespace EventManager.Infrastructure.Services
 			{
 				var sqlParamValue = new object[1] { id };
 
-				await _eventRepository.DeleteEventAsync(sqlParamValue);
+				await _eventRepository.DeleteAsync<Event>(sqlParamValue,_eventRepository.CreateDeleteParams);
 			}
 
 			catch (Exception e)
@@ -112,7 +109,7 @@ namespace EventManager.Infrastructure.Services
 			try
 			{
 				var SqlParams = new object[] { id, name, description, idLocation, startDate, endDate, modifier, hostIP };
-				await _eventRepository.UpdateEventAsync(SqlParams);
+				await _eventRepository.UpdateAsync<Event>(SqlParams,_eventRepository.CreateUpdateParams);
 			}
 
 			catch (Exception e)

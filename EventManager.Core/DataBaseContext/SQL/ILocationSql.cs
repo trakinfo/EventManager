@@ -11,7 +11,7 @@ namespace EventManager.Core.DataBaseContext.SQL
 		//string SelectLocation(string name);
 		string SelectAddress(ulong id);
 		string SelectSector(ulong id);
-		//string InsertLocation();
+		string InsertAddress();
 		//string UpdateLocation();
 		//string DeleteLocation();
 	}

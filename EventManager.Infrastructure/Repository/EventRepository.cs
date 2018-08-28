@@ -11,39 +11,39 @@ using System.Threading.Tasks;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class EventRepository : IEventRepository
+	public class EventRepository : GenericRepository, IEventRepository
 	{
-		IDataBaseContext dbContext;
+		//IDataBaseContext dbContext;
 		ILocationRepository locationRepository;
-		IEventSql sql;
+		//IEventSql sql;
 
-		public EventRepository(IDataBaseContext context, ILocationRepository locationRepo, IEventSql eventSql)
+		public EventRepository(IDataBaseContext context, ILocationRepository locationRepo, IEventSql eventSql) : base(context,eventSql)
 		{
-			dbContext = context;
+			//dbContext = context;
 			locationRepository = locationRepo;
-			sql = eventSql;
+			//sql = eventSql;
 		}
-		public async Task<Event> GetEventAsync(ulong eventId)
-		{
-			var eventDR = dbContext.FetchRecordAsync(sql.SelectEvent(eventId), GetEvent);
-			return await eventDR;
-		}
+		//public async Task<Event> GetEventAsync(ulong eventId)
+		//{
+		//	var eventDR = dbContext.FetchRecordAsync(sql.SelectEvent(eventId), GetEvent);
+		//	return await eventDR;
+		//}
 
-		public async Task<Event> GetEventAsync(string name)
-		{
-			var eventDR = dbContext.FetchRecordAsync(sql.SelectEvent(name), GetEvent);
-			return await eventDR;
-		}
+		//public async Task<Event> GetEventAsync(string name)
+		//{
+		//	var eventDR = dbContext.FetchRecordAsync(sql.SelectEvent(name), GetEvent);
+		//	return await eventDR;
+		//}
 
-		public async Task<IEnumerable<Event>> GetEventListAsync(string name = "")
-		{
-			var events = await dbContext.FetchRecordSetAsync(sql.SelectEvents(name), GetEvent);
-			return await Task.FromResult(events.AsEnumerable());
-		}
+		//public async Task<IEnumerable<Event>> GetEventListAsync(string name = "")
+		//{
+		//	var events = await dbContext.FetchRecordSetAsync(sql.SelectEvents(name), GetEvent);
+		//	return await Task.FromResult(events.AsEnumerable());
+		//}
 
 		async Task<Location> GetLocationAsync(ulong idEvent, ulong idLocation)
 		{
-			var location = await locationRepository.GetAsync(idLocation, locationRepository.GetLocationModel);
+			var location = await locationRepository.GetAsync(idLocation, locationRepository.GetLocation);
 
 			foreach (var S in location.Sectors)
 			{
@@ -54,26 +54,26 @@ namespace EventManager.Infrastructure.Repository
 
 		async Task<ISet<Ticket>> GetTicketListAsync(ulong idEvent, ulong idSector)
 		{
-			var tickets = dbContext.FetchRecordSetAsync(sql.SelectTicket(idEvent, idSector), GetTicket);
+			var tickets = dbContext.FetchRecordSetAsync((sql as IEventSql).SelectTicket(idEvent, idSector), GetTicket);
 			return await tickets;
 		}
 
-		public async Task AddEventAsync(object[] paramValue)
-		{
-			await dbContext.AddRecordAsync(sql.InsertEvent(), paramValue, CreateEventParams);
-		}
+		//public async Task AddEventAsync(object[] paramValue)
+		//{
+		//	await dbContext.AddRecordAsync(sql.InsertEvent(), paramValue, CreateEventParams);
+		//}
 
-		public async Task UpdateEventAsync(object[] paramValue)
-		{
-			await dbContext.UpdateRecordAsync(sql.UpdateEvent(), paramValue, CreateUpdateParams);
-		}
+		//public async Task UpdateEventAsync(object[] paramValue)
+		//{
+		//	await dbContext.UpdateRecordAsync(sql.UpdateEvent(), paramValue, CreateUpdateParams);
+		//}
 
-		public async Task DeleteEventAsync(object[] paramValue)
-		{
-			await dbContext.RemoveRecordAsync(sql.DeleteEvent(), paramValue, CreateDeleteParams);
-		}
+		//public async Task DeleteEventAsync(object[] paramValue)
+		//{
+		//	await dbContext.RemoveRecordAsync(sql.DeleteEvent(), paramValue, CreateDeleteParams);
+		//}
 
-		void CreateEventParams(IDbCommand cmd)
+		public void CreateEventParams(IDbCommand cmd)
 		{
 			cmd.Parameters.Add(dbContext.CreateParameter("?Name", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("?Description", DbType.String, cmd));
@@ -84,13 +84,13 @@ namespace EventManager.Infrastructure.Repository
 			cmd.Parameters.Add(dbContext.CreateParameter("?HostIP", DbType.String, cmd));
 		}
 
-		private void CreateUpdateParams(IDbCommand cmd)
+		public void CreateUpdateParams(IDbCommand cmd)
 		{
 			cmd.Parameters.Add(dbContext.CreateParameter("?ID", DbType.Int64, cmd));
 			CreateEventParams(cmd);
 		}
 
-		private void CreateDeleteParams(IDbCommand cmd)
+		public void CreateDeleteParams(IDbCommand cmd)
 		{
 			cmd.Parameters.Add(dbContext.CreateParameter("?ID", DbType.Int64, cmd));
 		}
@@ -104,7 +104,7 @@ namespace EventManager.Infrastructure.Repository
 				sqlParamValue[3] = i + 1;
 				HS.Add(sqlParamValue.ToArray());
 			}
-			return await dbContext.AddManyRecordsAsync(sql.InsertTicket(), HS, CreateTicketParams);
+			return await dbContext.AddManyRecordsAsync((sql as IEventSql).InsertTicket(), HS, CreateTicketParams);
 		}
 
 		private void CreateTicketParams(IDbCommand cmd)
@@ -115,7 +115,7 @@ namespace EventManager.Infrastructure.Repository
 			cmd.Parameters.Add(dbContext.CreateParameter("?SeatingNumber", DbType.Int32, cmd));
 		}
 
-		Event GetEvent(IDataReader R)
+		public Event GetEvent(IDataReader R)
 		{
 			var idEvent = Convert.ToUInt64(R["ID"]);
 			Location location = null;

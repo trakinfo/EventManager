@@ -5,16 +5,16 @@ using System.Threading.Tasks;
 
 namespace EventManager.Core.DataBaseContext.SQL
 {
-    public interface IEventSql
+    public interface IEventSql : ISql
     {
-		string SelectEvents(string name);
-		string SelectEvent(ulong id);
-		string SelectEvent(string name);
+		//string SelectEvents(string name);
+		//string SelectEvent(ulong id);
+		//string SelectEvent(string name);
 		string SelectTicket(ulong idEvent, ulong idSector);
-		string InsertEvent();
-		string UpdateEvent();
+		//string InsertEvent();
+		//string UpdateEvent();
 		string UpdateEventLocation();
-		string DeleteEvent();
+		//string DeleteEvent();
 		string InsertTicket();
 	}
 }

@@ -9,10 +9,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EventManager.Api.Controllers
 {
-   
-    [Route("Locations")]
-    public class LocationController : Controller
-    {
+
+	[Route("Locations")]
+	public class LocationController : Controller
+	{
 		ILocationService locationService;
 
 		public LocationController(ILocationService service)
@@ -40,5 +40,19 @@ namespace EventManager.Api.Controllers
 				);
 			return Created($"", null);
 		}
-    }
+		[Route("address")]
+		[HttpPost]
+		public async Task<IActionResult> Post([FromBody] NewAddress address)
+		{
+			await locationService.CreateAddressAsync(
+							address.PlaceName,
+							address.StreetName,
+							address.PropertyNumber,
+							address.ApartmentNumber,
+							address.PostalCode,
+							address.PostOffice
+							);
+			return Created($"", null);
+		}
+	}
 }

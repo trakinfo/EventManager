@@ -21,24 +21,20 @@ namespace EventManager.Infrastructure.Services
 		}
 		public async Task<IEnumerable<LocationDto>> BrowseAsync(string name = null)
 		{
-			var locationList = await locationRepo.GetListAsync(name, locationRepo.GetLocationModel);
+			var locationList = await locationRepo.GetListAsync(name, locationRepo.GetLocation);
 			return mapper.Map<IEnumerable<LocationDto>>(locationList);
+		}
+
+		public async Task CreateAddressAsync(string placeName, string streetName, string propertyNumber, string apartmentNumber, string postalCode, string postOffice)
+		{
+			var sqlParamValue = new object[] { placeName, streetName, propertyNumber, apartmentNumber, postalCode, postOffice };
+			await locationRepo.AddAddressAsync(sqlParamValue);
 		}
 
 		public async Task CreateAsync(string name, ulong? idAddress, string phoneNumber, string email, string www, string creator, string hostIP)
 		{
-			//var SqlParams = new Dictionary<string, object>();
-
-			//SqlParams.Add("?Name", name);
-			//SqlParams.Add("?IdAddress", idAddress);
-			//SqlParams.Add("?PhoneNumber", phoneNumber);
-			//SqlParams.Add("?Email", email);
-			//SqlParams.Add("?www", www);
-			//SqlParams.Add("?User", creator);
-			//SqlParams.Add("?HostIP", hostIP);
 			var sqlParamValue = new object[] { name, idAddress, phoneNumber, email, www, creator, hostIP };
 			await locationRepo.AddAsync<Location>(sqlParamValue, locationRepo.CreateLocationParams);
-			//return await locationRepo.AddAsync(SqlParams);
 		}
 
 		public Task<ISet<Sector>> CreateSectorCollectionAsync(ulong locationId)
@@ -58,7 +54,7 @@ namespace EventManager.Infrastructure.Services
 
 		public async Task<LocationDto> GetAsync(ulong id)
 		{
-			var location = await locationRepo.GetAsync(id, locationRepo.GetLocationModel);
+			var location = await locationRepo.GetAsync(id, locationRepo.GetLocation);
 			return mapper.Map<LocationDto>(location);
 		}
 
