@@ -34,12 +34,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 					{
 						using (var R = await new MySqlCommand { CommandText = sqlString, Connection = conn, Transaction = t }.ExecuteReaderAsync())
 						{
-							//if (!R.HasRows) return HS;
-							while (R.Read())
-							{
-								var D = GetDataRow(R);
-								HS.Add(D);
-							}
+							while (R.Read()) HS.Add(GetDataRow(R));
 						}
 						t.Commit();
 					}
@@ -95,74 +90,108 @@ namespace EventManager.Infrastructure.DataBaseContext
 			{
 				conn.Open();
 				var T = conn.BeginTransaction();
-				var cmd = conn.CreateCommand();
-				cmd.CommandType = CommandType.Text;
-				cmd.CommandText = sqlString;
-				cmd.Transaction = T;
-				using (cmd)
+				var cmd = CreateCommand(conn, T, CommandType.Text, sqlString);
+				createParams(cmd);
+				try
 				{
-					try
+					int recordAffected = 0;
+					foreach (var p in sqlParamValue)
 					{
-						createParams(cmd);
-						int recordAffected = 0;
-						foreach (var p in sqlParamValue)
-						{
-							for (int i = 0; i < p.Length; i++)
-								((MySqlCommand)cmd).Parameters[i].Value = p[i];
-							recordAffected += await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
-						}
-						T.Commit();
-						return recordAffected;
+						recordAffected += await ExecuteCommandAsync(cmd, p);
 					}
-					catch (MySqlException ex)
-					{
-						Console.WriteLine(ex.Message);
-						T.Rollback();
-						return 0;
-					}
+					T.Commit();
+					return recordAffected;
 				}
+				catch (MySqlException ex)
+				{
+					Console.WriteLine(ex.Message);
+					T.Rollback();
+					return 0;
+				}
+				//using (cmd)
+				//{
+				//	try
+				//	{
+				//		int recordAffected = 0;
+				//		foreach (var p in sqlParamValue)
+				//		{
+				//			for (int i = 0; i < p.Length; i++)
+				//				((MySqlCommand)cmd).Parameters[i].Value = p[i];
+				//			recordAffected += await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
+				//		}
+				//		T.Commit();
+				//		return recordAffected;
+				//	}
+				//	catch (MySqlException ex)
+				//	{
+				//		Console.WriteLine(ex.Message);
+				//		T.Rollback();
+				//		return 0;
+				//	}
+				//}
 			}
 		}
 
 		public async Task AddRecordAsync(string sqlString, object[] sqlParamValue, AddDataParameters createParams)
 		{
+			await ExecuteCommandAsync(sqlString, sqlParamValue, createParams);
+		}
+
+		public async Task UpdateRecordAsync(string sqlString, object[] sqlParameterValue, AddDataParameters updateParams)
+		{
+			await ExecuteCommandAsync(sqlString, sqlParameterValue, updateParams);
+		}
+
+		public async Task RemoveRecordAsync(string sqlString, object[] sqlParameterValue, AddDataParameters delParams)
+		{
+			await ExecuteCommandAsync(sqlString, sqlParameterValue, delParams);
+		}
+
+		async Task ExecuteCommandAsync(string sqlString, object[] sqlParamValue, AddDataParameters createParams)
+		{
 			using (var conn = GetConnection())
 			{
 				conn.Open();
 				var T = conn.BeginTransaction();
-				var cmd = conn.CreateCommand();
-				cmd.CommandType = CommandType.Text;
-				cmd.CommandText = sqlString;
-				cmd.Transaction = T;
-				using (cmd)
+				var cmd = CreateCommand(conn, T, CommandType.Text, sqlString);
+				createParams(cmd);
+				try
 				{
-					try
-					{
-						createParams(cmd);
-						for (int i = 0; i < sqlParamValue.Length; i++)
-							((MySqlCommand)cmd).Parameters[i].Value = sqlParamValue[i];
-						await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
-						T.Commit();
-					}
-					catch (MySqlException ex)
-					{
-						Console.WriteLine(ex.Message);
-						T.Rollback();
-					}
+					await ExecuteCommandAsync(cmd, sqlParamValue);
+					T.Commit();
 				}
+				catch (MySqlException ex)
+				{
+					Console.WriteLine(ex.Message);
+					T.Rollback();
+				}
+				//using (cmd)
+				//{
+				//	try
+				//	{
+				//		for (int i = 0; i < sqlParamValue.Length; i++)
+				//			((MySqlCommand)cmd).Parameters[i].Value = sqlParamValue[i];
+				//		await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
+				//		T.Commit();
+				//	}
+				//	catch (MySqlException ex)
+				//	{
+				//		Console.WriteLine(ex.Message);
+				//		T.Rollback();
+				//	}
+				//}
 			}
 		}
 
-		public async Task UpdateRecordAsync(string sqlString, object[] sqlParameterValue, AddDataParameters AddParams)
+		async Task<int> ExecuteCommandAsync(IDbCommand cmd, object[] sqlParamValue)
 		{
-			await AddRecordAsync(sqlString, sqlParameterValue, AddParams);
+			using (cmd)
+			{
+				for (int i = 0; i < sqlParamValue.Length; i++)
+					((MySqlCommand)cmd).Parameters[i].Value = sqlParamValue[i];
+				return await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
+			}
 		}
-
-		public async Task RemoveRecordAsync(string sqlString, object[] sqlParameterValue, AddDataParameters AddParams)
-		{
-			await AddRecordAsync(sqlString, sqlParameterValue, AddParams);
-		}
-
 		public IDataParameter CreateParameter(string name, DbType type, IDbCommand cmd)
 		{
 			var p = cmd.CreateParameter();
@@ -170,6 +199,15 @@ namespace EventManager.Infrastructure.DataBaseContext
 			p.DbType = type;
 
 			return p;
+		}
+
+		IDbCommand CreateCommand(IDbConnection conn, IDbTransaction T, CommandType cmdType, string cmdText)
+		{
+			var cmd = conn.CreateCommand();
+			cmd.CommandType = cmdType;
+			cmd.CommandText = cmdText;
+			cmd.Transaction = T;
+			return cmd;
 		}
 	}
 }
