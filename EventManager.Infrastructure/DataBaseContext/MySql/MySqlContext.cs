@@ -95,10 +95,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 				try
 				{
 					int recordAffected = 0;
-					foreach (var p in sqlParamValue)
-					{
-						recordAffected += await ExecuteCommandAsync(cmd, p);
-					}
+					foreach (var p in sqlParamValue) recordAffected += await ExecuteCommandAsync(cmd, p);
 					T.Commit();
 					return recordAffected;
 				}
@@ -108,27 +105,6 @@ namespace EventManager.Infrastructure.DataBaseContext
 					T.Rollback();
 					return 0;
 				}
-				//using (cmd)
-				//{
-				//	try
-				//	{
-				//		int recordAffected = 0;
-				//		foreach (var p in sqlParamValue)
-				//		{
-				//			for (int i = 0; i < p.Length; i++)
-				//				((MySqlCommand)cmd).Parameters[i].Value = p[i];
-				//			recordAffected += await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
-				//		}
-				//		T.Commit();
-				//		return recordAffected;
-				//	}
-				//	catch (MySqlException ex)
-				//	{
-				//		Console.WriteLine(ex.Message);
-				//		T.Rollback();
-				//		return 0;
-				//	}
-				//}
 			}
 		}
 
@@ -165,21 +141,6 @@ namespace EventManager.Infrastructure.DataBaseContext
 					Console.WriteLine(ex.Message);
 					T.Rollback();
 				}
-				//using (cmd)
-				//{
-				//	try
-				//	{
-				//		for (int i = 0; i < sqlParamValue.Length; i++)
-				//			((MySqlCommand)cmd).Parameters[i].Value = sqlParamValue[i];
-				//		await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
-				//		T.Commit();
-				//	}
-				//	catch (MySqlException ex)
-				//	{
-				//		Console.WriteLine(ex.Message);
-				//		T.Rollback();
-				//	}
-				//}
 			}
 		}
 

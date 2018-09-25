@@ -41,7 +41,7 @@ namespace EventManager.Api.Controllers
 			return Created(string.Empty, null);
 		}
 
-		[HttpPost("{eventId}")]
+		[HttpPost("{eventId}/tickets")]
 		public async Task<IActionResult> Post(ulong eventId)
 		{
 			var count = await _eventService.CreateTicketCollectionAsync(eventId);

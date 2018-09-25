@@ -9,8 +9,8 @@ namespace EventManager.Core.Domain
     {
 		public int SeatingNumber { get; protected set; }
 		public decimal Price { get; protected set; }
-		public long? UserId { get; protected set; }
-		public bool IsPurchased => UserId.HasValue;
+		public string UserId { get; protected set; }
+		public bool IsPurchased => !string.IsNullOrEmpty(UserId);
 		public DateTime? PurchaseDate { get; protected set; }
 
 		protected Ticket() { }

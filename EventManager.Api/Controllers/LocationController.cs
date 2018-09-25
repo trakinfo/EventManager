@@ -26,6 +26,14 @@ namespace EventManager.Api.Controllers
 			return Json(locationList);
 		}
 
+		[Route("address")]
+		[HttpGet]
+		public async Task<IActionResult> GetAddressList(string name = "")
+		{
+			var addressList = await locationService.BrowseAsync(name);
+			return Json(addressList);
+		}
+
 		[HttpPost]
 		public async Task<IActionResult> Post([FromBody] NewLocation location)
 		{
