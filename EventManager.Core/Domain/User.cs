@@ -9,7 +9,7 @@ namespace EventManager.Core.Domain
 
 	public class User : Entity
 	{
-		private ISet<Signature> _modifier = new HashSet<Signature>();
+		//private ISet<Signature> _modifier = new HashSet<Signature>();
 
 		public string Login { get; protected set; }
 		public byte[] Password { get; protected set; }
@@ -17,7 +17,7 @@ namespace EventManager.Core.Domain
 		public string LastName { get; protected set; }
 		public UserRole Role { get; protected set; }
 		public UserStatus Status { get; protected set; }
-		public IEnumerable<Signature> Modifier  => _modifier; 
+		//public IEnumerable<Signature> Modifier  => _modifier; 
 
 		protected User() { }
 
@@ -30,7 +30,7 @@ namespace EventManager.Core.Domain
 			Id = id;
 			Login = login;
 			Creator = creator;
-			UpdateUser( firstName, lastName, role, status, creator);
+			UpdateUser( firstName, lastName, role, status, null);
 			SetPassword(password);
 		}
 		public void UpdateUser(string firstName, string lastName, UserRole role, UserStatus status, Signature modifier)
@@ -39,7 +39,7 @@ namespace EventManager.Core.Domain
 			LastName = lastName;
 			Role = role;
 			Status = status;
-			_modifier.Add(modifier);
+			if (modifier != null) ModifierList.Add(modifier);
 		}
 		public void SetPassword(string password)
 		{
