@@ -5,47 +5,38 @@ using System.Text;
 
 namespace EventManager.Core.Domain
 {
-    public class Event : Entity
-    {
-		private ISet<Signature> _modifier = new HashSet<Signature>();
-		
+	public class Event : Entity
+	{
+		//private ISet<Signature> _modifier = new HashSet<Signature>();
+
 		public string Name { get; protected set; }
 		public string Description { get; protected set; }
 		public Location Location { get; protected set; }
 		public DateTime StartDate { get; protected set; }
 		public DateTime EndDate { get; protected set; }
-		public IEnumerable<Signature> Modifier  => _modifier; 
-		
+		//public IEnumerable<Signature> Modifier  => _modifier; 
+
 
 		protected Event() { }
 		public Event(ulong id, string name, string description, Location location, DateTime startDate, DateTime endDate, Signature creator)
 		{
+			Add(id,name, description, location, startDate, endDate, creator);
+		}
+		void Add(ulong id, string name, string description, Location location, DateTime startDate, DateTime endDate, Signature creator)
+		{
 			Id = id;
 			Creator = creator;
-			UpdateEvent(name, description, location, startDate, endDate, null);
+			Update(name, description, location, startDate, endDate, null);
 		}
-		public void UpdateEvent(string name, string description, Location location, DateTime startDate, DateTime endDate, Signature modifier)
+		public void Update(string name, string description, Location location, DateTime startDate, DateTime endDate, Signature modifier)
 		{
 			Name = name;
 			Description = description;
 			Location = location;
 			StartDate = startDate;
 			EndDate = endDate;
-			_modifier.Add(modifier);
+			if (modifier != null) ModifierList.Add(modifier);
 		}
-		//public void AddTickets(ISet<Ticket> tickets)
-		//{
-		//	foreach (var ticket in tickets)
-		//	{
-		//		_tickets.Add(ticket);
-		//	}
-		//}
-		//public void RemoveTickets(ISet<Ticket> tickets)
-		//{
-		//	foreach (var ticket in tickets)
-		//	{
-		//		_tickets.Remove(ticket);
-		//	}
-		//}
+
 	}
 }

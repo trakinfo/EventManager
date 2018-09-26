@@ -15,14 +15,23 @@ namespace EventManager.Core.Domain
 		public Location() { }
 		public Location(ulong id, string name, Address address, IEnumerable<Sector> sectors, string phoneNmuber, string email, string www, Signature creator)
 		{
+			Add(id, name, address, sectors, phoneNmuber, email, www, creator);
+		}
+		private void Add(ulong id, string name, Address address, IEnumerable<Sector> sectors, string phoneNmuber, string email, string www, Signature creator)
+		{
 			Id = id;
+			Creator = creator;
+			Update(name, address, sectors, phoneNmuber, email, www, null);
+		}
+		public void Update(string name, Address address, IEnumerable<Sector> sectors, string phoneNmuber, string email, string www, Signature modifier)
+		{
 			Name = name;
 			Address = address;
 			Sectors = sectors;
 			PhoneNumber = phoneNmuber;
 			Email = email;
 			WWW = www;
-			Creator = creator;
+			if (modifier != null) ModifierList.Add(modifier);
 		}
 	}
 }

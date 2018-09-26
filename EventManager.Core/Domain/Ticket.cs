@@ -17,10 +17,19 @@ namespace EventManager.Core.Domain
 
 		public Ticket(ulong id, int seatingNumber, decimal price, Signature creator)
 		{
+			Add(id, seatingNumber, price, creator);
+		}
+		private void Add(ulong id, int seatingNumber, decimal price, Signature creator)
+		{
 			Id = id;
+			Creator = creator;
+			Update(seatingNumber, price, null);
+		}
+		public void Update(int seatingNumber, decimal price, Signature modifier)
+		{
 			SeatingNumber = seatingNumber;
 			Price = price;
-			Creator = creator;
+			if (modifier != null) ModifierList.Add(modifier);
 		}
-    }
+	}
 }
