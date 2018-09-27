@@ -24,12 +24,12 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 
 		public string SelectAddress(ulong idLocation)
 		{
-			return $"SELECT a.PlaceName, a.StreetName, a.PropertyNumber, a.ApartmentNumber, a.PostalCode, a.PostOffice FROM address a INNER JOIN location l ON a.ID=l.IdAddress WHERE l.ID={idLocation};";
+			return $"SELECT a.ID, a.PlaceName, a.StreetName, a.PropertyNumber, a.ApartmentNumber, a.PostalCode, a.PostOffice, a.User,a.HostIP,a.Version FROM address a INNER JOIN location l ON a.ID=l.IdAddress WHERE l.ID={idLocation};";
 		}
 
 		public string SelectSector(ulong idLocation)
 		{
-			return $"SELECT s.ID,s.Name,s.Description,s.SeatingCount,s.SeatingPrice FROM sector s WHERE s.IdLocation={idLocation};";
+			return $"SELECT s.ID,s.Name,s.Description,s.SeatingCount,s.SeatingPrice,s.User,s.HostIP,s.Version FROM sector s WHERE s.IdLocation={idLocation};";
 		}
 
 		//public string UpdateLocation()
@@ -39,7 +39,7 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 
 		public string InsertAddress()
 		{
-			return "INSERT INTO address VALUES(null,?placeName,?streetName,?propertyNumber,?apartmentNumber,?postalCode,?postOffice);";
+			return "INSERT INTO address VALUES(null,?placeName,?streetName,?propertyNumber,?apartmentNumber,?postalCode,?postOffice,?User,?HostIP,NULL);";
 		}
 
 		//public string DeleteLocation()

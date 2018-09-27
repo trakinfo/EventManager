@@ -50,20 +50,13 @@ namespace EventManager.Infrastructure.Repository
 
 		private Address GetAddress(IDataReader R)
 		{
-			return new Address()
-			{
-				PlaceName = R["PlaceName"].ToString(),
-				StreetName = R["StreetName"].ToString(),
-				PropertyNumber = R["PropertyNumber"].ToString(),
-				ApartmentNumber = R["ApartmentNumber"].ToString(),
-				PostalCode = R["PostalCode"].ToString(),
-				PostOffice = R["PostOffice"].ToString()
-			};
+			return new Address(Convert.ToUInt64(R["ID"]), R["PlaceName"].ToString(), R["StreetName"].ToString(), R["PropertyNumber"].ToString(), R["ApartmentNumber"].ToString(), R["PostalCode"].ToString(), R["PostOffice"].ToString(),null);
+			
 		}
 
 		private Sector GetSectorModel(IDataReader S)
 		{
-			return new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Description"].ToString(), Convert.ToUInt32(S["SeatingCount"]), Convert.ToUInt32(S["SeatingPrice"]));
+			return new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Description"].ToString(), Convert.ToUInt32(S["SeatingRangeStart"]), Convert.ToUInt32(S["SeatingRangeEnd"]), Convert.ToUInt32(S["SeatingPrice"]),null);
 		}
 
 		public void CreateLocationParams(IDbCommand cmd)
@@ -84,6 +77,8 @@ namespace EventManager.Infrastructure.Repository
 			cmd.Parameters.Add(dbContext.CreateParameter("?ApartmentNumber", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("?PostalCode", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("?PostOffice", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?User", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("?HostIP", DbType.String, cmd));
 		}
 		public async Task AddAddressAsync(object[] sqlParamValues)
 		{
