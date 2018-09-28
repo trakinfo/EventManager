@@ -16,7 +16,7 @@ namespace EventManager.Infrastructure.Mapper
 				cfg =>
 			{
 				cfg.CreateMap<Event, EventDto>()
-				.ForMember(DTO => DTO.TicketCount, e => e.MapFrom(p => p.Location.Sectors.Sum(x => x.Tickets.Count())))
+				.ForMember(DTO => DTO.AvailableTicketCount, e => e.MapFrom(p => p.Location.Sectors.Sum(x => x.Tickets.Count() - x.Tickets.Where(y => y.IsPurchased).Count())))
 				.ForMember(DTO => DTO.Email, e => e.MapFrom(p => p.Location.Email))
 				.ForMember(DTO => DTO.PhoneNumber, e => e.MapFrom(p => p.Location.PhoneNumber))
 				.ForMember(DTO => DTO.www, e => e.MapFrom(p => p.Location.WWW))
