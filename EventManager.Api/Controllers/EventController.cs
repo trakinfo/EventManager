@@ -23,7 +23,7 @@ namespace EventManager.Api.Controllers
 		[HttpGet("{eventId}")]
 		public async Task<IActionResult> Get(ulong eventId)
 		{
-			var _event = await _eventService.GetAsync(eventId);
+			var _event = await _eventService.GetAsync(eventId, _eventService.GetEvent);
 			return Json(_event);
 		}
 		[HttpPost]

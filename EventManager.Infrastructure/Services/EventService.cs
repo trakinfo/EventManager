@@ -1,37 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using AutoMapper;
+using EventManager.Core.DataBaseContext;
+using EventManager.Core.DataBaseContext.SQL;
 using EventManager.Core.Domain;
+using EventManager.Core.Globals;
 using EventManager.Core.Repository;
 using EventManager.Infrastructure.DTO;
+using EventManager.Infrastructure.Services.Generic;
 
 namespace EventManager.Infrastructure.Services
 {
-	public class EventService : IEventService
+	public class EventService : Service, IEventService
 	{
-		readonly IEventRepository _eventRepository;
+		//readonly IEventRepository _eventRepository;
 		readonly IMapper _mapper;
 
-		public EventService(IEventRepository eventRepository, IMapper mapper)
+		public EventService(IDataBaseContext context, IMapper mapper, IEventSql eventSql) : base(context, eventSql)
 		{
-			_eventRepository = eventRepository;
 			_mapper = mapper;
 		}
 
-		public async Task<EventDto> GetAsync(ulong id)
-		{
-			try
-			{
-				var @event = await _eventRepository.GetAsync(id, _eventRepository.GetEvent);
-				return _mapper.Map<EventDto>(@event);
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine(e.Message);
-				throw;
-			}
-		}
+		//public async Task<EventDto> GetAsync(ulong id)
+		//{
+		//	try
+		//	{
+		//		var _event = await GetAsync(id, GetEvent);
+		//		return _mapper.Map<EventDto>(_event);
+		//	}
+		//	catch (Exception e)
+		//	{
+		//		Console.WriteLine(e.Message);
+		//		throw;
+		//	}
+		//}
 
 		public async Task<IEnumerable<EventDto>> BrowseAsync(string name = null)
 		{
@@ -116,6 +120,25 @@ namespace EventManager.Infrastructure.Services
 			{
 				Console.WriteLine(e.Message);
 			}
+		}
+
+		public EventDto GetEvent(IDataReader R)
+		{
+			var idEvent = Convert.ToUInt64(R["ID"]);
+			Location location = null;
+
+			if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
+				location = GetLocationAsync(idEvent, Convert.ToUInt64(R["IdLocation"])).Result;
+			return new EventDto
+				(
+					idEvent,
+					R["Name"].ToString(),
+					R["Description"].ToString(),
+					location,
+					Convert.ToDateTime(R["StartDate"]),
+					Convert.ToDateTime(R["EndDate"]),
+					new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
+				);
 		}
 	}
 }
