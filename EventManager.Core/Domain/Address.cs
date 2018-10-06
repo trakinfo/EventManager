@@ -35,10 +35,11 @@ namespace EventManager.Core.Domain
 
 		public override string ToString()
 		{
-			var address = $"{PlaceName} ".TrimStart(" ".ToCharArray());
+			var address = $"{PlaceName}";
 
 			address += $", ul. {StreetName}".TrimEnd(", ul. ".ToCharArray());
-			address += $" {PropertyNumber}/{ApartmentNumber}".Trim(" /".ToCharArray());
+			address += $" {PropertyNumber}".TrimEnd(" ".ToCharArray());
+			address += $"/{ApartmentNumber}".TrimEnd("/".ToCharArray());
 			address += $", {PostalCode}".TrimEnd(", ".ToCharArray());
 			address += $" {PostOffice}".TrimEnd(" ".ToCharArray());
 

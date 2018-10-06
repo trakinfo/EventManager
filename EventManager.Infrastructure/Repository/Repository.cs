@@ -8,23 +8,23 @@ using System.Threading.Tasks;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class GenericRepository : IRepository
+	public class Repository : IRepository
 	{
 		protected IDataBaseContext dbContext;
 		protected ISql sql;
 
-		public GenericRepository(IDataBaseContext context, ISql _sql)
+		public Repository(IDataBaseContext context, ISql _sql)
 		{
 			dbContext = context;
 			sql = _sql;
 		}
 
-		public async Task AddAsync<T>(object[] sqlParamValue, AddDataParameters createParams)
+		public async Task AddAsync<T>(object[] sqlParamValue, DataParameters createParams)
 		{
 			await dbContext.AddRecordAsync(sql.Insert(), sqlParamValue, createParams);
 		}
 
-		public async Task DeleteAsync<T>(object[] sqlParamValue, AddDataParameters createParams)
+		public async Task DeleteAsync<T>(object[] sqlParamValue, DataParameters createParams)
 		{
 			await dbContext.RemoveRecordAsync(sql.Update(), sqlParamValue, createParams);
 		}
@@ -39,7 +39,7 @@ namespace EventManager.Infrastructure.Repository
 			return await dbContext.FetchRecordSetAsync(sql.SelectMany(name), Get);
 		}
 
-		public async Task UpdateAsync<T>(object[] sqlParamValue, AddDataParameters createParams)
+		public async Task UpdateAsync<T>(object[] sqlParamValue, DataParameters createParams)
 		{
 			await dbContext.UpdateRecordAsync(sql.Update(), sqlParamValue, createParams);
 		}

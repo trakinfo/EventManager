@@ -17,7 +17,7 @@ namespace EventManager.Core.Repository
 		//Task UpdateEventAsync(object[] sqlParamValue);
 		Task<int> AddTickets(object[] sqlParamValue, uint seatingCount);
 		Event GetEvent(IDataReader R);
-		void CreateEventParams(IDbCommand cmd);
+		void CreateInsertParams(IDbCommand cmd);
 		void CreateUpdateParams(IDbCommand cmd);
 		void CreateDeleteParams(IDbCommand cmd);
 	}

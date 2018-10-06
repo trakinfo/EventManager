@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using EventManager.Core.DataBaseContext;
 using EventManager.Core.DataBaseContext.SQL;
 using EventManager.Core.Domain;
@@ -11,20 +8,14 @@ using EventManager.Core.Repository;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class LocationRepository : GenericRepository, ILocationRepository
+	public class LocationRepository : Repository, ILocationRepository
 	{
-		public LocationRepository(IDataBaseContext context, ILocationSql locationSql) : base(context, locationSql) { }
-
-		async Task<Address> GetLocationAddressAsync(ulong idLocation)
+		readonly IAddressRepository _addressRepo;
+		readonly ISectorRepository _sectorRepo;
+		public LocationRepository(IDataBaseContext context, ILocationSql locationSql, IAddressRepository addressRepo, ISectorRepository sectorRepo) : base(context, locationSql)
 		{
-			var address = await dbContext.FetchRecordAsync(((ILocationSql)sql).SelectAddress(idLocation), GetAddress);
-			return await Task.FromResult(address);
-		}
-
-		async Task<ISet<Sector>> GetSectorListAsync(ulong idLocation)
-		{
-			var sectors = await dbContext.FetchRecordSetAsync(((ILocationSql)sql).SelectSector(idLocation), GetSectorModel);
-			return await Task.FromResult(sectors);
+			_addressRepo = addressRepo;
+			_sectorRepo = sectorRepo;
 		}
 
 		public Location GetLocation(IDataReader R)
@@ -33,14 +24,14 @@ namespace EventManager.Infrastructure.Repository
 			Address address = null;
 
 			if (!string.IsNullOrEmpty(R["IdAddress"].ToString()))
-				address = GetLocationAddressAsync(idLocation).Result;
-
+				address = _addressRepo.GetAsync(idLocation, _addressRepo.GetAddress).Result;
+					
 			return new Location
 				(
 					idLocation,
 					R["Name"].ToString(),
 					address,
-					GetSectorListAsync(idLocation).Result,
+					_sectorRepo.GetListAsync(idLocation, _sectorRepo.GetSector).Result,
 					R["PhoneNumber"].ToString(),
 					R["Email"].ToString(),
 					R["www"].ToString(),
@@ -48,18 +39,7 @@ namespace EventManager.Infrastructure.Repository
 				);
 		}
 
-		private Address GetAddress(IDataReader R)
-		{
-			return new Address(Convert.ToUInt64(R["ID"]), R["PlaceName"].ToString(), R["StreetName"].ToString(), R["PropertyNumber"].ToString(), R["ApartmentNumber"].ToString(), R["PostalCode"].ToString(), R["PostOffice"].ToString(),null);
-			
-		}
-
-		private Sector GetSectorModel(IDataReader S)
-		{
-			return new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Description"].ToString(), Convert.ToUInt32(S["SeatingRangeStart"]), Convert.ToUInt32(S["SeatingRangeEnd"]), Convert.ToUInt32(S["SeatingPrice"]),null);
-		}
-
-		public void CreateLocationParams(IDbCommand cmd)
+		public void CreateInsertParams(IDbCommand cmd)
 		{
 			cmd.Parameters.Add(dbContext.CreateParameter("@Name", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("@IdAddress", DbType.Int64, cmd));
@@ -68,21 +48,6 @@ namespace EventManager.Infrastructure.Repository
 			cmd.Parameters.Add(dbContext.CreateParameter("@www", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("@User", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("@HostIP", DbType.String, cmd));
-		}
-		public void CreateAddressParams(IDbCommand cmd)
-		{
-			cmd.Parameters.Add(dbContext.CreateParameter("@PlaceName", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("@StreetName", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("@PropertyNumber", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("@ApartmentNumber", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("@PostalCode", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("@PostOffice", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("@User", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("@HostIP", DbType.String, cmd));
-		}
-		public async Task AddAddressAsync(object[] sqlParamValues)
-		{
-			await dbContext.AddRecordAsync(((ILocationSql)sql).InsertAddress(), sqlParamValues, CreateAddressParams);
 		}
 	}
 }

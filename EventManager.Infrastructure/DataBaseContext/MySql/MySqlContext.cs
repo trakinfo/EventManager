@@ -83,7 +83,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 				return await Task.FromResult(DR);
 			}
 		}
-		public async Task<int> AddManyRecordsAsync(string sqlString, ISet<object[]> sqlParamValue, AddDataParameters createParams)
+		public async Task<int> AddManyRecordsAsync(string sqlString, ISet<object[]> sqlParamValue, DataParameters createParams)
 		{
 			using (var conn = GetConnection())
 			{
@@ -107,22 +107,22 @@ namespace EventManager.Infrastructure.DataBaseContext
 			}
 		}
 
-		public async Task AddRecordAsync(string sqlString, object[] sqlParamValue, AddDataParameters createParams)
+		public async Task AddRecordAsync(string sqlString, object[] sqlParamValue, DataParameters createParams)
 		{
 			await ExecuteCommandAsync(sqlString, sqlParamValue, createParams);
 		}
 
-		public async Task UpdateRecordAsync(string sqlString, object[] sqlParameterValue, AddDataParameters updateParams)
+		public async Task UpdateRecordAsync(string sqlString, object[] sqlParameterValue, DataParameters updateParams)
 		{
 			await ExecuteCommandAsync(sqlString, sqlParameterValue, updateParams);
 		}
 
-		public async Task RemoveRecordAsync(string sqlString, object[] sqlParameterValue, AddDataParameters delParams)
+		public async Task RemoveRecordAsync(string sqlString, object[] sqlParameterValue, DataParameters delParams)
 		{
 			await ExecuteCommandAsync(sqlString, sqlParameterValue, delParams);
 		}
 
-		async Task ExecuteCommandAsync(string sqlString, object[] sqlParamValue, AddDataParameters createParams)
+		async Task ExecuteCommandAsync(string sqlString, object[] sqlParamValue, DataParameters createParams)
 		{
 			using (var conn = GetConnection())
 			{

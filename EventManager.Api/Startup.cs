@@ -31,10 +31,17 @@ namespace EventManager.Api
 			services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<IEventRepository, EventRepository>();
 			services.AddScoped<ILocationRepository, LocationRepository>();
+			services.AddScoped<IAddressRepository, AddressRepository>();
+			services.AddScoped<ISectorRepository, SectorRepository>();
+
 			services.AddScoped<IEventService, EventService>();
 			services.AddScoped<ILocationService, LocationService>();
+
 			services.AddSingleton<IEventSql, EventSql>();
 			services.AddSingleton<ILocationSql, LocationSql>();
+			services.AddSingleton<IAddressSql, AddressSql>();
+			services.AddSingleton<ISectorSql, SectorSql>();
+
 			services.AddSingleton(AutoMapperConfig.Initialize());
 		}
 

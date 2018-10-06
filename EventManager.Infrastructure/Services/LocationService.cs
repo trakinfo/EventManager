@@ -13,10 +13,12 @@ namespace EventManager.Infrastructure.Services
 	public class LocationService : ILocationService
 	{
 		readonly ILocationRepository locationRepo;
+		readonly IAddressRepository addressRepo;
 		readonly IMapper mapper;
-		public LocationService(ILocationRepository repo, IMapper _mapper)
+		public LocationService(ILocationRepository _locationRepo, IAddressRepository _addressRepo, IMapper _mapper)
 		{
-			locationRepo = repo;
+			locationRepo = _locationRepo;
+			addressRepo = _addressRepo;
 			mapper = _mapper;
 		}
 		public async Task<IEnumerable<LocationDto>> BrowseAsync(string name = null)
@@ -28,13 +30,13 @@ namespace EventManager.Infrastructure.Services
 		public async Task CreateAddressAsync(string placeName, string streetName, string propertyNumber, string apartmentNumber, string postalCode, string postOffice)
 		{
 			var sqlParamValue = new object[] { placeName, streetName, propertyNumber, apartmentNumber, postalCode, postOffice };
-			await locationRepo.AddAddressAsync(sqlParamValue);
+			await addressRepo.AddAsync<Address>(sqlParamValue,addressRepo.CreateInsertParams);
 		}
 
 		public async Task CreateAsync(string name, ulong? idAddress, string phoneNumber, string email, string www, string creator, string hostIP)
 		{
 			var sqlParamValue = new object[] { name, idAddress, phoneNumber, email, www, creator, hostIP };
-			await locationRepo.AddAsync<Location>(sqlParamValue, locationRepo.CreateLocationParams);
+			await locationRepo.AddAsync<Location>(sqlParamValue, locationRepo.CreateInsertParams);
 		}
 
 		public Task<ISet<Sector>> CreateSectorCollectionAsync(ulong locationId)

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class EventRepository : GenericRepository, IEventRepository
+	public class EventRepository : Repository, IEventRepository
 	{
 		//IDataBaseContext dbContext;
 		ILocationRepository locationRepository;
@@ -73,7 +73,7 @@ namespace EventManager.Infrastructure.Repository
 		//	await dbContext.RemoveRecordAsync(sql.DeleteEvent(), paramValue, CreateDeleteParams);
 		//}
 
-		public void CreateEventParams(IDbCommand cmd)
+		public void CreateInsertParams(IDbCommand cmd)
 		{
 			cmd.Parameters.Add(dbContext.CreateParameter("@Name", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("@Description", DbType.String, cmd));
@@ -87,7 +87,7 @@ namespace EventManager.Infrastructure.Repository
 		public void CreateUpdateParams(IDbCommand cmd)
 		{
 			cmd.Parameters.Add(dbContext.CreateParameter("@ID", DbType.Int64, cmd));
-			CreateEventParams(cmd);
+			CreateInsertParams(cmd);
 		}
 
 		public void CreateDeleteParams(IDbCommand cmd)

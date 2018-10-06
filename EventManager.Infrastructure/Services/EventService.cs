@@ -52,7 +52,7 @@ namespace EventManager.Infrastructure.Services
 			try
 			{
 				var sqlParamValue = new object[] { name, description, idLocation, startDate, endDate, creator, hostIP };
-				await _eventRepository.AddAsync<Event>(sqlParamValue, _eventRepository.CreateEventParams);
+				await _eventRepository.AddAsync<Event>(sqlParamValue, _eventRepository.CreateInsertParams);
 			}
 
 			catch (Exception e)
