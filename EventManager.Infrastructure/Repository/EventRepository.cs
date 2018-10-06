@@ -75,24 +75,24 @@ namespace EventManager.Infrastructure.Repository
 
 		public void CreateEventParams(IDbCommand cmd)
 		{
-			cmd.Parameters.Add(dbContext.CreateParameter("?Name", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?Description", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?IdLocation", DbType.Int64, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?StartDate", DbType.DateTime, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?EndDate", DbType.DateTime, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?User", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?HostIP", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@Name", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@Description", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@IdLocation", DbType.Int64, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@StartDate", DbType.DateTime, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@EndDate", DbType.DateTime, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@User", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@HostIP", DbType.String, cmd));
 		}
 
 		public void CreateUpdateParams(IDbCommand cmd)
 		{
-			cmd.Parameters.Add(dbContext.CreateParameter("?ID", DbType.Int64, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@ID", DbType.Int64, cmd));
 			CreateEventParams(cmd);
 		}
 
 		public void CreateDeleteParams(IDbCommand cmd)
 		{
-			cmd.Parameters.Add(dbContext.CreateParameter("?ID", DbType.Int64, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@ID", DbType.Int64, cmd));
 		}
 
 		public async Task<int> AddTickets(object[] sqlParamValue, uint seatingCount)
@@ -109,10 +109,10 @@ namespace EventManager.Infrastructure.Repository
 
 		private void CreateTicketParams(IDbCommand cmd)
 		{
-			cmd.Parameters.Add(dbContext.CreateParameter("?IdEvent", DbType.Int64, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?IdSector", DbType.Int64, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?Price", DbType.Decimal, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?SeatingNumber", DbType.Int32, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@IdEvent", DbType.Int64, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@IdSector", DbType.Int64, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@Price", DbType.Decimal, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@SeatingNumber", DbType.Int32, cmd));
 		}
 
 		public Event GetEvent(IDataReader R)

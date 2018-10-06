@@ -23,8 +23,8 @@ namespace EventManager.Infrastructure.Services
 		{
 			try
 			{
-				var @event = await _eventRepository.GetAsync(id, _eventRepository.GetEvent);
-				return _mapper.Map<EventDto>(@event);
+				var _event = await _eventRepository.GetAsync(id, _eventRepository.GetEvent);
+				return _mapper.Map<EventDto>(_event);
 			}
 			catch (Exception e)
 			{

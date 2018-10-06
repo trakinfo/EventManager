@@ -61,24 +61,24 @@ namespace EventManager.Infrastructure.Repository
 
 		public void CreateLocationParams(IDbCommand cmd)
 		{
-			cmd.Parameters.Add(dbContext.CreateParameter("?Name", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?IdAddress", DbType.Int64, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?PhoneNumber", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?Email", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?www", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?User", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?HostIP", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@Name", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@IdAddress", DbType.Int64, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@PhoneNumber", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@Email", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@www", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@User", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@HostIP", DbType.String, cmd));
 		}
 		public void CreateAddressParams(IDbCommand cmd)
 		{
-			cmd.Parameters.Add(dbContext.CreateParameter("?PlaceName", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?StreetName", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?PropertyNumber", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?ApartmentNumber", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?PostalCode", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?PostOffice", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?User", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?HostIP", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@PlaceName", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@StreetName", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@PropertyNumber", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@ApartmentNumber", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@PostalCode", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@PostOffice", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@User", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@HostIP", DbType.String, cmd));
 		}
 		public async Task AddAddressAsync(object[] sqlParamValues)
 		{

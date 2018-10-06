@@ -39,12 +39,12 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 
 		public string InsertAddress()
 		{
-			return "INSERT INTO address VALUES(null,?placeName,?streetName,?propertyNumber,?apartmentNumber,?postalCode,?postOffice,?User,?HostIP,NULL);";
+			return "INSERT INTO address VALUES(null,@placeName,@streetName,@propertyNumber,@apartmentNumber,@postalCode,@postOffice,@User,@HostIP,NULL);";
 		}
 
 		//public string DeleteLocation()
 		//{
-		//	return "DELETE FROM location WHERE ID=?ID;";
+		//	return "DELETE FROM location WHERE ID=@ID;";
 		//}
 
 		public string SelectMany(string name)
@@ -59,7 +59,7 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 
 		public string Insert()
 		{
-			return "INSERT INTO location VALUES(null,?Name,?IdAddress,?PhoneNumber,?Email,?www,?User,?HostIP,NULL);";
+			return "INSERT INTO location VALUES(null,@Name,@IdAddress,@PhoneNumber,@Email,@www,@User,@HostIP,NULL);";
 		}
 
 		public string Update()
@@ -69,7 +69,7 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 
 		public string Delete()
 		{
-			return "DELETE FROM location WHERE ID=?ID;";
+			return "DELETE FROM location WHERE ID=@ID;";
 		}
 	}
 }

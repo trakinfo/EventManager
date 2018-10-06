@@ -24,16 +24,16 @@ namespace EventManager.Infrastructure.DataBaseContext.SQL
 		}
 		public static string InsertUser()
 		{
-			return "INSERT INTO user (Login,Nazwisko,Imie,Email,Password,Role,Status,Sex,Owner,User,ComputerIP) VALUES (?Login,?LastName,?FirstName,?Email,?Password,?Role,?Status,?Sex,?Owner,?User,?IP);";
+			return "INSERT INTO user (Login,Nazwisko,Imie,Email,Password,Role,Status,Sex,Owner,User,ComputerIP) VALUES (@Login,@LastName,@FirstName,@Email,@Password,@Role,@Status,@Sex,@Owner,@User,@IP);";
 		}
 
 		public static string UpdateUser()
 		{
-			return "UPDATE user SET Nazwisko=?Nazwisko,Imie=?Imie,Email=?Email,Role=?Rola,Status=?Status,Sex=?Sex,User=?User,ComputerIP=?IP WHERE Login=?Login;";
+			return "UPDATE user SET Nazwisko=@Nazwisko,Imie=@Imie,Email=@Email,Role=@Rola,Status=@Status,Sex=@Sex,User=@User,ComputerIP=@IP WHERE Login=@Login;";
 		}
 		public static string DeleteUser()
 		{
-			return "DELETE FROM user WHERE Login=?Login;";
+			return "DELETE FROM user WHERE Login=@Login;";
 		}
 		public static string CountUser(string Login)
 		{

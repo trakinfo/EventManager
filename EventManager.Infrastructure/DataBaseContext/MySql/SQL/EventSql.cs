@@ -24,27 +24,27 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 		}
 		public string Insert()
 		{
-			return "INSERT INTO event VALUES(null,?Name,?Description,?IdLocation,?StartDate,?EndDate,?User,?HostIP,NULL);";
+			return "INSERT INTO event VALUES(null,@Name,@Description,@IdLocation,@StartDate,@EndDate,@User,@HostIP,NULL);";
 		}
 
 		public string Update()
 		{
-			return "UPDATE event SET Name=?Name, Description=?Description, IdLocation=?IdLocation, StartDate=?StartDate, EndDate=?EndDate, User=?User, HostIP=?HostIP WHERE ID=?ID;";
+			return "UPDATE event SET Name=@Name, Description=@Description, IdLocation=@IdLocation, StartDate=@StartDate, EndDate=@EndDate, User=@User, HostIP=@HostIP WHERE ID=@ID;";
 		}
 
 		public string UpdateEventLocation()
 		{
-			return "UPDATE event SET IdLocation=?IdLocation, User=?User, HostIP=?HostIP WHERE ID=?ID;";
+			return "UPDATE event SET IdLocation=@IdLocation, User=@User, HostIP=@HostIP WHERE ID=@ID;";
 		}
 
 		public string Delete()
 		{
-			return "DELETE FROM event WHERE ID=?ID";
+			return "DELETE FROM event WHERE ID=@ID";
 		}
 
 		public string InsertTicket()
 		{
-			return "INSERT INTO ticket VALUES(null,?IdSector,?IdEvent,?SeatingNumber,?Price);";
+			return "INSERT INTO ticket VALUES(null,@IdSector,@IdEvent,@SeatingNumber,@Price);";
 		}
 	}
 }
