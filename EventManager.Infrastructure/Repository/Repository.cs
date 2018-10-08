@@ -13,20 +13,11 @@ namespace EventManager.Infrastructure.Repository
 		protected IDataBaseContext dbContext;
 		protected ISql sql;
 
+
 		public Repository(IDataBaseContext context, ISql _sql)
 		{
 			dbContext = context;
 			sql = _sql;
-		}
-
-		public async Task AddAsync<T>(object[] sqlParamValue, DataParameters createParams)
-		{
-			await dbContext.AddRecordAsync(sql.Insert(), sqlParamValue, createParams);
-		}
-
-		public async Task DeleteAsync<T>(object[] sqlParamValue, DataParameters createParams)
-		{
-			await dbContext.RemoveRecordAsync(sql.Update(), sqlParamValue, createParams);
 		}
 
 		public async Task<T> GetAsync<T>(ulong id, GetData<T> Get)
@@ -39,9 +30,20 @@ namespace EventManager.Infrastructure.Repository
 			return await dbContext.FetchRecordSetAsync(sql.SelectMany(name), Get);
 		}
 
+		public async Task AddAsync<T>(object[] sqlParamValue, DataParameters createParams)
+		{
+			await dbContext.AddRecordAsync(sql.Insert(), sqlParamValue, createParams);
+		}
+
 		public async Task UpdateAsync<T>(object[] sqlParamValue, DataParameters createParams)
 		{
 			await dbContext.UpdateRecordAsync(sql.Update(), sqlParamValue, createParams);
 		}
+
+		public async Task DeleteAsync<T>(object[] sqlParamValue, DataParameters createParams)
+		{
+			await dbContext.RemoveRecordAsync(sql.Update(), sqlParamValue, createParams);
+		}
+
 	}
 }
