@@ -6,6 +6,7 @@ using EventManager.Core.Repository;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 
 namespace EventManager.Infrastructure.Repository
@@ -16,18 +17,23 @@ namespace EventManager.Infrastructure.Repository
 		public AddressRepository(IDataBaseContext context, IAddressSql addressSql) : base(context, addressSql)
 		{
 			RefreshRepo();
+			RecordAffected -= (s, ex) => RefreshRepo();
+			RecordAffected += (s, ex) => RefreshRepo();
 		}
 
 		private void RefreshRepo()
 		{
-			AddressList = GetListAsync(null, GetAddress).Result;
+			AddressList = GetListAsync(null, CreateAddress).Result;
 		}
-
-		public Address GetAddress(IDataReader R)
+		public Address GetAddress(long idAddress)
+		{
+			return AddressList.Where(A => A.Id == idAddress).FirstOrDefault();
+		}
+		public Address CreateAddress(IDataReader R)
 		{
 			return new Address
 				(
-					Convert.ToUInt64(R["ID"]),
+					Convert.ToInt64(R["ID"]),
 					R["PlaceName"].ToString(),
 					R["StreetName"].ToString(),
 					R["PropertyNumber"].ToString(),

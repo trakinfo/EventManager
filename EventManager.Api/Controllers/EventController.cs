@@ -21,7 +21,7 @@ namespace EventManager.Api.Controllers
 			return Json(events);
 		}
 		[HttpGet("{eventId}")]
-		public async Task<IActionResult> Get(ulong eventId)
+		public async Task<IActionResult> Get(long eventId)
 		{
 			var _event = await _eventService.GetAsync(eventId);
 			return Json(_event);
@@ -42,14 +42,14 @@ namespace EventManager.Api.Controllers
 		}
 
 		[HttpPost("{eventId}/tickets")]
-		public async Task<IActionResult> Post(ulong eventId)
+		public async Task<IActionResult> Post(long eventId)
 		{
 			var count = await _eventService.CreateTicketCollectionAsync(eventId);
 			return Created(string.Empty, count);
 		}
 
 		[HttpPut("{eventId}")]
-		public async Task<IActionResult> Put(ulong eventId, [FromBody] NewEvent Event)
+		public async Task<IActionResult> Put(long eventId, [FromBody] NewEvent Event)
 		{
 			await _eventService.UpdateAsync(
 				eventId,
@@ -65,7 +65,7 @@ namespace EventManager.Api.Controllers
 		}
 
 		[HttpDelete("{eventId}")]
-		public async Task<IActionResult> Delete(ulong eventId)
+		public async Task<IActionResult> Delete(long eventId)
 		{
 			await _eventService.DeleteAsync(eventId);
 			return NoContent();

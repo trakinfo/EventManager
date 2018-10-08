@@ -20,18 +20,19 @@ namespace EventManager.Infrastructure.Repository
 
 		public Location GetLocation(IDataReader R)
 		{
-			var idLocation = Convert.ToUInt64(R["ID"]);
+			var idLocation = Convert.ToInt64(R["ID"]);
 			Address address = null;
 
 			if (!string.IsNullOrEmpty(R["IdAddress"].ToString()))
-				address = _addressRepo.GetAsync(idLocation, _addressRepo.GetAddress).Result;
+				address = _addressRepo.GetAddress(Convert.ToInt64(R["IdAddress"]));
+				//address = _addressRepo.GetAsync(idLocation, _addressRepo.GetAddress).Result;
 					
 			return new Location
 				(
 					idLocation,
 					R["Name"].ToString(),
 					address,
-					_sectorRepo.GetListAsync(idLocation, _sectorRepo.GetSector).Result,
+					_sectorRepo.GetLocationSectors(idLocation),
 					R["PhoneNumber"].ToString(),
 					R["Email"].ToString(),
 					R["www"].ToString(),

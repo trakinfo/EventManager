@@ -11,7 +11,10 @@ namespace EventManager.Core.Repository
 	public interface ISectorRepository : IRepository
 	{
 		void CreateInsertParams(IDbCommand cmd);
-		Task<ISet<Sector>> GetListAsync(ulong idLocation, GetData<Sector> Get);
-		Sector GetSector(IDataReader R);
+		void CreateUpdateParams(IDbCommand cmd);
+		void CreateDeleteParams(IDbCommand cmd);
+		IEnumerable<Sector> GetLocationSectors(long idLocation);
+		//Task<ISet<Sector>> GetListAsync(long idLocation, GetData<Sector> Get);
+		Sector CreateSector(IDataReader R);
 	}
 }

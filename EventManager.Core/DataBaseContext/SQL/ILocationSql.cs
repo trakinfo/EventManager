@@ -6,8 +6,8 @@ namespace EventManager.Core.DataBaseContext.SQL
 {
     public interface ILocationSql : ISql
     {
-		//string SelectAddress(ulong id);
-		//string SelectSector(ulong id);
+		//string SelectAddress(long id);
+		//string SelectSector(long id);
 		string UpdateAddress();
 	}
 }

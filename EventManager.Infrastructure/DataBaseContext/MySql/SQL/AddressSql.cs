@@ -7,7 +7,7 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 {
 	public class AddressSql : IAddressSql
 	{
-		public string Select(ulong id)
+		public string Select(long id)
 		{
 			return $"SELECT a.ID, a.PlaceName, a.StreetName, a.PropertyNumber, a.ApartmentNumber, a.PostalCode, a.PostOffice, a.User,a.HostIP,a.Version FROM address a INNER JOIN location l ON a.ID=l.IdAddress WHERE l.ID={id};";
 		}

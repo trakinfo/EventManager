@@ -17,17 +17,17 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 		//	throw new NotImplementedException();
 		//}
 
-		//public string SelectLocation(ulong idLocation)
+		//public string SelectLocation(long idLocation)
 		//{
 		//	return $"SELECT l.ID,l.Name, l.IdAddress, l.PhoneNumber, l.Email, l.www, l.User,l.HostIP,l.Version FROM location l WHERE l.ID={idLocation};";
 		//}
 
-		//public string SelectAddress(ulong idLocation)
+		//public string SelectAddress(long idLocation)
 		//{
 		//	return $"SELECT a.ID, a.PlaceName, a.StreetName, a.PropertyNumber, a.ApartmentNumber, a.PostalCode, a.PostOffice, a.User,a.HostIP,a.Version FROM address a INNER JOIN location l ON a.ID=l.IdAddress WHERE l.ID={idLocation};";
 		//}
 
-		//public string SelectSector(ulong idLocation)
+		//public string SelectSector(long idLocation)
 		//{
 		//	return $"SELECT s.ID,s.Name,s.Description,s.SeatingCount,s.SeatingPrice,s.User,s.HostIP,s.Version FROM sector s WHERE s.IdLocation={idLocation};";
 		//}
@@ -47,7 +47,7 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 		//	return "DELETE FROM location WHERE ID=@ID;";
 		//}
 
-		public string Select(ulong idLocation)
+		public string Select(long idLocation)
 		{
 			return $"SELECT l.ID,l.Name, l.IdAddress, l.PhoneNumber, l.Email, l.www, l.User,l.HostIP,l.Version FROM location l WHERE l.ID={idLocation};";
 		}

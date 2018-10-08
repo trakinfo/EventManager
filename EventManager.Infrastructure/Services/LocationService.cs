@@ -12,39 +12,39 @@ namespace EventManager.Infrastructure.Services
 {
 	public class LocationService : ILocationService
 	{
-		readonly ILocationRepository locationRepo;
-		readonly IAddressRepository addressRepo;
+		readonly ILocationRepository _locationRepo;
+		readonly IAddressRepository _addressRepo;
 		readonly IMapper mapper;
-		public LocationService(ILocationRepository _locationRepo, IAddressRepository _addressRepo, IMapper _mapper)
+		public LocationService(ILocationRepository locationRepo, IAddressRepository addressRepo, IMapper _mapper)
 		{
-			locationRepo = _locationRepo;
-			addressRepo = _addressRepo;
+			_locationRepo = locationRepo;
+			_addressRepo = addressRepo;
 			mapper = _mapper;
 		}
 		public async Task<IEnumerable<LocationDto>> BrowseAsync(string name = null)
 		{
-			var locationList = await locationRepo.GetListAsync(name, locationRepo.GetLocation);
+			var locationList = await _locationRepo.GetListAsync(name, _locationRepo.GetLocation);
 			return mapper.Map<IEnumerable<LocationDto>>(locationList);
 		}
 
 		public async Task CreateAddressAsync(string placeName, string streetName, string propertyNumber, string apartmentNumber, string postalCode, string postOffice)
 		{
 			var sqlParamValue = new object[] { placeName, streetName, propertyNumber, apartmentNumber, postalCode, postOffice };
-			await addressRepo.AddAsync<Address>(sqlParamValue,addressRepo.CreateInsertParams);
+			await _addressRepo.AddAsync<Address>(sqlParamValue, _addressRepo.CreateInsertParams);
 		}
 
-		public async Task CreateAsync(string name, ulong? idAddress, string phoneNumber, string email, string www, string creator, string hostIP)
+		public async Task CreateAsync(string name, long? idAddress, string phoneNumber, string email, string www, string creator, string hostIP)
 		{
 			var sqlParamValue = new object[] { name, idAddress, phoneNumber, email, www, creator, hostIP };
-			await locationRepo.AddAsync<Location>(sqlParamValue, locationRepo.CreateInsertParams);
+			await _locationRepo.AddAsync<Location>(sqlParamValue, _locationRepo.CreateInsertParams);
 		}
 
-		public Task<ISet<Sector>> CreateSectorCollectionAsync(ulong locationId)
+		public Task<ISet<Sector>> CreateSectorCollectionAsync(long locationId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task DeleteAsync(ulong id)
+		public Task DeleteAsync(long id)
 		{
 			throw new NotImplementedException();
 		}
@@ -54,15 +54,15 @@ namespace EventManager.Infrastructure.Services
 			throw new NotImplementedException();
 		}
 
-		public async Task<LocationDto> GetAsync(ulong id)
+		public async Task<LocationDto> GetAsync(long id)
 		{
-			var location = await locationRepo.GetAsync(id, locationRepo.GetLocation);
+			var location = await _locationRepo.GetAsync(id, _locationRepo.GetLocation);
 			return mapper.Map<LocationDto>(location);
 		}
 
 
 
-		public Task UpdateAsync(ulong id, string name, ulong? idAddress, string phoneNumber, string email, string www, string modifier, string hostIP)
+		public Task UpdateAsync(long id, string name, long? idAddress, string phoneNumber, string email, string www, string modifier, string hostIP)
 		{
 			throw new NotImplementedException();
 		}

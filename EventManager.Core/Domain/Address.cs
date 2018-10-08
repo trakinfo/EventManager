@@ -12,11 +12,11 @@ namespace EventManager.Core.Domain
 		public string PostOffice { get; set; }
 
 		protected Address() { }
-		public Address(ulong id, string placeName, string streetName, string propertyNumber, string apartmentNumber, string  postalCode, string  postOffice, Signature creator)
+		public Address(long id, string placeName, string streetName, string propertyNumber, string apartmentNumber, string  postalCode, string  postOffice, Signature creator)
 		{
 			Add(id, placeName, streetName, propertyNumber, apartmentNumber, postalCode, postOffice, creator);
 		}
-		private void Add(ulong id, string placeName, string streetName, string propertyNumber, string apartmentNumber, string postalCode, string postOffice, Signature creator)
+		private void Add(long id, string placeName, string streetName, string propertyNumber, string apartmentNumber, string postalCode, string postOffice, Signature creator)
 		{
 			Id = id;
 			Creator = creator;

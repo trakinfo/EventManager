@@ -2,7 +2,7 @@
 {
 	public interface IEventSql : ISql
     {
-		string SelectTicket(ulong idEvent, ulong idSector);
+		string SelectTicket(long idEvent, long idSector);
 		string InsertTicket();
 		string UpdateEventLocation();
 	}

@@ -19,7 +19,7 @@ namespace EventManager.Infrastructure.Services
 			_mapper = mapper;
 		}
 
-		public async Task<EventDto> GetAsync(ulong id)
+		public async Task<EventDto> GetAsync(long id)
 		{
 			try
 			{
@@ -47,7 +47,7 @@ namespace EventManager.Infrastructure.Services
 			}
 		}
 
-		public async Task CreateAsync(string name, string description, ulong? idLocation, DateTime startDate, DateTime endDate, string creator, string hostIP)
+		public async Task CreateAsync(string name, string description, long? idLocation, DateTime startDate, DateTime endDate, string creator, string hostIP)
 		{
 			try
 			{
@@ -62,7 +62,7 @@ namespace EventManager.Infrastructure.Services
 		}
 
 
-		public async Task<int> CreateTicketCollectionAsync(ulong eventId)
+		public async Task<int> CreateTicketCollectionAsync(long eventId)
 		{
 			int ticketCount = 0;
 			try
@@ -84,7 +84,7 @@ namespace EventManager.Infrastructure.Services
 			return ticketCount;
 		}
 
-		public async Task DeleteAsync(ulong id)
+		public async Task DeleteAsync(long id)
 		{
 			try
 			{
@@ -104,7 +104,7 @@ namespace EventManager.Infrastructure.Services
 			throw new NotImplementedException();
 		}
 
-		public async Task UpdateAsync(ulong id, string name, string description, ulong? idLocation, DateTime startDate, DateTime endDate, string modifier, string hostIP)
+		public async Task UpdateAsync(long id, string name, string description, long? idLocation, DateTime startDate, DateTime endDate, string modifier, string hostIP)
 		{
 			try
 			{

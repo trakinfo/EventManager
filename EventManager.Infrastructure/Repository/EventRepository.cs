@@ -23,7 +23,7 @@ namespace EventManager.Infrastructure.Repository
 			locationRepository = locationRepo;
 			//sql = eventSql;
 		}
-		//public async Task<Event> GetEventAsync(ulong eventId)
+		//public async Task<Event> GetEventAsync(long eventId)
 		//{
 		//	var eventDR = dbContext.FetchRecordAsync(sql.SelectEvent(eventId), GetEvent);
 		//	return await eventDR;
@@ -41,7 +41,7 @@ namespace EventManager.Infrastructure.Repository
 		//	return await Task.FromResult(events.AsEnumerable());
 		//}
 
-		async Task<Location> GetLocationAsync(ulong idEvent, ulong idLocation)
+		async Task<Location> GetLocationAsync(long idEvent, long idLocation)
 		{
 			var location = await locationRepository.GetAsync(idLocation, locationRepository.GetLocation);
 
@@ -52,7 +52,7 @@ namespace EventManager.Infrastructure.Repository
 			return await Task.FromResult(location);
 		}
 
-		async Task<ISet<Ticket>> GetTicketListAsync(ulong idEvent, ulong idSector)
+		async Task<ISet<Ticket>> GetTicketListAsync(long idEvent, long idSector)
 		{
 			var tickets = dbContext.FetchRecordSetAsync((sql as IEventSql).SelectTicket(idEvent, idSector), GetTicket);
 			return await tickets;
@@ -95,7 +95,7 @@ namespace EventManager.Infrastructure.Repository
 			cmd.Parameters.Add(dbContext.CreateParameter("@ID", DbType.Int64, cmd));
 		}
 
-		public async Task<int> AddTickets(object[] sqlParamValue, uint seatingCount)
+		public async Task<int> AddTickets(object[] sqlParamValue, int seatingCount)
 		{
 			var HS = new HashSet<object[]>();
 
@@ -117,11 +117,11 @@ namespace EventManager.Infrastructure.Repository
 
 		public Event GetEvent(IDataReader R)
 		{
-			var idEvent = Convert.ToUInt64(R["ID"]);
+			var idEvent = Convert.ToInt64(R["ID"]);
 			Location location = null;
 
 			if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
-				location = GetLocationAsync(idEvent, Convert.ToUInt64(R["IdLocation"])).Result;
+				location = GetLocationAsync(idEvent, Convert.ToInt64(R["IdLocation"])).Result;
 			return new Event
 				(
 					idEvent,
@@ -136,7 +136,7 @@ namespace EventManager.Infrastructure.Repository
 
 		Ticket GetTicket(IDataReader R)
 		{
-			return new Ticket(Convert.ToUInt64(R["ID"]), Convert.ToInt32(R["SeatingNumber"]), Convert.ToDecimal(R["Price"]), null);
+			return new Ticket(Convert.ToInt64(R["ID"]), Convert.ToInt32(R["SeatingNumber"]), Convert.ToDecimal(R["Price"]), null);
 		}
 	}
 }

@@ -15,11 +15,11 @@ namespace EventManager.Core.Domain
 
 		protected Ticket() { }
 
-		public Ticket(ulong id, int seatingNumber, decimal price, Signature creator)
+		public Ticket(long id, int seatingNumber, decimal price, Signature creator)
 		{
 			Add(id, seatingNumber, price, creator);
 		}
-		private void Add(ulong id, int seatingNumber, decimal price, Signature creator)
+		private void Add(long id, int seatingNumber, decimal price, Signature creator)
 		{
 			Id = id;
 			Creator = creator;

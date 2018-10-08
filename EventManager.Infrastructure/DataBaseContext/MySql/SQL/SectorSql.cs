@@ -7,14 +7,14 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 {
 	public class SectorSql : ISectorSql
 	{
-		public string Select(ulong id)
+		public string Select(long id)
 		{
-			return $"SELECT s.ID,s.Name,s.Description,s.SeatingRangeStart,s.SeatingRangeEnd,s.SeatingPrice,s.User,s.HostIP,s.Version FROM sector s WHERE s.ID={id};";
+			return $"SELECT s.ID,s.Name,s.Description,s.SeatingRangeStart,s.SeatingRangeEnd,s.SeatingPrice,s.IdLocation,s.User,s.HostIP,s.Version FROM sector s WHERE s.ID={id};";
 		}
 
 		public string SelectMany(string name)
 		{
-			return $"SELECT s.ID,s.Name,s.Description,s.SeatingRangeStart,s.SeatingRangeEnd,s.SeatingPrice,s.User,s.HostIP,s.Version FROM sector s WHERE s.Name LIKE '{name}%' ORDER BY s.Name;";
+			return $"SELECT s.ID,s.Name,s.Description,s.SeatingRangeStart,s.SeatingRangeEnd,s.SeatingPrice,s.IdLocation,s.User,s.HostIP,s.Version FROM sector s WHERE s.Name LIKE '{name}%' ORDER BY s.Name;";
 		}
 
 		public string Insert()
@@ -32,12 +32,12 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 			throw new NotImplementedException();
 		}
 
-		public string SelectLocationSectors(ulong idLocation)
+		public string SelectLocationSectors(long idLocation)
 		{
 			return $"SELECT s.ID,s.Name,s.Description,s.SeatingRangeStart,s.SeatingRangeEnd,s.SeatingPrice,s.User,s.HostIP,s.Version FROM sector s WHERE s.IdLocation={idLocation};";
 		}
 
-		public string UpdateLocation(ulong sectorId)
+		public string UpdateLocation(long sectorId)
 		{
 			throw new NotImplementedException();
 		}

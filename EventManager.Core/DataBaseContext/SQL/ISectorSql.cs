@@ -6,7 +6,7 @@ namespace EventManager.Core.DataBaseContext.SQL
 {
 	public interface ISectorSql :ISql
 	{
-		string SelectLocationSectors(ulong idLocation);
-		string UpdateLocation(ulong sectorId);
+		string SelectLocationSectors(long idLocation);
+		string UpdateLocation(long sectorId);
 	}
 }

@@ -13,6 +13,7 @@ namespace EventManager.Infrastructure.Repository
 		protected IDataBaseContext dbContext;
 		protected ISql sql;
 
+		public event EventHandler RecordAffected;
 
 		public Repository(IDataBaseContext context, ISql _sql)
 		{
@@ -20,7 +21,7 @@ namespace EventManager.Infrastructure.Repository
 			sql = _sql;
 		}
 
-		public async Task<T> GetAsync<T>(ulong id, GetData<T> Get)
+		public async Task<T> GetAsync<T>(long id, GetData<T> Get)
 		{
 			return await dbContext.FetchRecordAsync(sql.Select(id), Get);
 		}
@@ -33,16 +34,19 @@ namespace EventManager.Infrastructure.Repository
 		public async Task AddAsync<T>(object[] sqlParamValue, DataParameters createParams)
 		{
 			await dbContext.AddRecordAsync(sql.Insert(), sqlParamValue, createParams);
+			RecordAffected?.Invoke(this, new EventArgs());
 		}
 
 		public async Task UpdateAsync<T>(object[] sqlParamValue, DataParameters createParams)
 		{
 			await dbContext.UpdateRecordAsync(sql.Update(), sqlParamValue, createParams);
+			RecordAffected?.Invoke(this, new EventArgs());
 		}
 
 		public async Task DeleteAsync<T>(object[] sqlParamValue, DataParameters createParams)
 		{
 			await dbContext.RemoveRecordAsync(sql.Update(), sqlParamValue, createParams);
+			RecordAffected?.Invoke(this, new EventArgs());
 		}
 
 	}

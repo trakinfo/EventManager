@@ -4,7 +4,7 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 {
 	public class EventSql : IEventSql
     {
-		public string Select(ulong id)
+		public string Select(long id)
 		{
 			return $"SELECT e.ID,e.Name,e.Description,e.IdLocation,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.ID={id};";
 		}
@@ -29,7 +29,7 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 			return "DELETE FROM event WHERE ID=@ID";
 		}
 
-		public string SelectTicket(ulong idEvent, ulong idSector)
+		public string SelectTicket(long idEvent, long idSector)
 		{
 			return $"SELECT t.ID,t.SeatingNumber,t.Price,t.UserId,t.PurchaseDate,t.User,t.HostIP,t.Version FROM ticket t WHERE t.IdEvent={idEvent} AND t.IdSector={idSector};";
 		}
