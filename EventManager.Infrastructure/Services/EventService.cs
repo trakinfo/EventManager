@@ -52,7 +52,7 @@ namespace EventManager.Infrastructure.Services
 			try
 			{
 				var sqlParamValue = new object[] { name, description, idLocation, startDate, endDate, creator, hostIP };
-				await _eventRepository.AddAsync<Event>(sqlParamValue, _eventRepository.CreateInsertParams);
+				await _eventRepository.AddAsync(sqlParamValue, _eventRepository.CreateInsertParams);
 			}
 
 			catch (Exception e)
@@ -90,7 +90,7 @@ namespace EventManager.Infrastructure.Services
 			{
 				var sqlParamValue = new object[1] { id };
 
-				await _eventRepository.DeleteAsync<Event>(sqlParamValue,_eventRepository.CreateDeleteParams);
+				await _eventRepository.DeleteAsync(sqlParamValue,_eventRepository.CreateDeleteParams);
 			}
 
 			catch (Exception e)
@@ -109,7 +109,7 @@ namespace EventManager.Infrastructure.Services
 			try
 			{
 				var SqlParams = new object[] { id, name, description, idLocation, startDate, endDate, modifier, hostIP };
-				await _eventRepository.UpdateAsync<Event>(SqlParams,_eventRepository.CreateUpdateParams);
+				await _eventRepository.UpdateAsync(SqlParams,_eventRepository.CreateUpdateParams);
 			}
 
 			catch (Exception e)
