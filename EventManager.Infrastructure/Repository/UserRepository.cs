@@ -7,7 +7,8 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class UserRepository : Repository, IUserRepository
 	{
-		public IEnumerable<User> UserList { get; set; }
+		IEnumerable<User> userList;
+		public IEnumerable<User> UserList { get;}
 		public UserRepository(IDataBaseContext context, IUserSql userSql) : base(context, userSql)
 		{
 			RefreshRepo();
@@ -17,7 +18,7 @@ namespace EventManager.Infrastructure.Repository
 
 		private void RefreshRepo()
 		{
-			UserList = GetListAsync(null, CreateUser).Result;
+			userList = GetListAsync(null, CreateUser).Result;
 		}
 	}
 }

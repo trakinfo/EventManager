@@ -13,7 +13,8 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class AddressRepository : Repository, IAddressRepository
 	{
-		public IEnumerable<Address> AddressList { get; set; }
+		IEnumerable<Address> addressList;
+		public IEnumerable<Address> AddressList { get => addressList; }
 		public AddressRepository(IDataBaseContext context, IAddressSql addressSql) : base(context, addressSql)
 		{
 			RefreshRepo();
@@ -23,7 +24,7 @@ namespace EventManager.Infrastructure.Repository
 
 		private void RefreshRepo()
 		{
-			AddressList = GetListAsync(null, CreateAddress).Result;
+			addressList = GetListAsync(null, CreateAddress).Result;
 		}
 		public Address GetAddress(long idAddress)
 		{

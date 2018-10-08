@@ -7,7 +7,7 @@ namespace EventManager.Core.Repository
 {
 	public interface IAddressRepository : IRepository
 	{
-		IEnumerable<Address> AddressList { get; set; }
+		IEnumerable<Address> AddressList { get; }
 		event EventHandler RecordAffected;
 		void CreateInsertParams(IDbCommand cmd);
 		Address CreateAddress(IDataReader R);
