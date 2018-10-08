@@ -23,7 +23,7 @@ namespace EventManager.Infrastructure.Mapper
 				.ForMember(DTO => DTO.LocationAddress, e => e.MapFrom(p => p.Location.Address));
 				cfg.CreateMap<Location, LocationDto>()
 				.ForMember(DTO => DTO.Address, l => l.MapFrom(p => p.Address));
-
+				cfg.CreateMap<Address, AddressDto>().ForMember(DTO => DTO.Address, a => a.MapFrom(p => p.ToString()));
 			}
 			).CreateMapper();
 		}

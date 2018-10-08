@@ -13,11 +13,11 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class AddressRepository : Repository, IAddressRepository
 	{
-		public IEnumerable<Address> AddressList { get; protected set; }
+		public IEnumerable<Address> AddressList { get; set; }
 		public AddressRepository(IDataBaseContext context, IAddressSql addressSql) : base(context, addressSql)
 		{
 			RefreshRepo();
-			RecordAffected -= (s, ex) => RefreshRepo();
+			RecordAffected -= (s, ex) =>  RefreshRepo(); 
 			RecordAffected += (s, ex) => RefreshRepo();
 		}
 
@@ -29,6 +29,7 @@ namespace EventManager.Infrastructure.Repository
 		{
 			return AddressList.Where(A => A.Id == idAddress).FirstOrDefault();
 		}
+
 		public Address CreateAddress(IDataReader R)
 		{
 			return new Address

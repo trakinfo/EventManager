@@ -18,7 +18,7 @@ namespace EventManager.Infrastructure.Repository
 			_sectorRepo = sectorRepo;
 		}
 
-		public Location GetLocation(IDataReader R)
+		public Location CreateLocation(IDataReader R)
 		{
 			var idLocation = Convert.ToInt64(R["ID"]);
 			Address address = null;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EventManager.Core.Repository
 {
-    public interface IUserRepository
+    public interface IUserRepository : IRepository
     {
 		Task<User> GetAsync(long userId);
 		Task<User> GetAsync(string login);

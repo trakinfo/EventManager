@@ -43,7 +43,7 @@ namespace EventManager.Infrastructure.Repository
 
 		async Task<Location> GetLocationAsync(long idEvent, long idLocation)
 		{
-			var location = await locationRepository.GetAsync(idLocation, locationRepository.GetLocation);
+			var location = await locationRepository.GetAsync(idLocation, locationRepository.CreateLocation);
 
 			foreach (var S in location.Sectors)
 			{

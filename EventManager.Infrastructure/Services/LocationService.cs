@@ -21,11 +21,18 @@ namespace EventManager.Infrastructure.Services
 			_addressRepo = addressRepo;
 			mapper = _mapper;
 		}
-		public async Task<IEnumerable<LocationDto>> BrowseAsync(string name = null)
+		public async Task<IEnumerable<LocationDto>> GetListAsync(string name = null)
 		{
-			var locationList = await _locationRepo.GetListAsync(name, _locationRepo.GetLocation);
+			var locationList = await _locationRepo.GetListAsync(name, _locationRepo.CreateLocation);
 			return mapper.Map<IEnumerable<LocationDto>>(locationList);
 		}
+
+		public async Task<IEnumerable<AddressDto>> GetAddressList(string name = null)
+		{
+			//var addressList = _addressRepo.GetListAsync(name, _addressRepo.CreateAddress).Result;
+			var addressList = await Task.FromResult(_addressRepo.AddressList);
+			return mapper.Map<IEnumerable<AddressDto>>(addressList);
+		} 
 
 		public async Task CreateAddressAsync(string placeName, string streetName, string propertyNumber, string apartmentNumber, string postalCode, string postOffice)
 		{
@@ -56,7 +63,7 @@ namespace EventManager.Infrastructure.Services
 
 		public async Task<LocationDto> GetAsync(long id)
 		{
-			var location = await _locationRepo.GetAsync(id, _locationRepo.GetLocation);
+			var location = await _locationRepo.GetAsync(id, _locationRepo.CreateLocation);
 			return mapper.Map<LocationDto>(location);
 		}
 

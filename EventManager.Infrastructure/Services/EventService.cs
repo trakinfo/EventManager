@@ -33,7 +33,7 @@ namespace EventManager.Infrastructure.Services
 			}
 		}
 
-		public async Task<IEnumerable<EventDto>> BrowseAsync(string name = null)
+		public async Task<IEnumerable<EventDto>> GetListAsync(string name = null)
 		{
 			try
 			{
