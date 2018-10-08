@@ -17,7 +17,7 @@ namespace EventManager.Api.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Get(string name = "")
 		{
-			var events = await _eventService.BrowseAsync(name);
+			var events = await _eventService.GetListAsync(name);
 			return Json(events);
 		}
 		[HttpGet("{eventId}")]
