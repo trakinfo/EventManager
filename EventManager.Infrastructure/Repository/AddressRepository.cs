@@ -11,10 +11,10 @@ using System.Text;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class AddressRepository : Repository, IAddressRepository
+	public class AddressRepository : Repository<Address>, IAddressRepository
 	{
-		IEnumerable<Address> addressList;
-		public IEnumerable<Address> AddressList { get => addressList; }
+		//IEnumerable<Address> addressList;
+		public IEnumerable<Address> AddressList { get => objectList; }
 		public AddressRepository(IDataBaseContext context, IAddressSql addressSql) : base(context, addressSql)
 		{
 			RefreshRepo();
@@ -24,7 +24,7 @@ namespace EventManager.Infrastructure.Repository
 
 		private void RefreshRepo()
 		{
-			addressList = GetListAsync(null, CreateAddress).Result;
+			objectList = GetListAsync(null, CreateAddress).Result;
 		}
 		public Address GetAddress(long idAddress)
 		{

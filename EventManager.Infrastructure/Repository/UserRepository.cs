@@ -8,10 +8,10 @@ using System.Data;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class UserRepository : Repository, IUserRepository
+	public class UserRepository : Repository<User>, IUserRepository
 	{
-		IEnumerable<User> userList;
-		public IEnumerable<User> UserList { get;}
+		//IEnumerable<User> userList;
+		public IEnumerable<User> UserList { get => objectList;}
 		public UserRepository(IDataBaseContext context, IUserSql userSql) : base(context, userSql)
 		{
 			RefreshRepo();
@@ -21,7 +21,7 @@ namespace EventManager.Infrastructure.Repository
 
 		private void RefreshRepo()
 		{
-			userList = GetListAsync<User>(null, CreateUser).Result;
+			objectList = UserList;
 		}
 
 		private User CreateUser(IDataReader R)

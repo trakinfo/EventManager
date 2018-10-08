@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using EventManager.Core.Domain;
@@ -66,8 +64,6 @@ namespace EventManager.Infrastructure.Services
 			var location = await _locationRepo.GetAsync(id, _locationRepo.CreateLocation);
 			return mapper.Map<LocationDto>(location);
 		}
-
-
 
 		public Task UpdateAsync(long id, string name, long? idAddress, string phoneNumber, string email, string www, string modifier, string hostIP)
 		{

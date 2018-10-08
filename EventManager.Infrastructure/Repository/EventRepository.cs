@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class EventRepository : Repository, IEventRepository
+	public class EventRepository : Repository<Event>, IEventRepository
 	{
 		//IDataBaseContext dbContext;
 		ILocationRepository locationRepository;
@@ -115,7 +115,7 @@ namespace EventManager.Infrastructure.Repository
 			cmd.Parameters.Add(dbContext.CreateParameter("@SeatingNumber", DbType.Int32, cmd));
 		}
 
-		public Event GetEvent(IDataReader R)
+		public Event CreateEvent(IDataReader R)
 		{
 			var idEvent = Convert.ToInt64(R["ID"]);
 			Location location = null;

@@ -8,7 +8,7 @@ using EventManager.Core.Repository;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class LocationRepository : Repository, ILocationRepository
+	public class LocationRepository : Repository<Location>, ILocationRepository
 	{
 		readonly IAddressRepository _addressRepo;
 		readonly ISectorRepository _sectorRepo;

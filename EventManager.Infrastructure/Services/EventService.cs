@@ -23,7 +23,7 @@ namespace EventManager.Infrastructure.Services
 		{
 			try
 			{
-				var _event = await _eventRepository.GetAsync(id, _eventRepository.GetEvent);
+				var _event = await _eventRepository.GetAsync(id, _eventRepository.CreateEvent);
 				return _mapper.Map<EventDto>(_event);
 			}
 			catch (Exception e)
@@ -37,7 +37,7 @@ namespace EventManager.Infrastructure.Services
 		{
 			try
 			{
-				var events = await _eventRepository.GetListAsync(name, _eventRepository.GetEvent);
+				var events = await _eventRepository.GetListAsync(name, _eventRepository.CreateEvent);
 				return _mapper.Map<IEnumerable<EventDto>>(events);
 			}
 			catch (Exception e)
@@ -67,7 +67,7 @@ namespace EventManager.Infrastructure.Services
 			int ticketCount = 0;
 			try
 			{
-				var _event = await _eventRepository.GetAsync(eventId,_eventRepository.GetEvent);
+				var _event = await _eventRepository.GetAsync(eventId,_eventRepository.CreateEvent);
 				if (_event.Location == null || _event.Location.Sectors == null) return 0;
 
 				var HS = new HashSet<Ticket>();

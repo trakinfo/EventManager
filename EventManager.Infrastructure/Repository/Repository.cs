@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class Repository : IRepository
+	public class Repository<T1> : IRepository
 	{
 		protected IDataBaseContext dbContext;
 		protected ISql sql;
+		protected IEnumerable<T1> objectList;
 
 		public event EventHandler RecordAffected;
 

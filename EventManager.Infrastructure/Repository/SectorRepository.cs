@@ -12,17 +12,19 @@ using System.Threading.Tasks;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class SectorRepository : Repository, ISectorRepository
+	public class SectorRepository : Repository<Sector>, ISectorRepository
 	{
-		public IEnumerable<Sector> SectorList { get; protected set; }
+		public IEnumerable<Sector> SectorList { get => objectList; }
 		public SectorRepository(IDataBaseContext context, ISectorSql sectorSql) : base(context, sectorSql)
 		{
-			RefreshData();
+			RefreshRepo();
+			RecordAffected -= (s, ex) => RefreshRepo();
+			RecordAffected += (s, ex) => RefreshRepo();
 		}
 
-		private void RefreshData()
+		private void RefreshRepo()
 		{
-			SectorList = GetListAsync(null, CreateSector).Result;
+			objectList = GetListAsync(null, CreateSector).Result;
 		}
 
 		public IEnumerable<Sector> GetLocationSectors(long idLocation)
