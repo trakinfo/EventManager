@@ -1,7 +1,10 @@
 ﻿using EventManager.Core.DataBaseContext;
+using EventManager.Core.DataBaseContext.SQL;
 using EventManager.Core.Domain;
 using EventManager.Core.Repository;
+using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace EventManager.Infrastructure.Repository
 {
@@ -18,7 +21,12 @@ namespace EventManager.Infrastructure.Repository
 
 		private void RefreshRepo()
 		{
-			userList = GetListAsync(null, CreateUser).Result;
+			userList = GetListAsync<User>(null, CreateUser).Result;
+		}
+
+		private User CreateUser(IDataReader R)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
