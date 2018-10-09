@@ -19,11 +19,12 @@ namespace EventManager.Infrastructure.Services
 			_mapper = mapper;
 		}
 
-		public async Task<EventDto> GetAsync(long id)
+		public EventDto Get(long id)
 		{
 			try
 			{
-				var _event = await _eventRepository.GetAsync(id, _eventRepository.CreateEvent);
+				//var _event = await _eventRepository.GetAsync(id, _eventRepository.CreateEvent);
+				var _event = _eventRepository.Get(id);
 				return _mapper.Map<EventDto>(_event);
 			}
 			catch (Exception e)
@@ -33,11 +34,12 @@ namespace EventManager.Infrastructure.Services
 			}
 		}
 
-		public async Task<IEnumerable<EventDto>> GetListAsync(string name = null)
+		public IEnumerable<EventDto> GetList(string name = null)
 		{
 			try
 			{
-				var events = await _eventRepository.GetListAsync(name, _eventRepository.CreateEvent);
+				//var events = await _eventRepository.GetListAsync(name, _eventRepository.CreateEvent);
+				var events = _eventRepository.GetList(name);
 				return _mapper.Map<IEnumerable<EventDto>>(events);
 			}
 			catch (Exception e)

@@ -13,8 +13,6 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class AddressRepository : Repository<Address>, IAddressRepository
 	{
-		//IEnumerable<Address> addressList;
-		public IEnumerable<Address> AddressList { get => objectList; }
 		public AddressRepository(IDataBaseContext context, IAddressSql addressSql) : base(context, addressSql)
 		{
 			RefreshRepo();
@@ -28,7 +26,12 @@ namespace EventManager.Infrastructure.Repository
 		}
 		public Address GetAddress(long idAddress)
 		{
-			return AddressList.Where(A => A.Id == idAddress).FirstOrDefault();
+			return objectList.Where(A => A.Id == idAddress).FirstOrDefault();
+		}
+
+		public IEnumerable<Address> GetAddressList(string name)
+		{
+			return objectList.Where(A => A.PlaceName.StartsWith(name));
 		}
 
 		public Address CreateAddress(IDataReader R)

@@ -31,10 +31,6 @@ namespace EventManager.Infrastructure.Repository
 		{
 			return SectorList.Where(L => L.LocationId == idLocation);
 		}
-		//public async Task<ISet<Sector>> GetListAsync(long idLocation, GetData<Sector> get)
-		//{
-		//	return await dbContext.FetchRecordSetAsync(((ISectorSql)sql).SelectLocationSectors(idLocation), GetSector);
-		//}
 		public Sector CreateSector(IDataReader S)
 		{
 			return new Sector

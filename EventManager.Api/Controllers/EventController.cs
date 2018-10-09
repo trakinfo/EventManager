@@ -15,15 +15,15 @@ namespace EventManager.Api.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Get(string name = "")
+		public IActionResult Get(string name = "")
 		{
-			var events = await _eventService.GetListAsync(name);
+			var events = _eventService.GetList(name);
 			return Json(events);
 		}
 		[HttpGet("{eventId}")]
-		public async Task<IActionResult> Get(long eventId)
+		public IActionResult Get(long eventId)
 		{
-			var _event = await _eventService.GetAsync(eventId);
+			var _event = _eventService.Get(eventId);
 			return Json(_event);
 		}
 		[HttpPost]

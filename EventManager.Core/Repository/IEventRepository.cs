@@ -9,12 +9,9 @@ namespace EventManager.Core.Repository
 {
     public interface IEventRepository : IRepository
     {
-		//Task<Event> GetEventAsync(long eventId);
-		//Task<Event> GetEventAsync(string name);
-		//Task<IEnumerable<Event>> GetEventListAsync(string name="");
-		//Task AddEventAsync(object[] sqlParamValue);
-		//Task DeleteEventAsync(object[] sqlParamValue);
-		//Task UpdateEventAsync(object[] sqlParamValue);
+		//IEnumerable<Event> EventList { get; }
+		Event Get(long id);
+		IEnumerable<Event> GetList(string name);
 		Task<int> AddTickets(object[] sqlParamValue, int seatingCount);
 		Event CreateEvent(IDataReader R);
 		void CreateInsertParams(IDbCommand cmd);

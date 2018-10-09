@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using EventManager.Core.DataBaseContext;
 using EventManager.Core.DataBaseContext.SQL;
 using EventManager.Core.Domain;
@@ -16,6 +18,24 @@ namespace EventManager.Infrastructure.Repository
 		{
 			_addressRepo = addressRepo;
 			_sectorRepo = sectorRepo;
+			RefreshRepo();
+			RecordAffected -= (s, ex) => RefreshRepo();
+			RecordAffected += (s, ex) => RefreshRepo();
+		}
+
+		private void RefreshRepo()
+		{
+			objectList = GetListAsync(null, CreateLocation).Result;
+		}
+
+		public Location GetLocation(long idLocation)
+		{
+			return objectList.Where(L => L.Id == idLocation).FirstOrDefault();
+		}
+
+		public IEnumerable<Location> GetLocationList(string name)
+		{
+			return objectList.Where(L => L.Name.StartsWith(name));
 		}
 
 		public Location CreateLocation(IDataReader R)

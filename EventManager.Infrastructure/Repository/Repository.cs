@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class Repository<T1> : IRepository
+	public class Repository<T> : IRepository
 	{
 		protected IDataBaseContext dbContext;
 		protected ISql sql;
-		protected IEnumerable<T1> objectList;
+		protected IEnumerable<T> objectList;
 
 		public event EventHandler RecordAffected;
 
@@ -22,12 +22,12 @@ namespace EventManager.Infrastructure.Repository
 			sql = _sql;
 		}
 
-		public async Task<T> GetAsync<T>(long id, GetData<T> Get)
+		public async Task<T1> GetAsync<T1>(long id, GetData<T1> Get)
 		{
 			return await dbContext.FetchRecordAsync(sql.Select(id), Get);
 		}
 
-		public async Task<IEnumerable<T>> GetListAsync<T>(string name, GetData<T> Get)
+		public async Task<IEnumerable<T1>> GetListAsync<T1>(string name, GetData<T1> Get)
 		{
 			return await dbContext.FetchRecordSetAsync(sql.SelectMany(name), Get);
 		}
@@ -35,6 +35,12 @@ namespace EventManager.Infrastructure.Repository
 		public async Task AddAsync(object[] sqlParamValue, DataParameters createParams)
 		{
 			await dbContext.AddRecordAsync(sql.Insert(), sqlParamValue, createParams);
+			RecordAffected?.Invoke(this, new EventArgs());
+		}
+
+		public async Task AddManyAsync(ISet<object[]> sqlParamValue, DataParameters createParams)
+		{
+			await dbContext.AddManyRecordsAsync(sql.Insert(), sqlParamValue, createParams);
 			RecordAffected?.Invoke(this, new EventArgs());
 		}
 

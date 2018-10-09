@@ -13,33 +13,30 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class EventRepository : Repository<Event>, IEventRepository
 	{
-		//IDataBaseContext dbContext;
 		ILocationRepository locationRepository;
-		//IEventSql sql;
-
-		public EventRepository(IDataBaseContext context, ILocationRepository locationRepo, IEventSql eventSql) : base(context,eventSql)
+		
+		public EventRepository(IDataBaseContext context, ILocationRepository locationRepo, IEventSql eventSql) : base(context, eventSql)
 		{
-			//dbContext = context;
 			locationRepository = locationRepo;
-			//sql = eventSql;
+			RefreshRepo();
+			RecordAffected -= (s, ex) => RefreshRepo();
+			RecordAffected += (s, ex) => RefreshRepo();
 		}
-		//public async Task<Event> GetEventAsync(long eventId)
-		//{
-		//	var eventDR = dbContext.FetchRecordAsync(sql.SelectEvent(eventId), GetEvent);
-		//	return await eventDR;
-		//}
 
-		//public async Task<Event> GetEventAsync(string name)
-		//{
-		//	var eventDR = dbContext.FetchRecordAsync(sql.SelectEvent(name), GetEvent);
-		//	return await eventDR;
-		//}
+		private void RefreshRepo()
+		{
+			objectList = GetListAsync(null, CreateEvent).Result;
+		}
 
-		//public async Task<IEnumerable<Event>> GetEventListAsync(string name = "")
-		//{
-		//	var events = await dbContext.FetchRecordSetAsync(sql.SelectEvents(name), GetEvent);
-		//	return await Task.FromResult(events.AsEnumerable());
-		//}
+		public IEnumerable<Event> GetList(string name)
+		{
+			return objectList.Where(e => e.Name.StartsWith(name));
+		}
+
+		public Event Get(long id)
+		{
+			return objectList.Where(e => e.Id == id).FirstOrDefault();
+		}
 
 		async Task<Location> GetLocationAsync(long idEvent, long idLocation)
 		{
@@ -57,21 +54,6 @@ namespace EventManager.Infrastructure.Repository
 			var tickets = dbContext.FetchRecordSetAsync((sql as IEventSql).SelectTicket(idEvent, idSector), GetTicket);
 			return await tickets;
 		}
-
-		//public async Task AddEventAsync(object[] paramValue)
-		//{
-		//	await dbContext.AddRecordAsync(sql.InsertEvent(), paramValue, CreateEventParams);
-		//}
-
-		//public async Task UpdateEventAsync(object[] paramValue)
-		//{
-		//	await dbContext.UpdateRecordAsync(sql.UpdateEvent(), paramValue, CreateUpdateParams);
-		//}
-
-		//public async Task DeleteEventAsync(object[] paramValue)
-		//{
-		//	await dbContext.RemoveRecordAsync(sql.DeleteEvent(), paramValue, CreateDeleteParams);
-		//}
 
 		public void CreateInsertParams(IDbCommand cmd)
 		{

@@ -19,16 +19,22 @@ namespace EventManager.Infrastructure.Services
 			_addressRepo = addressRepo;
 			mapper = _mapper;
 		}
-		public async Task<IEnumerable<LocationDto>> GetListAsync(string name = null)
+		public LocationDto GetLocation(long id)
 		{
-			var locationList = await _locationRepo.GetListAsync(name, _locationRepo.CreateLocation);
+			//var location = await _locationRepo.GetAsync(id, _locationRepo.CreateLocation);
+			var location = _locationRepo.GetLocation(id);
+			return mapper.Map<LocationDto>(location);
+		}
+		public IEnumerable<LocationDto> GetLocationList(string name = null)
+		{
+			//var locationList = await _locationRepo.GetListAsync(name, _locationRepo.CreateLocation);
+			var locationList = _locationRepo.GetLocationList(name);
 			return mapper.Map<IEnumerable<LocationDto>>(locationList);
 		}
 
-		public async Task<IEnumerable<AddressDto>> GetAddressList(string name = null)
+		public IEnumerable<AddressDto> GetAddressList(string name = null)
 		{
-			//var addressList = _addressRepo.GetListAsync(name, _addressRepo.CreateAddress).Result;
-			var addressList = await Task.FromResult(_addressRepo.AddressList);
+			var addressList = _addressRepo.GetAddressList(name);
 			return mapper.Map<IEnumerable<AddressDto>>(addressList);
 		} 
 
@@ -57,12 +63,6 @@ namespace EventManager.Infrastructure.Services
 		public Task DeleteSectorsAsync(ISet<Sector> Sectors)
 		{
 			throw new NotImplementedException();
-		}
-
-		public async Task<LocationDto> GetAsync(long id)
-		{
-			var location = await _locationRepo.GetAsync(id, _locationRepo.CreateLocation);
-			return mapper.Map<LocationDto>(location);
 		}
 
 		public Task UpdateAsync(long id, string name, long? idAddress, string phoneNumber, string email, string www, string modifier, string hostIP)
