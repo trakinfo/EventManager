@@ -27,14 +27,14 @@ namespace EventManager.Infrastructure.Repository
 			objectList = GetListAsync(null, CreateSector).Result;
 		}
 
-		public Sector GetSector(long id)
+		public async Task<Sector> GetSector(long id)
 		{
-			return SectorList.Where(S => S.Id == id).FirstOrDefault();
+			return await Task.FromResult(SectorList.Where(S => S.Id == id).FirstOrDefault());
 		} 
 
-		public IEnumerable<Sector> GetSectorList(string name)
+		public async Task<IEnumerable<Sector>> GetSectorList(string name)
 		{
-			return SectorList.Where(S => S.Name.StartsWith(name));
+			return await Task.FromResult(SectorList.Where(S => S.Name.StartsWith(name)));
 		}
 		public Sector CreateSector(IDataReader S)
 		{

@@ -13,11 +13,11 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class EventRepository : Repository<Event>, IEventRepository
 	{
-		ILocationRepository locationRepository;
+		ILocationRepository _locationRepo;
 		
 		public EventRepository(IDataBaseContext context, ILocationRepository locationRepo, IEventSql eventSql) : base(context, eventSql)
 		{
-			locationRepository = locationRepo;
+			_locationRepo = locationRepo;
 			RefreshRepo();
 			RecordAffected -= (s, ex) => RefreshRepo();
 			RecordAffected += (s, ex) => RefreshRepo();
@@ -28,26 +28,26 @@ namespace EventManager.Infrastructure.Repository
 			objectList = GetListAsync(null, CreateEvent).Result;
 		}
 
-		public IEnumerable<Event> GetList(string name)
+		public async Task<IEnumerable<Event>> GetList(string name)
 		{
-			return objectList.Where(e => e.Name.StartsWith(name));
+			return await Task.FromResult(objectList.Where(e => e.Name.StartsWith(name)));
 		}
 
-		public Event Get(long id)
+		public async Task<Event> Get(long id)
 		{
-			return objectList.Where(e => e.Id == id).FirstOrDefault();
+			return await Task.FromResult(objectList.Where(e => e.Id == id).FirstOrDefault());
 		}
 
-		async Task<Location> GetLocationAsync(long idEvent, long idLocation)
-		{
-			var location = await locationRepository.GetAsync(idLocation, locationRepository.CreateLocation);
+		//async Task<Location> GetLocationAsync(long idEvent, long idLocation)
+		//{
+		//	var location = await locationRepository.GetAsync(idLocation, locationRepository.CreateLocation);
 
-			foreach (var S in location.Sectors)
-			{
-				S.Tickets = await GetTicketListAsync(idEvent, S.Id);
-			}
-			return await Task.FromResult(location);
-		}
+		//	foreach (var S in location.Sectors)
+		//	{
+		//		S.Tickets = await GetTicketListAsync(idEvent, S.Id);
+		//	}
+		//	return await Task.FromResult(location);
+		//}
 
 		async Task<ISet<Ticket>> GetTicketListAsync(long idEvent, long idSector)
 		{
@@ -103,7 +103,8 @@ namespace EventManager.Infrastructure.Repository
 			Location location = null;
 
 			if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
-				location = GetLocationAsync(idEvent, Convert.ToInt64(R["IdLocation"])).Result;
+				location = _locationRepo.GetLocation(Convert.ToInt64(R["IdLocation"])).Result;
+				//location = GetLocationAsync(idEvent, Convert.ToInt64(R["IdLocation"])).Result;
 			return new Event
 				(
 					idEvent,

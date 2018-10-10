@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace EventManager.Infrastructure.Repository
 {
@@ -24,14 +25,14 @@ namespace EventManager.Infrastructure.Repository
 		{
 			objectList = GetListAsync(null, CreateAddress).Result;
 		}
-		public Address GetAddress(long idAddress)
+		public async Task<Address> GetAddress(long idAddress)
 		{
-			return objectList.Where(A => A.Id == idAddress).FirstOrDefault();
+			return await Task.FromResult(objectList.Where(A => A.Id == idAddress).FirstOrDefault());
 		}
 
-		public IEnumerable<Address> GetAddressList(string name)
+		public async Task<IEnumerable<Address>> GetAddressList(string name)
 		{
-			return objectList.Where(A => A.PlaceName.StartsWith(name));
+			return await Task.FromResult(objectList.Where(A => A.PlaceName.StartsWith(name)));
 		}
 
 		public Address CreateAddress(IDataReader R)

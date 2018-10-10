@@ -10,9 +10,9 @@ namespace EventManager.Core.Repository
 {
     public interface ILocationRepository : IRepository
     {
-		Location GetLocation(long idLocation);
-		IEnumerable<Location> GetLocationList(string name);
-		Location CreateLocation(IDataReader Reader);
+		Task<Location> GetLocation(long idLocation);
+		Task<IEnumerable<Location>> GetLocationList(string name);
+		//Location CreateLocation(IDataReader Reader);
 		void CreateInsertParams(IDbCommand cmd);
 	}
 }

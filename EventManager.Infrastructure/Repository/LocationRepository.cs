@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using EventManager.Core.DataBaseContext;
 using EventManager.Core.DataBaseContext.SQL;
 using EventManager.Core.Domain;
@@ -28,31 +29,30 @@ namespace EventManager.Infrastructure.Repository
 			objectList = GetListAsync(null, CreateLocation).Result;
 		}
 
-		public Location GetLocation(long idLocation)
+		public async Task<Location> GetLocation(long idLocation)
 		{
-			return objectList.Where(L => L.Id == idLocation).FirstOrDefault();
+			return await Task.FromResult(objectList.Where(L => L.Id == idLocation).FirstOrDefault());
 		}
 
-		public IEnumerable<Location> GetLocationList(string name)
+		public async Task<IEnumerable<Location>> GetLocationList(string name)
 		{
-			return objectList.Where(L => L.Name.StartsWith(name));
+			return await Task.FromResult(objectList.Where(L => L.Name.StartsWith(name)));
 		}
 
-		public Location CreateLocation(IDataReader R)
+		Location CreateLocation(IDataReader R)
 		{
 			var idLocation = Convert.ToInt64(R["ID"]);
 			Address address = null;
 
 			if (!string.IsNullOrEmpty(R["IdAddress"].ToString()))
-				address = _addressRepo.GetAddress(Convert.ToInt64(R["IdAddress"]));
-				//address = _addressRepo.GetAsync(idLocation, _addressRepo.GetAddress).Result;
-					
+				address = _addressRepo.GetAddress(Convert.ToInt64(R["IdAddress"])).Result;
+									
 			return new Location
 				(
 					idLocation,
 					R["Name"].ToString(),
 					address,
-					_sectorRepo.GetSectorList(null).Where(S => S.LocationId == idLocation),
+					_sectorRepo.GetSectorList(string.Empty).Result.Where(S => S.LocationId == idLocation),
 					R["PhoneNumber"].ToString(),
 					R["Email"].ToString(),
 					R["www"].ToString(),

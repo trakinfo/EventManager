@@ -22,7 +22,7 @@ namespace EventManager.Api.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Get(string name = "")
 		{
-			var locationList = await locationService.GetListAsync(name);
+			var locationList = await locationService.GetLocationList(name);
 			return Json(locationList);
 		}
 

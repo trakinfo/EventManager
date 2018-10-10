@@ -10,8 +10,8 @@ namespace EventManager.Infrastructure.Services
 {
     public interface IEventService
     {
-		EventDto Get(long id);
-		IEnumerable<EventDto> GetList(string name = null);
+		Task<EventDto> Get(long id);
+		Task<IEnumerable<EventDto>> GetList(string name = null);
 		Task CreateAsync(string name, string descripion, long? idLocation, DateTime startDate, DateTime endDate, string creator, string hostIP);
 		Task<int> CreateTicketCollectionAsync(long eventId);
 		Task UpdateAsync(long id, string name, string description, long? idLocation, DateTime startDate, DateTime endDate, string modifier, string hostIP);
