@@ -29,15 +29,15 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 			return "DELETE FROM event WHERE ID=@ID";
 		}
 
-		public string SelectTicket(long idEvent, long idSector)
-		{
-			return $"SELECT t.ID,t.SeatingNumber,t.Price,t.UserId,t.PurchaseDate,t.User,t.HostIP,t.Version FROM ticket t WHERE t.IdEvent={idEvent} AND t.IdSector={idSector};";
-		}
+		//public string SelectTicket(long idEvent, long idSector)
+		//{
+		//	return $"SELECT t.ID,t.SeatingNumber,t.Price,t.UserId,t.PurchaseDate,t.User,t.HostIP,t.Version FROM ticket t WHERE t.IdEvent={idEvent} AND t.IdSector={idSector};";
+		//}
 
-		public string InsertTicket()
-		{
-			return "INSERT INTO ticket VALUES(null,@IdSector,@IdEvent,null,@SeatingNumber,@Price,null,@User,@HostIP,null);";
-		}
+		//public string InsertTicket()
+		//{
+		//	return "INSERT INTO ticket VALUES(null,@IdSector,@IdEvent,null,@SeatingNumber,@Price,null,@User,@HostIP,null);";
+		//}
 
 		public string UpdateEventLocation()
 		{

@@ -49,11 +49,11 @@ namespace EventManager.Infrastructure.Repository
 		//	return await Task.FromResult(location);
 		//}
 
-		async Task<ISet<Ticket>> GetTicketListAsync(long idEvent, long idSector)
-		{
-			var tickets = dbContext.FetchRecordSetAsync((sql as IEventSql).SelectTicket(idEvent, idSector), GetTicket);
-			return await tickets;
-		}
+		//async Task<ISet<Ticket>> GetTicketListAsync(long idEvent, long idSector)
+		//{
+		//	var tickets = dbContext.FetchRecordSetAsync((sql as IEventSql).SelectTicket(idEvent, idSector), GetTicket);
+		//	return await tickets;
+		//}
 
 		public void CreateInsertParams(IDbCommand cmd)
 		{
@@ -89,13 +89,13 @@ namespace EventManager.Infrastructure.Repository
 			return await dbContext.AddManyRecordsAsync((sql as IEventSql).InsertTicket(), HS, CreateTicketParams);
 		}
 
-		private void CreateTicketParams(IDbCommand cmd)
-		{
-			cmd.Parameters.Add(dbContext.CreateParameter("@IdEvent", DbType.Int64, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("@IdSector", DbType.Int64, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("@Price", DbType.Decimal, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("@SeatingNumber", DbType.Int32, cmd));
-		}
+		//private void CreateTicketParams(IDbCommand cmd)
+		//{
+		//	cmd.Parameters.Add(dbContext.CreateParameter("@IdEvent", DbType.Int64, cmd));
+		//	cmd.Parameters.Add(dbContext.CreateParameter("@IdSector", DbType.Int64, cmd));
+		//	cmd.Parameters.Add(dbContext.CreateParameter("@Price", DbType.Decimal, cmd));
+		//	cmd.Parameters.Add(dbContext.CreateParameter("@SeatingNumber", DbType.Int32, cmd));
+		//}
 
 		public Event CreateEvent(IDataReader R)
 		{
@@ -117,9 +117,9 @@ namespace EventManager.Infrastructure.Repository
 				);
 		}
 
-		Ticket GetTicket(IDataReader R)
-		{
-			return new Ticket(Convert.ToInt64(R["ID"]), Convert.ToInt32(R["SeatingNumber"]), Convert.ToDecimal(R["Price"]), null);
-		}
+		//Ticket GetTicket(IDataReader R)
+		//{
+		//	return new Ticket(Convert.ToInt64(R["ID"]), Convert.ToInt32(R["SeatingNumber"]), Convert.ToDecimal(R["Price"]), null);
+		//}
 	}
 }
