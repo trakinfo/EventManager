@@ -27,9 +27,14 @@ namespace EventManager.Infrastructure.Repository
 			objectList = GetListAsync(null, CreateSector).Result;
 		}
 
-		public IEnumerable<Sector> GetLocationSectors(long idLocation)
+		public Sector GetSector(long id)
 		{
-			return SectorList.Where(L => L.LocationId == idLocation);
+			return SectorList.Where(S => S.Id == id).FirstOrDefault();
+		} 
+
+		public IEnumerable<Sector> GetSectorList(string name)
+		{
+			return SectorList.Where(S => S.Name.StartsWith(name));
 		}
 		public Sector CreateSector(IDataReader S)
 		{

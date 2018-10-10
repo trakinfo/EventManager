@@ -13,7 +13,8 @@ namespace EventManager.Core.Repository
 		void CreateInsertParams(IDbCommand cmd);
 		void CreateUpdateParams(IDbCommand cmd);
 		void CreateDeleteParams(IDbCommand cmd);
-		IEnumerable<Sector> GetLocationSectors(long idLocation);
+		Sector GetSector(long id);
+		IEnumerable<Sector> GetSectorList(string name);
 		//Task<ISet<Sector>> GetListAsync(long idLocation, GetData<Sector> Get);
 		Sector CreateSector(IDataReader R);
 	}

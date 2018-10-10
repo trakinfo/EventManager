@@ -52,7 +52,7 @@ namespace EventManager.Infrastructure.Repository
 					idLocation,
 					R["Name"].ToString(),
 					address,
-					_sectorRepo.GetLocationSectors(idLocation),
+					_sectorRepo.GetSectorList(null).Where(S => S.LocationId == idLocation),
 					R["PhoneNumber"].ToString(),
 					R["Email"].ToString(),
 					R["www"].ToString(),
