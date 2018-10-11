@@ -13,7 +13,7 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class EventRepository : Repository<Event>, IEventRepository
 	{
-		ILocationRepository _locationRepo;
+		readonly ILocationRepository _locationRepo;
 		
 		public EventRepository(IDataBaseContext context, ILocationRepository locationRepo, IEventSql eventSql) : base(context, eventSql)
 		{
@@ -77,17 +77,17 @@ namespace EventManager.Infrastructure.Repository
 			cmd.Parameters.Add(dbContext.CreateParameter("@ID", DbType.Int64, cmd));
 		}
 
-		public async Task<int> AddTickets(object[] sqlParamValue, int seatingCount)
-		{
-			var HS = new HashSet<object[]>();
+		//public async Task<int> AddTickets(object[] sqlParamValue, int seatingCount)
+		//{
+		//	var HS = new HashSet<object[]>();
 
-			for (int i = 0; i < seatingCount; i++)
-			{
-				sqlParamValue[3] = i + 1;
-				HS.Add(sqlParamValue.ToArray());
-			}
-			return await dbContext.AddManyRecordsAsync((sql as IEventSql).InsertTicket(), HS, CreateTicketParams);
-		}
+		//	for (int i = 0; i < seatingCount; i++)
+		//	{
+		//		sqlParamValue[3] = i + 1;
+		//		HS.Add(sqlParamValue.ToArray());
+		//	}
+		//	return await dbContext.AddManyRecordsAsync((sql as IEventSql).InsertTicket(), HS, CreateTicketParams);
+		//}
 
 		//private void CreateTicketParams(IDbCommand cmd)
 		//{
@@ -110,7 +110,7 @@ namespace EventManager.Infrastructure.Repository
 					idEvent,
 					R["Name"].ToString(),
 					R["Description"].ToString(),
-					location,
+					location.Sectors.SelectMany(,
 					Convert.ToDateTime(R["StartDate"]),
 					Convert.ToDateTime(R["EndDate"]),
 					new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))

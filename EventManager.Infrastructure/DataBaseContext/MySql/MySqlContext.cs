@@ -20,7 +20,7 @@ namespace EventManager.Infrastructure.DataBaseContext
 		{
 			ConnectionString = connectionString;
 		}
-		public async Task<ISet<T>> FetchRecordSetAsync<T>(string sqlString, GetData<T> GetDataRow)
+		public async Task<IEnumerable<T>> FetchRecordSetAsync<T>(string sqlString, GetData<T> GetDataRow)
 		{
 			var HS = new HashSet<T>();
 			try
@@ -112,17 +112,17 @@ namespace EventManager.Infrastructure.DataBaseContext
 			await ExecuteCommandAsync(sqlString, sqlParamValue, createParams);
 		}
 
-		public async Task UpdateRecordAsync(string sqlString, object[] sqlParameterValue, DataParameters updateParams)
+		public async Task<int> UpdateRecordAsync(string sqlString, object[] sqlParameterValue, DataParameters updateParams)
 		{
-			await ExecuteCommandAsync(sqlString, sqlParameterValue, updateParams);
+			return await ExecuteCommandAsync(sqlString, sqlParameterValue, updateParams);
 		}
 
-		public async Task RemoveRecordAsync(string sqlString, object[] sqlParameterValue, DataParameters delParams)
+		public async Task<int> RemoveRecordAsync(string sqlString, object[] sqlParameterValue, DataParameters delParams)
 		{
-			await ExecuteCommandAsync(sqlString, sqlParameterValue, delParams);
+			return await ExecuteCommandAsync(sqlString, sqlParameterValue, delParams);
 		}
 
-		async Task ExecuteCommandAsync(string sqlString, object[] sqlParamValue, DataParameters createParams)
+		async Task<int> ExecuteCommandAsync(string sqlString, object[] sqlParamValue, DataParameters createParams)
 		{
 			using (var conn = GetConnection())
 			{
@@ -132,13 +132,15 @@ namespace EventManager.Infrastructure.DataBaseContext
 				createParams(cmd);
 				try
 				{
-					await ExecuteCommandAsync(cmd, sqlParamValue);
+					var recordAffected = await ExecuteCommandAsync(cmd, sqlParamValue);
 					T.Commit();
+					return recordAffected;
 				}
 				catch (MySqlException ex)
 				{
 					Console.WriteLine(ex.Message);
 					T.Rollback();
+					return 0;
 				}
 			}
 		}

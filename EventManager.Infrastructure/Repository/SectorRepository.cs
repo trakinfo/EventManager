@@ -14,9 +14,11 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class SectorRepository : Repository<Sector>, ISectorRepository
 	{
-		public IEnumerable<Sector> SectorList { get => objectList; }
-		public SectorRepository(IDataBaseContext context, ISectorSql sectorSql) : base(context, sectorSql)
+		//public IEnumerable<Sector> SectorList { get => objectList; }
+		readonly ITicketRepository _ticketRepo;
+		public SectorRepository(ITicketRepository ticketRepo, IDataBaseContext context, ISectorSql sectorSql) : base(context, sectorSql)
 		{
+			_ticketRepo = ticketRepo;
 			RefreshRepo();
 			RecordAffected -= (s, ex) => RefreshRepo();
 			RecordAffected += (s, ex) => RefreshRepo();
@@ -24,18 +26,20 @@ namespace EventManager.Infrastructure.Repository
 
 		private void RefreshRepo()
 		{
+			_ticketRepo.TicketDateSpan=new DateSpan(DateTime.Now, DateTime.MaxValue);
 			objectList = GetListAsync(null, CreateSector).Result;
 		}
 
 		public async Task<Sector> GetSector(long id)
 		{
-			return await Task.FromResult(SectorList.Where(S => S.Id == id).FirstOrDefault());
+			return await Task.FromResult(objectList.Where(S => S.Id == id).FirstOrDefault());
 		} 
 
 		public async Task<IEnumerable<Sector>> GetSectorList(string name)
 		{
-			return await Task.FromResult(SectorList.Where(S => S.Name.StartsWith(name)));
+			return await Task.FromResult(objectList.Where(S => S.Name.StartsWith(name)));
 		}
+
 		public Sector CreateSector(IDataReader S)
 		{
 			return new Sector
@@ -47,6 +51,7 @@ namespace EventManager.Infrastructure.Repository
 					Convert.ToInt32(S["SeatingRangeEnd"]),
 					Convert.ToUInt32(S["SeatingPrice"]),
 					Convert.ToInt64(S["IdLocation"]),
+					_ticketRepo.GetTicketList().Result,
 					new Signature
 					(
 						S["User"].ToString(),

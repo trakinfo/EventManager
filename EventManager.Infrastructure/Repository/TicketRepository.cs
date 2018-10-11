@@ -14,7 +14,9 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class TicketRepository : Repository<Ticket>, ITicketRepository
 	{
-		public TicketRepository(IDataBaseContext context, ITicketSql ticketSql) : base(context, ticketSql)
+		public DateSpan TicketDateSpan { get; set; }
+
+		public TicketRepository(DateTime startDate, DateTime endDate, IDataBaseContext context, ITicketSql ticketSql) : base(context, ticketSql)
 		{
 			RefreshRepo();
 			RecordAffected -= (s, ex) => RefreshRepo();
@@ -23,7 +25,7 @@ namespace EventManager.Infrastructure.Repository
 
 		private void RefreshRepo()
 		{
-			objectList = GetListAsync(null, CreateTicket).Result;
+			objectList = GetListAsync(TicketDateSpan.Start, TicketDateSpan.End, CreateTicket).Result;
 		}
 
 		public async Task<Ticket> GetTicket(long id)
@@ -36,16 +38,21 @@ namespace EventManager.Infrastructure.Repository
 			return await Task.FromResult(objectList);
 		}
 
-		private Ticket CreateTicket(IDataReader R)
+		async Task<IEnumerable<Ticket>> GetListAsync(DateTime startDate, DateTime endDate, GetData<Ticket> getTicket)
+		{
+			return await dbContext.FetchRecordSetAsync((sql as ITicketSql).SelectMany(startDate, endDate), CreateTicket);
+		}
+
+		Ticket CreateTicket(IDataReader R)
 		{
 			return new Ticket(
-				Convert.ToInt64(R["ID"]), 
-				Convert.ToInt32(R["SeatingNumber"]), 
-				Convert.ToDecimal(R["Price"]), 
-				Convert.ToInt64(R["IdEvent"]), 
-				Convert.ToInt64(R["IdSector"]), 
+				Convert.ToInt64(R["ID"]),
+				Convert.ToInt32(R["SeatingNumber"]),
+				Convert.ToDecimal(R["Price"]),
+				Convert.ToInt64(R["IdEvent"]),
+				Convert.ToInt64(R["IdSector"]),
 				new Signature(
-					R["User"].ToString(), 
+					R["User"].ToString(),
 					R["HostIP"].ToString(),
 					Convert.ToDateTime(R["Version"])
 					)

@@ -11,7 +11,7 @@ namespace EventManager.Core.Repository
     {
 		Task<Event> Get(long id);
 		Task<IEnumerable<Event>> GetList(string name);
-		Task<int> AddTickets(object[] sqlParamValue, int seatingCount);
+		//Task<int> AddTickets(object[] sqlParamValue, int seatingCount);
 		Event CreateEvent(IDataReader R);
 		void CreateInsertParams(IDbCommand cmd);
 		void CreateUpdateParams(IDbCommand cmd);
