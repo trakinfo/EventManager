@@ -42,16 +42,17 @@ namespace EventManager.Infrastructure.Repository
 
 		public Sector CreateSector(IDataReader S)
 		{
+			var sectorId = Convert.ToInt64(S["ID"]);
 			return new Sector
 				(
-					Convert.ToInt64(S["ID"]),
+					sectorId,
 					S["Name"].ToString(),
 					S["Description"].ToString(),
 					Convert.ToInt32(S["SeatingRangeStart"]),
 					Convert.ToInt32(S["SeatingRangeEnd"]),
 					Convert.ToUInt32(S["SeatingPrice"]),
 					Convert.ToInt64(S["IdLocation"]),
-					_ticketRepo.GetTicketList().Result,
+					_ticketRepo.GetTicketList().Result.Where(T => T.SectorId==sectorId),
 					new Signature
 					(
 						S["User"].ToString(),

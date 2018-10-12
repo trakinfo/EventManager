@@ -18,6 +18,7 @@ namespace EventManager.Infrastructure.Repository
 
 		public TicketRepository(DateTime startDate, DateTime endDate, IDataBaseContext context, ITicketSql ticketSql) : base(context, ticketSql)
 		{
+			TicketDateSpan = new DateSpan(DateTime.Now, DateTime.MaxValue);
 			RefreshRepo();
 			RecordAffected -= (s, ex) => RefreshRepo();
 			RecordAffected += (s, ex) => RefreshRepo();

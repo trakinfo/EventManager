@@ -14,7 +14,7 @@ namespace EventManager.Infrastructure.Repository
 	public class EventRepository : Repository<Event>, IEventRepository
 	{
 		readonly ILocationRepository _locationRepo;
-		
+
 		public EventRepository(IDataBaseContext context, ILocationRepository locationRepo, IEventSql eventSql) : base(context, eventSql)
 		{
 			_locationRepo = locationRepo;
@@ -103,14 +103,17 @@ namespace EventManager.Infrastructure.Repository
 			Location location = null;
 
 			if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
+			{
 				location = _locationRepo.GetLocation(Convert.ToInt64(R["IdLocation"])).Result;
-				//location = GetLocationAsync(idEvent, Convert.ToInt64(R["IdLocation"])).Result;
+				location.Sectors.ToList().ForEach(S => S.Tickets.ToList().RemoveAll(T => T.EventId != idEvent));
+			}
+
 			return new Event
 				(
 					idEvent,
 					R["Name"].ToString(),
 					R["Description"].ToString(),
-					location.Sectors.SelectMany(,
+					location,
 					Convert.ToDateTime(R["StartDate"]),
 					Convert.ToDateTime(R["EndDate"]),
 					new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
