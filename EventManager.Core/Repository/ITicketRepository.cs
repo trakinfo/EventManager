@@ -10,7 +10,7 @@ namespace EventManager.Core.Repository
 	{
 		DateSpan TicketDateSpan { set; }
 		Task<Ticket> GetTicket(long id);
-		Task<IEnumerable<Ticket>> GetTicketList();
+		Task<IList<Ticket>> GetTicketList();
 		void CreateInsertParams(IDbCommand cmd);
 	}
 }

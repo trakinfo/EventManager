@@ -14,7 +14,7 @@ namespace EventManager.Infrastructure.Repository
 		protected ISql sql;
 		protected IEnumerable<T> objectList;
 
-		public event EventHandler RecordAffected;
+		//public event EventHandler RecordAffected;
 
 		public Repository(IDataBaseContext context, ISql _sql)
 		{
@@ -35,25 +35,25 @@ namespace EventManager.Infrastructure.Repository
 		public async Task AddAsync(object[] sqlParamValue, DataParameters createParams)
 		{
 			await dbContext.AddRecordAsync(sql.Insert(), sqlParamValue, createParams);
-			RecordAffected?.Invoke(this, new EventArgs());
+			//RecordAffected?.Invoke(this, new EventArgs());
 		}
 
 		public async Task AddManyAsync(ISet<object[]> sqlParamValue, DataParameters createParams)
 		{
 			await dbContext.AddManyRecordsAsync(sql.Insert(), sqlParamValue, createParams);
-			RecordAffected?.Invoke(this, new EventArgs());
+			//RecordAffected?.Invoke(this, new EventArgs());
 		}
 
 		public async Task UpdateAsync(object[] sqlParamValue, DataParameters createParams)
 		{
 			await dbContext.UpdateRecordAsync(sql.Update(), sqlParamValue, createParams);
-			RecordAffected?.Invoke(this, new EventArgs());
+			//RecordAffected?.Invoke(this, new EventArgs());
 		}
 
 		public async Task DeleteAsync(object[] sqlParamValue, DataParameters createParams)
 		{
 			await dbContext.RemoveRecordAsync(sql.Update(), sqlParamValue, createParams);
-			RecordAffected?.Invoke(this, new EventArgs());
+			//RecordAffected?.Invoke(this, new EventArgs());
 		}
 
 	}

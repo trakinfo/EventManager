@@ -19,8 +19,8 @@ namespace EventManager.Infrastructure.Repository
 		{
 			_locationRepo = locationRepo;
 			RefreshRepo();
-			RecordAffected -= (s, ex) => RefreshRepo();
-			RecordAffected += (s, ex) => RefreshRepo();
+			//RecordAffected -= (s, ex) => RefreshRepo();
+			//RecordAffected += (s, ex) => RefreshRepo();
 		}
 
 		private void RefreshRepo()
@@ -105,9 +105,14 @@ namespace EventManager.Infrastructure.Repository
 			if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
 			{
 				location = _locationRepo.GetLocation(Convert.ToInt64(R["IdLocation"])).Result;
-				var a = location.Sectors.Sum(t => t.Tickets.Count());
-				location.Sectors.ToList().ForEach(S => S.Tickets.ToList().RemoveAll(T => T.EventId != idEvent));
-				var b = location.Sectors.Sum(t => t.Tickets.Count());
+				//var a = location.Sectors.Sum(t => t.Tickets.Count());
+
+				location.Sectors.ToList().ForEach(S => S.Tickets.RemoveAll(T => T.EventId != idEvent));
+				//foreach (var s in location.Sectors)
+				//{
+				//	var x = s.Tickets.RemoveAll(T => T.EventId != idEvent);
+				//}
+				//var b = location.Sectors.Sum(t => t.Tickets.Count());
 			}
 
 			return new Event

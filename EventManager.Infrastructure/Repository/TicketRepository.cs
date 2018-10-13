@@ -18,10 +18,9 @@ namespace EventManager.Infrastructure.Repository
 
 		public TicketRepository(IDataBaseContext context, ITicketSql ticketSql) : base(context, ticketSql)
 		{
-			//TicketDateSpan = new DateSpan(DateTime.Now, DateTime.MaxValue);
 			RefreshRepo();
-			RecordAffected -= (s, ex) => RefreshRepo();
-			RecordAffected += (s, ex) => RefreshRepo();
+			//RecordAffected -= (s, ex) => RefreshRepo();
+			//RecordAffected += (s, ex) => RefreshRepo();
 		}
 
 		private void RefreshRepo()
@@ -34,9 +33,9 @@ namespace EventManager.Infrastructure.Repository
 			return await Task.FromResult(objectList.Where(T => T.Id == id).FirstOrDefault());
 		}
 
-		public async Task<IEnumerable<Ticket>> GetTicketList()
+		public async Task<IList<Ticket>> GetTicketList()
 		{
-			return await Task.FromResult(objectList);
+			return await Task.FromResult(objectList.ToList());
 		}
 
 		async Task<IEnumerable<Ticket>> GetListAsync(DateTime startDate, DateTime endDate, GetData<Ticket> getTicket)
@@ -46,10 +45,12 @@ namespace EventManager.Infrastructure.Repository
 
 		Ticket CreateTicket(IDataReader R)
 		{
+			//var id = Convert.ToInt64(R["ID"]);
 			return new Ticket(
 				Convert.ToInt64(R["ID"]),
 				Convert.ToInt32(R["SeatingNumber"]),
 				Convert.ToDecimal(R["Price"]),
+				R["UserId"].ToString(),
 				Convert.ToInt64(R["IdEvent"]),
 				Convert.ToInt64(R["IdSector"]),
 				new Signature(

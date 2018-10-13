@@ -15,8 +15,8 @@ namespace EventManager.Infrastructure.Repository
 		public UserRepository(IDataBaseContext context, IUserSql userSql) : base(context, userSql)
 		{
 			RefreshRepo();
-			RecordAffected -= (s, ex) => RefreshRepo();
-			RecordAffected += (s, ex) => RefreshRepo();
+			//RecordAffected -= (s, ex) => RefreshRepo();
+			//RecordAffected += (s, ex) => RefreshRepo();
 		}
 
 		private void RefreshRepo()

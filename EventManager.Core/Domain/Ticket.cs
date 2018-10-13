@@ -17,13 +17,14 @@ namespace EventManager.Core.Domain
 
 		protected Ticket() { }
 
-		public Ticket(long id, int seatingNumber, decimal price, long eventId, long sectorId, Signature creator)
+		public Ticket(long id, int seatingNumber, decimal price, string userId, long eventId, long sectorId, Signature creator)
 		{
-			Add(id, seatingNumber, price, eventId, sectorId, creator);
+			Add(id, seatingNumber, price, userId, eventId, sectorId, creator);
 		}
-		private void Add(long id, int seatingNumber, decimal price, long eventId, long sectorId, Signature creator)
+		private void Add(long id, int seatingNumber, decimal price, string userId, long eventId, long sectorId, Signature creator)
 		{
 			Id = id;
+			UserId = userId;
 			EventId = eventId;
 			SectorId = sectorId;
 			Creator = creator;

@@ -17,8 +17,8 @@ namespace EventManager.Infrastructure.Repository
 		public AddressRepository(IDataBaseContext context, IAddressSql addressSql) : base(context, addressSql)
 		{
 			RefreshRepo();
-			RecordAffected -= (s, ex) =>  RefreshRepo(); 
-			RecordAffected += (s, ex) => RefreshRepo();
+			//RecordAffected -= (s, ex) =>  RefreshRepo(); 
+			//RecordAffected += (s, ex) => RefreshRepo();
 		}
 
 		private void RefreshRepo()

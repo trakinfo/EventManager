@@ -20,8 +20,8 @@ namespace EventManager.Infrastructure.Repository
 		{
 			_ticketRepo = ticketRepo;
 			RefreshRepo();
-			RecordAffected -= (s, ex) => RefreshRepo();
-			RecordAffected += (s, ex) => RefreshRepo();
+			//RecordAffected -= (s, ex) => RefreshRepo();
+			//RecordAffected += (s, ex) => RefreshRepo();
 		}
 
 		private void RefreshRepo()
@@ -52,7 +52,7 @@ namespace EventManager.Infrastructure.Repository
 					Convert.ToInt32(S["SeatingRangeEnd"]),
 					Convert.ToUInt32(S["SeatingPrice"]),
 					Convert.ToInt64(S["IdLocation"]),
-					_ticketRepo.GetTicketList().Result.Where(T => T.SectorId==sectorId),
+					_ticketRepo.GetTicketList().Result.Where(T => T.SectorId==sectorId).ToList(),
 					new Signature
 					(
 						S["User"].ToString(),
