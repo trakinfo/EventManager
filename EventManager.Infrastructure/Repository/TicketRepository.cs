@@ -14,11 +14,11 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class TicketRepository : Repository<Ticket>, ITicketRepository
 	{
-		public DateSpan TicketDateSpan { get; set; }
+		public DateSpan TicketDateSpan { get; set; } = new DateSpan(DateTime.MinValue, DateTime.MaxValue);
 
-		public TicketRepository(DateTime startDate, DateTime endDate, IDataBaseContext context, ITicketSql ticketSql) : base(context, ticketSql)
+		public TicketRepository(IDataBaseContext context, ITicketSql ticketSql) : base(context, ticketSql)
 		{
-			TicketDateSpan = new DateSpan(DateTime.Now, DateTime.MaxValue);
+			//TicketDateSpan = new DateSpan(DateTime.Now, DateTime.MaxValue);
 			RefreshRepo();
 			RecordAffected -= (s, ex) => RefreshRepo();
 			RecordAffected += (s, ex) => RefreshRepo();

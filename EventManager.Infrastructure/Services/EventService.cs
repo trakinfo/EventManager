@@ -67,15 +67,15 @@ namespace EventManager.Infrastructure.Services
 			int ticketCount = 0;
 			try
 			{
-				var _event = await _eventRepository.GetAsync(eventId,_eventRepository.CreateEvent);
-				if (_event.Location == null || _event.Location.Sectors == null) return 0;
+				//var _event = await _eventRepository.GetAsync(eventId,_eventRepository.CreateEvent);
+				//if (_event.Location == null || _event.Location.Sectors == null) return 0;
 
-				var HS = new HashSet<Ticket>();
-				foreach (var S in _event.Location.Sectors)
-				{
-					var sqlParamValue = new object[4] { eventId, S.Id, S.SeatingPrice, null };
-					ticketCount += await _eventRepository.AddTickets(sqlParamValue, S.SeatingCount);
-				}
+				//var HS = new HashSet<Ticket>();
+				//foreach (var S in _event.Location.Sectors)
+				//{
+				//	var sqlParamValue = new object[4] { eventId, S.Id, S.SeatingPrice, null };
+				//	ticketCount += await _eventRepository.AddTickets(sqlParamValue, S.SeatingCount);
+				//}
 			}
 			catch (Exception e)
 			{

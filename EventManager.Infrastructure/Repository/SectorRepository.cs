@@ -26,7 +26,7 @@ namespace EventManager.Infrastructure.Repository
 
 		private void RefreshRepo()
 		{
-			_ticketRepo.TicketDateSpan=new DateSpan(DateTime.Now, DateTime.MaxValue);
+			//_ticketRepo.TicketDateSpan = new DateSpan(DateTime.Now, DateTime.MaxValue);
 			objectList = GetListAsync(null, CreateSector).Result;
 		}
 
