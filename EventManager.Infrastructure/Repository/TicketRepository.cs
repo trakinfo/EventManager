@@ -25,17 +25,22 @@ namespace EventManager.Infrastructure.Repository
 
 		private void RefreshRepo()
 		{
-			objectList = GetListAsync(TicketDateSpan.Start, TicketDateSpan.End, CreateTicket).Result;
+			contentList = GetListAsync(TicketDateSpan.Start, TicketDateSpan.End, CreateTicket).Result;
 		}
 
 		public async Task<Ticket> GetTicket(long id)
 		{
-			return await Task.FromResult(objectList.Where(T => T.Id == id).FirstOrDefault());
+			return await Task.FromResult(contentList.Where(T => T.Id == id).FirstOrDefault());
 		}
 
-		public async Task<IList<Ticket>> GetTicketList()
+		public async Task<IEnumerable<Ticket>> GetTicketList()
 		{
-			return await Task.FromResult(objectList.ToList());
+			return await Task.FromResult(contentList.ToList());
+		}
+
+		public async Task<IEnumerable<Ticket>> GetTicketList(long idEvent,long idSector)
+		{
+			return await Task.FromResult(contentList.Where(T => T.EventId==idEvent && T.SectorId==idSector));
 		}
 
 		async Task<IEnumerable<Ticket>> GetListAsync(DateTime startDate, DateTime endDate, GetData<Ticket> getTicket)

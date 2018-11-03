@@ -14,28 +14,28 @@ namespace EventManager.Infrastructure.Repository
 	public class EventRepository : Repository<Event>, IEventRepository
 	{
 		readonly ILocationRepository _locationRepo;
+		readonly ITicketRepository _ticketRepo;
 
-		public EventRepository(IDataBaseContext context, ILocationRepository locationRepo, IEventSql eventSql) : base(context, eventSql)
+		public EventRepository(ILocationRepository locationRepo, ITicketRepository ticketRepo, IDataBaseContext context, IEventSql eventSql) : base(context, eventSql)
 		{
 			_locationRepo = locationRepo;
+			_ticketRepo = ticketRepo;
 			RefreshRepo();
-			//RecordAffected -= (s, ex) => RefreshRepo();
-			//RecordAffected += (s, ex) => RefreshRepo();
 		}
 
 		private void RefreshRepo()
 		{
-			objectList = GetListAsync(null, CreateEvent).Result;
+			contentList = GetListAsync(null, CreateEvent).Result;
 		}
 
 		public async Task<IEnumerable<Event>> GetList(string name)
 		{
-			return await Task.FromResult(objectList.Where(e => e.Name.StartsWith(name)));
+			return await Task.FromResult(contentList.Where(e => e.Name.StartsWith(name)));
 		}
 
 		public async Task<Event> Get(long id)
 		{
-			return await Task.FromResult(objectList.Where(e => e.Id == id).FirstOrDefault());
+			return await Task.FromResult(contentList.Where(e => e.Id == id).FirstOrDefault());
 		}
 
 		//async Task<Location> GetLocationAsync(long idEvent, long idLocation)
@@ -47,12 +47,6 @@ namespace EventManager.Infrastructure.Repository
 		//		S.Tickets = await GetTicketListAsync(idEvent, S.Id);
 		//	}
 		//	return await Task.FromResult(location);
-		//}
-
-		//async Task<ISet<Ticket>> GetTicketListAsync(long idEvent, long idSector)
-		//{
-		//	var tickets = dbContext.FetchRecordSetAsync((sql as IEventSql).SelectTicket(idEvent, idSector), GetTicket);
-		//	return await tickets;
 		//}
 
 		public void CreateInsertParams(IDbCommand cmd)
@@ -105,14 +99,8 @@ namespace EventManager.Infrastructure.Repository
 			if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
 			{
 				location = _locationRepo.GetLocation(Convert.ToInt64(R["IdLocation"])).Result;
-				//var a = location.Sectors.Sum(t => t.Tickets.Count());
-
-				location.Sectors.ToList().ForEach(S => S.Tickets.RemoveAll(T => T.EventId != idEvent));
-				//foreach (var s in location.Sectors)
-				//{
-				//	var x = s.Tickets.RemoveAll(T => T.EventId != idEvent);
-				//}
-				//var b = location.Sectors.Sum(t => t.Tickets.Count());
+				foreach (var s in location.Sectors)
+					s.Tickets = GetTicketList(idEvent, s.Id);
 			}
 
 			return new Event
@@ -125,6 +113,12 @@ namespace EventManager.Infrastructure.Repository
 					Convert.ToDateTime(R["EndDate"]),
 					new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
 				);
+		}
+
+		IEnumerable<Ticket> GetTicketList(long idEvent, long idSector)
+		{
+			var tickets = _ticketRepo.GetTicketList(idEvent, idSector).Result;
+			return tickets;
 		}
 
 		//Ticket GetTicket(IDataReader R)

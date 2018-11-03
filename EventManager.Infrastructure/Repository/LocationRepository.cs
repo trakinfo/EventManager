@@ -26,17 +26,17 @@ namespace EventManager.Infrastructure.Repository
 
 		private void RefreshRepo()
 		{
-			objectList = GetListAsync(null, CreateLocation).Result;
+			contentList = GetListAsync(null, CreateLocation).Result;
 		}
 
 		public async Task<Location> GetLocation(long idLocation)
 		{
-			return await Task.FromResult(objectList.Where(L => L.Id == idLocation).FirstOrDefault());
+			return await Task.FromResult(contentList.Where(L => L.Id == idLocation).FirstOrDefault());
 		} 
 
 		public async Task<IEnumerable<Location>> GetLocationList(string name)
 		{
-			return await Task.FromResult(objectList.Where(L => L.Name.StartsWith(name)));
+			return await Task.FromResult(contentList.Where(L => L.Name.StartsWith(name)));
 		}
 
 		Location CreateLocation(IDataReader R)

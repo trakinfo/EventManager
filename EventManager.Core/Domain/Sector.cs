@@ -14,17 +14,16 @@ namespace EventManager.Core.Domain
 		public int SeatingCount => GetSeatingCount();
 		public decimal SeatingPrice { get; protected set; }
 		public long LocationId { get; protected set; }
-		public List<Ticket> Tickets { get; set; }
+		public IEnumerable<Ticket> Tickets { get; set; }
 
 		protected Sector() { }
-		public Sector(long id, string name, string description, int seatingRangeStart, int seatingRangeEnd, decimal seatingPrice, long locationId,  List<Ticket> tickets, Signature creator)
+		public Sector(long id, string name, string description, int seatingRangeStart, int seatingRangeEnd, decimal seatingPrice, long locationId,   Signature creator)
 		{
-			Add(id, name, description, seatingRangeStart, seatingRangeEnd, seatingPrice, locationId, tickets, creator);
+			Add(id, name, description, seatingRangeStart, seatingRangeEnd, seatingPrice, locationId, creator);
 		}
-		void Add(long id, string name, string description, int seatingRangeStart, int seatingRangeEnd, decimal seatingPrice, long locationId,List<Ticket> tickets, Signature creator)
+		void Add(long id, string name, string description, int seatingRangeStart, int seatingRangeEnd, decimal seatingPrice, long locationId, Signature creator)
 		{
 			Id = id;
-			Tickets = tickets;
 			Creator = creator;
 			Update(name, description, seatingRangeStart, seatingRangeEnd, seatingPrice, locationId, null);
 		}

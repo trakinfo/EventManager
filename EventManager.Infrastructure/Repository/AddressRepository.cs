@@ -23,16 +23,16 @@ namespace EventManager.Infrastructure.Repository
 
 		private void RefreshRepo()
 		{
-			objectList = GetListAsync(null, CreateAddress).Result;
+			contentList = GetListAsync(null, CreateAddress).Result;
 		}
 		public async Task<Address> GetAddress(long idAddress)
 		{
-			return await Task.FromResult(objectList.Where(A => A.Id == idAddress).FirstOrDefault());
+			return await Task.FromResult(contentList.Where(A => A.Id == idAddress).FirstOrDefault());
 		}
 
 		public async Task<IEnumerable<Address>> GetAddressList(string name)
 		{
-			return await Task.FromResult(objectList.Where(A => A.PlaceName.StartsWith(name)));
+			return await Task.FromResult(contentList.Where(A => A.PlaceName.StartsWith(name)));
 		}
 
 		public Address CreateAddress(IDataReader R)

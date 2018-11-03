@@ -12,7 +12,7 @@ namespace EventManager.Infrastructure.Repository
 	{
 		protected IDataBaseContext dbContext;
 		protected ISql sql;
-		protected IEnumerable<T> objectList;
+		protected IEnumerable<T> contentList;
 
 		//public event EventHandler RecordAffected;
 
