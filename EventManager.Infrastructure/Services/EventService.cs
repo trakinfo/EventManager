@@ -33,7 +33,7 @@ namespace EventManager.Infrastructure.Services
 			}
 		}
 
-		public async Task<IEnumerable<EventDto>> GetList(string name = null)
+		public async Task<IEnumerable<EventDto>> GetList(DateTime startDate, DateTime endDate, string name = null)
 		{
 			try
 			{

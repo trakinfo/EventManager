@@ -19,8 +19,7 @@ namespace EventManager.Infrastructure.Repository
 		public TicketRepository(IDataBaseContext context, ITicketSql ticketSql) : base(context, ticketSql)
 		{
 			RefreshRepo();
-			//RecordAffected -= (s, ex) => RefreshRepo();
-			//RecordAffected += (s, ex) => RefreshRepo();
+			
 		}
 
 		private void RefreshRepo()
@@ -35,7 +34,7 @@ namespace EventManager.Infrastructure.Repository
 
 		public async Task<IEnumerable<Ticket>> GetTicketList()
 		{
-			return await Task.FromResult(contentList.ToList());
+			return await Task.FromResult(contentList);
 		}
 
 		public async Task<IEnumerable<Ticket>> GetTicketList(long idEvent,long idSector)

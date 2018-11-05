@@ -1,6 +1,7 @@
 ﻿using EventManager.Infrastructure.Command.Event;
 using EventManager.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace EventManager.Api.Controllers
@@ -9,15 +10,19 @@ namespace EventManager.Api.Controllers
 	public class EventController : Controller
 	{
 		readonly IEventService _eventService;
+
 		public EventController(IEventService eventService)
 		{
 			_eventService = eventService;
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Get(string name = "")
+		public async Task<IActionResult> Get(DateTime? startDate, DateTime? endDate, string name="")
 		{
-			var events = await _eventService.GetList(name);
+			//var startDate = DateTime.Now;
+			//var endDate = DateTime.MaxValue;
+			
+			var events = await _eventService.GetList(startDate ?? DateTime.Now , endDate ?? DateTime.MaxValue, name);
 			return Json(events);
 		}
 
