@@ -19,9 +19,6 @@ namespace EventManager.Api.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Get(DateTime? startDate, DateTime? endDate, string name="")
 		{
-			//var startDate = DateTime.Now;
-			//var endDate = DateTime.MaxValue;
-			
 			var events = await _eventService.GetList(startDate ?? DateTime.Now , endDate ?? DateTime.MaxValue, name);
 			return Json(events);
 		}

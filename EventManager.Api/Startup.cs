@@ -39,11 +39,11 @@ namespace EventManager.Api
 			services.AddScoped<IEventService, EventService>();
 			services.AddScoped<ILocationService, LocationService>();
 
-			services.AddSingleton<IEventSql, EventSql>();
-			services.AddSingleton<ILocationSql, LocationSql>();
-			services.AddSingleton<IAddressSql, AddressSql>();
-			services.AddSingleton<ISectorSql, SectorSql>();
-			services.AddSingleton<ITicketSql, TicketSql>();
+			services.AddScoped<ILocationSql, LocationSql>();
+			services.AddScoped<IAddressSql, AddressSql>();
+			services.AddScoped<ISectorSql, SectorSql>();
+			services.AddScoped<ITicketSql, TicketSql>();
+			services.AddScoped<IEventSql, EventSql>();
 
 			services.AddSingleton(AutoMapperConfig.Initialize());
 		}

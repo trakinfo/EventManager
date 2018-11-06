@@ -8,7 +8,7 @@ namespace EventManager.Core.Repository
 {
 	public interface ITicketRepository
 	{
-		DateSpan TicketDateSpan { set; }
+		//DateSpan TicketDateSpan { set; }
 		Task<Ticket> GetTicket(long id);
 		Task<IEnumerable<Ticket>> GetTicketList();
 		Task<IEnumerable<Ticket>> GetTicketList(long idEvent, long idSector);

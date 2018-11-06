@@ -10,7 +10,7 @@ namespace EventManager.Core.Repository
     public interface IEventRepository : IRepository
     {
 		Task<Event> Get(long id);
-		Task<IEnumerable<Event>> GetList(string name);
+		Task<IEnumerable<Event>> GetList(DateTime startDate, DateTime endDate, string name);
 		//Task<int> AddTickets(object[] sqlParamValue, int seatingCount);
 		Event CreateEvent(IDataReader R);
 		void CreateInsertParams(IDbCommand cmd);

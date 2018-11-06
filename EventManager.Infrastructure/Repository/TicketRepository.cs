@@ -14,7 +14,7 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class TicketRepository : Repository<Ticket>, ITicketRepository
 	{
-		public DateSpan TicketDateSpan { get; set; } = new DateSpan(DateTime.MinValue, DateTime.MaxValue);
+		//public DateSpan TicketDateSpan { get; set; } = new DateSpan(DateTime.MinValue, DateTime.MaxValue);
 
 		public TicketRepository(IDataBaseContext context, ITicketSql ticketSql) : base(context, ticketSql)
 		{
@@ -24,7 +24,7 @@ namespace EventManager.Infrastructure.Repository
 
 		private void RefreshRepo()
 		{
-			contentList = GetListAsync(TicketDateSpan.Start, TicketDateSpan.End, CreateTicket).Result;
+			contentList = GetListAsync(null, CreateTicket).Result;
 		}
 
 		public async Task<Ticket> GetTicket(long id)
@@ -42,10 +42,10 @@ namespace EventManager.Infrastructure.Repository
 			return await Task.FromResult(contentList.Where(T => T.EventId==idEvent && T.SectorId==idSector));
 		}
 
-		async Task<IEnumerable<Ticket>> GetListAsync(DateTime startDate, DateTime endDate, GetData<Ticket> getTicket)
-		{
-			return await dbContext.FetchRecordSetAsync((sql as ITicketSql).SelectMany(startDate, endDate), CreateTicket);
-		}
+		//async Task<IEnumerable<Ticket>> GetListAsync(DateTime startDate, DateTime endDate, GetData<Ticket> getTicket)
+		//{
+		//	return await dbContext.FetchRecordSetAsync((sql as ITicketSql).SelectMany(startDate, endDate), CreateTicket);
+		//}
 
 		Ticket CreateTicket(IDataReader R)
 		{

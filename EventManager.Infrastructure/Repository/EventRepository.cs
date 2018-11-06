@@ -28,9 +28,9 @@ namespace EventManager.Infrastructure.Repository
 			contentList = GetListAsync(null, CreateEvent).Result;
 		}
 
-		public async Task<IEnumerable<Event>> GetList(string name)
+		public async Task<IEnumerable<Event>> GetList(DateTime startDate, DateTime endDate, string name)
 		{
-			return await Task.FromResult(contentList.Where(e => e.Name.StartsWith(name)));
+			return await Task.FromResult(contentList.Where(e => e.Name.StartsWith(name)).Where(e => e.StartDate >= startDate && e.EndDate <= endDate));
 		}
 
 		public async Task<Event> Get(long id)
