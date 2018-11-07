@@ -13,28 +13,28 @@ namespace EventManager.Core.Domain
 		public int SeatingRangeEnd { get; protected set; }
 		public int SeatingCount => GetSeatingCount();
 		public decimal SeatingPrice { get; protected set; }
-		public long LocationId { get; protected set; }
+		//public long LocationId { get; protected set; }
 		public IEnumerable<Ticket> Tickets { get; set; }
 
 		protected Sector() { }
-		public Sector(long id, string name, string description, int seatingRangeStart, int seatingRangeEnd, decimal seatingPrice, long locationId,   Signature creator)
+		public Sector(long id, string name, string description, int seatingRangeStart, int seatingRangeEnd, decimal seatingPrice, Signature creator)
 		{
-			Add(id, name, description, seatingRangeStart, seatingRangeEnd, seatingPrice, locationId, creator);
+			Add(id, name, description, seatingRangeStart, seatingRangeEnd, seatingPrice, creator);
 		}
-		void Add(long id, string name, string description, int seatingRangeStart, int seatingRangeEnd, decimal seatingPrice, long locationId, Signature creator)
+		void Add(long id, string name, string description, int seatingRangeStart, int seatingRangeEnd, decimal seatingPrice, Signature creator)
 		{
 			Id = id;
 			Creator = creator;
-			Update(name, description, seatingRangeStart, seatingRangeEnd, seatingPrice, locationId, null);
+			Update(name, description, seatingRangeStart, seatingRangeEnd, seatingPrice, null);
 		}
-		public void Update(string name, string description, int seatingRangeStart, int seatingRangeEnd, decimal seatingPrice, long locationId, Signature modifier)
+		public void Update(string name, string description, int seatingRangeStart, int seatingRangeEnd, decimal seatingPrice, Signature modifier)
 		{
 			Name = name;
 			Description = description;
 			SeatingRangeStart = seatingRangeStart;
 			SeatingRangeEnd = seatingRangeEnd;
 			SeatingPrice = seatingPrice;
-			LocationId = locationId;
+			//LocationId = locationId;
 			if (modifier != null) ModifierList.Add(modifier);
 		}
 		int GetSeatingCount()

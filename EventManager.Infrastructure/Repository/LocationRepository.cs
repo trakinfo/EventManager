@@ -29,8 +29,10 @@ namespace EventManager.Infrastructure.Repository
 
 		public async Task<Location> GetLocation(long idLocation)
 		{
-
-			return await Task.FromResult(contentList.Where(L => L.Id == idLocation).FirstOrDefault());
+			var sectors = _sectorRepo.GetSectorList(idLocation).Result;
+			var l = contentList.Where(L => L.Id == idLocation).FirstOrDefault();
+			var location = new Location(l.Id, l.Name, l.Address, sectors, l.PhoneNumber, l.Email, l.WWW, l.Creator);
+			return await Task.FromResult(location);
 		} 
 
 		public async Task<IEnumerable<Location>> GetLocationList(string name)
@@ -51,7 +53,7 @@ namespace EventManager.Infrastructure.Repository
 					idLocation,
 					R["Name"].ToString(),
 					address,
-					_sectorRepo.GetSectorList(string.Empty).Result.Where(S => S.LocationId == idLocation),
+					null,
 					R["PhoneNumber"].ToString(),
 					R["Email"].ToString(),
 					R["www"].ToString(),

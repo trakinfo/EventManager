@@ -14,7 +14,7 @@ namespace EventManager.Core.Repository
 		void CreateUpdateParams(IDbCommand cmd);
 		void CreateDeleteParams(IDbCommand cmd);
 		Task<Sector> GetSector(long id);
-		Task<IEnumerable<Sector>> GetSectorList(string name);
+		Task<IEnumerable<Sector>> GetSectorList(long idLocation);
 		//Task<ISet<Sector>> GetListAsync(long idLocation, GetData<Sector> Get);
 		Sector CreateSector(IDataReader R);
 	}

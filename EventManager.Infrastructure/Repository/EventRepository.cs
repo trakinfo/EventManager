@@ -98,17 +98,9 @@ namespace EventManager.Infrastructure.Repository
 
 			if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
 			{
-				var l = _locationRepo.GetLocation(Convert.ToInt64(R["IdLocation"])).Result;
-				var sectors = new List<Sector>();
-				foreach (var s in l.Sectors)
-				{
-					var sector = new Sector(s.Id, s.Name, s.Description, s.SeatingRangeStart, s.SeatingRangeEnd, s.SeatingPrice, s.LocationId, s.Creator);
-					sectors.Add(sector);
-				}
-				foreach (var s in sectors)
+				location = _locationRepo.GetLocation(Convert.ToInt64(R["IdLocation"])).Result;
+				foreach (var s in location.Sectors)
 					s.Tickets = GetTicketList(idEvent, s.Id);
-				location = new Location(l.Id,l.Name,l.Address,sectors,l.PhoneNumber,l.Email,l.WWW,l.Creator);
-				
 			}
 
 			return new Event

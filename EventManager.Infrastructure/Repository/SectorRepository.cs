@@ -14,42 +14,48 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class SectorRepository : Repository<Sector>, ISectorRepository
 	{
-		//public IEnumerable<Sector> SectorList { get => contentList; }
-		//readonly ITicketRepository _ticketRepo;
 		public SectorRepository(IDataBaseContext context, ISectorSql sectorSql) : base(context, sectorSql)
 		{
-			RefreshRepo();
+			//RefreshRepo();
 		}
 
-		private void RefreshRepo()
-		{
-			//_ticketRepo.TicketDateSpan = new DateSpan(DateTime.Now, DateTime.MaxValue);
-			contentList = GetListAsync(null, CreateSector).Result;
-		}
+		//private void RefreshRepo()
+		//{
+		//	contentList = GetListAsync(null, CreateSector).Result;
+		//}
 
-		public async Task<Sector> GetSector(long id)
-		{
-			return await Task.FromResult(contentList.Where(S => S.Id == id).FirstOrDefault());
-		} 
+		//public async Task<Sector> GetSector(long id)
+		//{
+		//	return await Task.FromResult(contentList.Where(S => S.Id == id).FirstOrDefault());
+		//}
 
-		public async Task<IEnumerable<Sector>> GetSectorList(string name)
+		//public async Task<IEnumerable<Sector>> GetSectorList(long idLocation)
+		//{
+		//	var sectors = new List<Sector>();
+		//	foreach (var s in contentList.Where(S => S.LocationId == idLocation))
+		//	{
+		//		sectors.Add(new Sector(s.Id,s.Name,s.Description,s.SeatingRangeStart,s.SeatingRangeEnd,s.SeatingPrice,s.LocationId,s.Creator));
+		//	}
+
+		//	return await Task.FromResult(sectors);
+		//}
+		public async Task<IEnumerable<Sector>> GetListAsync(long idLocation, GetData<Sector> Get)
 		{
-			return await Task.FromResult(contentList.Where(S => S.Name.StartsWith(name)));
+			return await dbContext.FetchRecordSetAsync(sql.SelectMany(idLocation), Get);
 		}
 
 		public Sector CreateSector(IDataReader S)
 		{
-			var sectorId = Convert.ToInt64(S["ID"]);
+			//var sectorId = Convert.ToInt64(S["ID"]);
 			return new Sector
 				(
-					sectorId,
+					Convert.ToInt64(S["ID"]),
 					S["Name"].ToString(),
 					S["Description"].ToString(),
 					Convert.ToInt32(S["SeatingRangeStart"]),
 					Convert.ToInt32(S["SeatingRangeEnd"]),
 					Convert.ToUInt32(S["SeatingPrice"]),
-					Convert.ToInt64(S["IdLocation"]),
-					//_ticketRepo.GetTicketList().Result.Where(T => T.SectorId==sectorId).ToList(),
+					//Convert.ToInt64(S["IdLocation"]),
 					new Signature
 					(
 						S["User"].ToString(),
