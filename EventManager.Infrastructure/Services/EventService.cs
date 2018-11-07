@@ -5,7 +5,6 @@ using AutoMapper;
 using EventManager.Core.Domain;
 using EventManager.Core.Repository;
 using EventManager.Infrastructure.DTO;
-
 namespace EventManager.Infrastructure.Services
 {
 	public class EventService : IEventService
@@ -38,7 +37,6 @@ namespace EventManager.Infrastructure.Services
 			try
 			{
 				var events = await _eventRepository.GetList(startDate, endDate, name);
-				//var t = events.Where(e=>e.Id==3).Single().Location.Sectors.Sum(x => x.Tickets.Count() - x.Tickets.Where(y => y.IsPurchased).Count());
 				return _mapper.Map<IEnumerable<EventDto>>(events);
 			}
 			catch (Exception e)

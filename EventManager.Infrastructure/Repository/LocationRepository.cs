@@ -20,8 +20,6 @@ namespace EventManager.Infrastructure.Repository
 			_addressRepo = addressRepo;
 			_sectorRepo = sectorRepo;
 			RefreshRepo();
-			//RecordAffected -= (s, ex) => RefreshRepo();
-			//RecordAffected += (s, ex) => RefreshRepo();
 		}
 
 		private void RefreshRepo()
@@ -31,6 +29,7 @@ namespace EventManager.Infrastructure.Repository
 
 		public async Task<Location> GetLocation(long idLocation)
 		{
+
 			return await Task.FromResult(contentList.Where(L => L.Id == idLocation).FirstOrDefault());
 		} 
 

@@ -18,10 +18,7 @@ namespace EventManager.Infrastructure.Repository
 		//readonly ITicketRepository _ticketRepo;
 		public SectorRepository(IDataBaseContext context, ISectorSql sectorSql) : base(context, sectorSql)
 		{
-			//_ticketRepo = ticketRepo;
 			RefreshRepo();
-			//RecordAffected -= (s, ex) => RefreshRepo();
-			//RecordAffected += (s, ex) => RefreshRepo();
 		}
 
 		private void RefreshRepo()
