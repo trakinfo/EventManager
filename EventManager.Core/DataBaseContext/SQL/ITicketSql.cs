@@ -6,6 +6,6 @@ namespace EventManager.Core.DataBaseContext.SQL
 {
 	public interface ITicketSql : ISql
 	{
-		//string SelectMany(DateTime startDate, DateTime endDate);
+		string SelectMany(long idEvent);
 	}
 }

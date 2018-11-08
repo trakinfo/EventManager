@@ -18,36 +18,36 @@ namespace EventManager.Infrastructure.Repository
 
 		public TicketRepository(IDataBaseContext context, ITicketSql ticketSql) : base(context, ticketSql)
 		{
-			RefreshRepo();
+			//RefreshRepo();
 			
 		}
 
-		private void RefreshRepo()
-		{
-			contentList = GetListAsync(null, CreateTicket).Result;
-		}
-
-		public async Task<Ticket> GetTicket(long id)
-		{
-			return await Task.FromResult(contentList.Where(T => T.Id == id).FirstOrDefault());
-		}
-
-		public async Task<IEnumerable<Ticket>> GetTicketList()
-		{
-			return await Task.FromResult(contentList);
-		}
-
-		public async Task<IEnumerable<Ticket>> GetTicketList(long idEvent,long idSector)
-		{
-			return await Task.FromResult(contentList.Where(T => T.EventId==idEvent && T.SectorId==idSector));
-		}
-
-		//async Task<IEnumerable<Ticket>> GetListAsync(DateTime startDate, DateTime endDate, GetData<Ticket> getTicket)
+		//private void RefreshRepo()
 		//{
-		//	return await dbContext.FetchRecordSetAsync((sql as ITicketSql).SelectMany(startDate, endDate), CreateTicket);
+		//	contentList = GetListAsync(null, CreateTicket).Result;
 		//}
 
-		Ticket CreateTicket(IDataReader R)
+		//public async Task<Ticket> GetTicket(long id)
+		//{
+		//	return await Task.FromResult(contentList.Where(T => T.Id == id).FirstOrDefault());
+		//}
+
+		//public async Task<IEnumerable<Ticket>> GetTicketList()
+		//{
+		//	return await Task.FromResult(contentList);
+		//}
+
+		//public async Task<IEnumerable<Ticket>> GetTicketList(long idEvent,long idSector)
+		//{
+		//	return await Task.FromResult(contentList.Where(T => T.EventId==idEvent && T.SectorId==idSector));
+		//}
+
+		public async Task<IEnumerable<Ticket>> GetListAsync(long idEvent, GetData<Ticket> Get)
+		{
+			return await dbContext.FetchRecordSetAsync((sql as ITicketSql).SelectMany(idEvent), Get);
+		}
+
+		public Ticket CreateTicket(IDataReader R)
 		{
 			//var id = Convert.ToInt64(R["ID"]);
 			return new Ticket(
@@ -55,7 +55,7 @@ namespace EventManager.Infrastructure.Repository
 				Convert.ToInt32(R["SeatingNumber"]),
 				Convert.ToDecimal(R["Price"]),
 				R["UserId"].ToString(),
-				Convert.ToInt64(R["IdEvent"]),
+				//Convert.ToInt64(R["IdEvent"]),
 				Convert.ToInt64(R["IdSector"]),
 				new Signature(
 					R["User"].ToString(),
@@ -74,5 +74,7 @@ namespace EventManager.Infrastructure.Repository
 			cmd.Parameters.Add(dbContext.CreateParameter("@User", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("@HostIP", DbType.String, cmd));
 		}
+
+
 	}
 }

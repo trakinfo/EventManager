@@ -7,8 +7,8 @@ namespace EventManager.Core.Repository
 {
 	public interface IAddressRepository : IRepository
 	{
-		Task<Address> GetAddress(long id);
-		Task<IEnumerable<Address>> GetAddressList(string name);
+		//Task<Address> GetAddress(long id);
+		//Task<IEnumerable<Address>> GetAddressList(string name);
 		void CreateInsertParams(IDbCommand cmd);
 		Address CreateAddress(IDataReader R);
 	}

@@ -16,24 +16,22 @@ namespace EventManager.Infrastructure.Repository
 	{
 		public AddressRepository(IDataBaseContext context, IAddressSql addressSql) : base(context, addressSql)
 		{
-			RefreshRepo();
-			//RecordAffected -= (s, ex) =>  RefreshRepo(); 
-			//RecordAffected += (s, ex) => RefreshRepo();
+			//RefreshRepo();
 		}
 
-		private void RefreshRepo()
-		{
-			contentList = GetListAsync(null, CreateAddress).Result;
-		}
-		public async Task<Address> GetAddress(long idAddress)
-		{
-			return await Task.FromResult(contentList.Where(A => A.Id == idAddress).FirstOrDefault());
-		}
+		//private void RefreshRepo()
+		//{
+		//	contentList = GetListAsync(null, CreateAddress).Result;
+		//}
+		//public async Task<Address> GetAddress(long idAddress)
+		//{
+		//	return await Task.FromResult(contentList.Where(A => A.Id == idAddress).FirstOrDefault());
+		//}
 
-		public async Task<IEnumerable<Address>> GetAddressList(string name)
-		{
-			return await Task.FromResult(contentList.Where(A => A.PlaceName.StartsWith(name)));
-		}
+		//public async Task<IEnumerable<Address>> GetAddressList(string name)
+		//{
+		//	return await Task.FromResult(contentList.Where(A => A.PlaceName.StartsWith(name)));
+		//}
 
 		public Address CreateAddress(IDataReader R)
 		{

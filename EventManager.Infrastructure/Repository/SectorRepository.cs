@@ -41,7 +41,7 @@ namespace EventManager.Infrastructure.Repository
 		//}
 		public async Task<IEnumerable<Sector>> GetListAsync(long idLocation, GetData<Sector> Get)
 		{
-			return await dbContext.FetchRecordSetAsync(sql.SelectMany(idLocation), Get);
+			return await dbContext.FetchRecordSetAsync((sql as ISectorSql).SelectMany(idLocation), Get);
 		}
 
 		public Sector CreateSector(IDataReader S)
@@ -55,7 +55,6 @@ namespace EventManager.Infrastructure.Repository
 					Convert.ToInt32(S["SeatingRangeStart"]),
 					Convert.ToInt32(S["SeatingRangeEnd"]),
 					Convert.ToUInt32(S["SeatingPrice"]),
-					//Convert.ToInt64(S["IdLocation"]),
 					new Signature
 					(
 						S["User"].ToString(),

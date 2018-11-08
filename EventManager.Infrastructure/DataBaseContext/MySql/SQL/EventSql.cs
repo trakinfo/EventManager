@@ -1,4 +1,5 @@
 ﻿using EventManager.Core.DataBaseContext.SQL;
+using System;
 
 namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 {
@@ -12,6 +13,11 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 		public string SelectMany(string name)
 		{
 			return $"SELECT e.ID,e.Name,e.Description,e.IdLocation,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.Name LIKE '{name}%' ORDER BY e.StartDate DESC,e.Name;";
+		}
+
+		public string SelectMany(DateTime startDate, DateTime endDate, string name)
+		{
+			return $"SELECT e.ID,e.Name,e.Description,e.IdLocation,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.Name LIKE '{name}%' AND e.StartDate >= '{startDate}' AND e.EndDate <= '{endDate}' ORDER BY e.StartDate DESC,e.Name;";
 		}
 
 		public string Insert()

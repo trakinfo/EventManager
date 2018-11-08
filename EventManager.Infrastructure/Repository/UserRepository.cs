@@ -10,19 +10,15 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class UserRepository : Repository<User>, IUserRepository
 	{
-		//IEnumerable<User> userList;
-		public IEnumerable<User> UserList { get => contentList;}
 		public UserRepository(IDataBaseContext context, IUserSql userSql) : base(context, userSql)
 		{
-			RefreshRepo();
-			//RecordAffected -= (s, ex) => RefreshRepo();
-			//RecordAffected += (s, ex) => RefreshRepo();
+			//RefreshRepo();
 		}
 
-		private void RefreshRepo()
-		{
-			contentList = UserList;
-		}
+		//private void RefreshRepo()
+		//{
+		//	contentList = UserList;
+		//}
 
 		private User CreateUser(IDataReader R)
 		{

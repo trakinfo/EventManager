@@ -22,6 +22,11 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 			return $"SELECT t.ID,t.SeatingNumber,t.Price,t.UserId,t.PurchaseDate,t.IdEvent,t.IdSector,t.User,t.HostIP,t.Version FROM ticket t;";
 		}
 
+		public string SelectMany(long idEvent)
+		{
+			return $"SELECT t.ID,t.SeatingNumber,t.Price,t.UserId,t.PurchaseDate,t.IdSector,t.User,t.HostIP,t.Version FROM ticket t WHERE t.IdEvent={idEvent};";
+		}
+
 		public string Insert()
 		{
 			return "INSERT INTO ticket VALUES(null,@IdSector,@IdEvent,null,@SeatingNumber,@Price,null,@User,@HostIP,null);";

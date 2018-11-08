@@ -22,7 +22,7 @@ namespace EventManager.Infrastructure.Services
 		{
 			try
 			{
-				var _event = await _eventRepository.Get(id);
+				var _event = await _eventRepository.GetAsync(id, _eventRepository.CreateEvent);
 				return _mapper.Map<EventDto>(_event);
 			}
 			catch (Exception e)
@@ -36,7 +36,7 @@ namespace EventManager.Infrastructure.Services
 		{
 			try
 			{
-				var events = await _eventRepository.GetList(startDate, endDate, name);
+				var events = await _eventRepository.GetListAsync(startDate, endDate, name, _eventRepository.CreateEvent);
 				return _mapper.Map<IEnumerable<EventDto>>(events);
 			}
 			catch (Exception e)

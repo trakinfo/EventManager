@@ -19,45 +19,50 @@ namespace EventManager.Infrastructure.Repository
 		{
 			_addressRepo = addressRepo;
 			_sectorRepo = sectorRepo;
-			RefreshRepo();
+			//RefreshRepo();
 		}
 
-		private void RefreshRepo()
-		{
-			contentList = GetListAsync(null, CreateLocation).Result;
-		}
+		//private void RefreshRepo()
+		//{
+		//	contentList = GetListAsync(null, CreateLocation).Result;
+		//}
 
-		public async Task<Location> GetLocation(long idLocation)
-		{
-			var sectors = _sectorRepo.GetSectorList(idLocation).Result;
-			var l = contentList.Where(L => L.Id == idLocation).FirstOrDefault();
-			var location = new Location(l.Id, l.Name, l.Address, sectors, l.PhoneNumber, l.Email, l.WWW, l.Creator);
-			return await Task.FromResult(location);
-		} 
+		//public async Task<Location> GetLocation(long idLocation)
+		//{
+		//	var sectors = _sectorRepo.GetSectorList(idLocation).Result;
+		//	var l = contentList.Where(L => L.Id == idLocation).FirstOrDefault();
+		//	var location = new Location(l.Id, l.Name, l.Address, sectors, l.PhoneNumber, l.Email, l.WWW, l.Creator);
+		//	return await Task.FromResult(location);
+		//} 
 
-		public async Task<IEnumerable<Location>> GetLocationList(string name)
-		{
-			return await Task.FromResult(contentList.Where(L => L.Name.StartsWith(name)));
-		}
+		//public async Task<IEnumerable<Location>> GetLocationList(string name)
+		//{
+		//	return await Task.FromResult(contentList.Where(L => L.Name.StartsWith(name)));
+		//}
 
-		Location CreateLocation(IDataReader R)
+		public Location CreateLocation(IDataReader R)
 		{
 			var idLocation = Convert.ToInt64(R["ID"]);
 			Address address = null;
 
 			if (!string.IsNullOrEmpty(R["IdAddress"].ToString()))
-				address = _addressRepo.GetAddress(Convert.ToInt64(R["IdAddress"])).Result;
-									
+				address = _addressRepo.GetAsync(Convert.ToInt64(R["IdAddress"]), _addressRepo.CreateAddress).Result;
+
 			return new Location
 				(
 					idLocation,
 					R["Name"].ToString(),
 					address,
-					null,
+					_sectorRepo.GetListAsync(idLocation, _sectorRepo.CreateSector).Result,
 					R["PhoneNumber"].ToString(),
 					R["Email"].ToString(),
 					R["www"].ToString(),
-					new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
+					new Signature
+					(
+						R["User"].ToString(),
+						R["HostIP"].ToString(),
+						Convert.ToDateTime(R["Version"])
+					)
 				);
 		}
 

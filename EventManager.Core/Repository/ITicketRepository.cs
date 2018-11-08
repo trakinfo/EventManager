@@ -1,4 +1,5 @@
-﻿using EventManager.Core.Domain;
+﻿using EventManager.Core.DataBaseContext;
+using EventManager.Core.Domain;
 using EventManager.Core.Globals;
 using System.Collections.Generic;
 using System.Data;
@@ -6,12 +7,13 @@ using System.Threading.Tasks;
 
 namespace EventManager.Core.Repository
 {
-	public interface ITicketRepository
+	public interface ITicketRepository : IRepository
 	{
 		//DateSpan TicketDateSpan { set; }
-		Task<Ticket> GetTicket(long id);
-		Task<IEnumerable<Ticket>> GetTicketList();
-		Task<IEnumerable<Ticket>> GetTicketList(long idEvent, long idSector);
+		//Task<Ticket> GetTicket(long id);
+		//Task<IEnumerable<Ticket>> GetTicketList();
+		Task<IEnumerable<Ticket>> GetListAsync(long idEvent, GetData<Ticket> Get);
 		void CreateInsertParams(IDbCommand cmd);
+		Ticket CreateTicket(IDataReader R);
 	}
 }

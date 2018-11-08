@@ -17,6 +17,11 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 			return $"SELECT s.ID,s.Name,s.Description,s.SeatingRangeStart,s.SeatingRangeEnd,s.SeatingPrice,s.IdLocation,s.User,s.HostIP,s.Version FROM sector s WHERE s.Name LIKE '{name}%' ORDER BY s.Name;";
 		}
 
+		public string SelectMany(long idLocation)
+		{
+			return $"SELECT s.ID,s.Name,s.Description,s.SeatingRangeStart,s.SeatingRangeEnd,s.SeatingPrice,s.User,s.HostIP,s.Version FROM sector s WHERE s.IdLocation={idLocation};";
+		}
+
 		public string Insert()
 		{
 			throw new NotImplementedException();
@@ -30,11 +35,6 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 		public string Delete()
 		{
 			throw new NotImplementedException();
-		}
-
-		public string SelectLocationSectors(long idLocation)
-		{
-			return $"SELECT s.ID,s.Name,s.Description,s.SeatingRangeStart,s.SeatingRangeEnd,s.SeatingPrice,s.User,s.HostIP,s.Version FROM sector s WHERE s.IdLocation={idLocation};";
 		}
 
 		public string UpdateLocation(long sectorId)
