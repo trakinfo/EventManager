@@ -76,5 +76,10 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 		{
 			throw new NotImplementedException();
 		}
+
+		public string SelectMany()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

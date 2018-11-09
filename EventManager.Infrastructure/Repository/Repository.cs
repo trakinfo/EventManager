@@ -31,6 +31,11 @@ namespace EventManager.Infrastructure.Repository
 			return await dbContext.FetchRecordSetAsync(sql.SelectMany(name), Get);
 		}
 
+		public async Task<IEnumerable<T1>> GetListAsync<T1>(object[] sqlParamValue, DataParameters createParams, GetData<T1> Get)
+		{
+			return await dbContext.FetchRecordSetAsync(sql.SelectMany(),sqlParamValue, createParams, Get);
+		}
+
 		public async Task AddAsync(object[] sqlParamValue, DataParameters createParams)
 		{
 			await dbContext.AddRecordAsync(sql.Insert(), sqlParamValue, createParams);

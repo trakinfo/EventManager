@@ -36,7 +36,8 @@ namespace EventManager.Infrastructure.Services
 		{
 			try
 			{
-				var events = await _eventRepository.GetListAsync(startDate, endDate, name, _eventRepository.CreateEvent);
+				var sqlParamValue = new object[] { name, startDate, endDate };
+				var events = await _eventRepository.GetListAsync(sqlParamValue,_eventRepository.CreateSelectParams, _eventRepository.CreateEvent);
 				return _mapper.Map<IEnumerable<EventDto>>(events);
 			}
 			catch (Exception e)

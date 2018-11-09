@@ -15,9 +15,9 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 			return $"SELECT e.ID,e.Name,e.Description,e.IdLocation,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.Name LIKE '{name}%' ORDER BY e.StartDate DESC,e.Name;";
 		}
 
-		public string SelectMany(DateTime startDate, DateTime endDate, string name)
+		public string SelectMany()
 		{
-			return $"SELECT e.ID,e.Name,e.Description,e.IdLocation,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.Name LIKE '{name}%' AND e.StartDate >= '{startDate}' AND e.EndDate <= '{endDate}' ORDER BY e.StartDate DESC,e.Name;";
+			return $"SELECT e.ID,e.Name,e.Description,e.IdLocation,e.StartDate,e.EndDate,e.User,e.HostIP,e.Version FROM `event` e WHERE e.Name LIKE concat(@name,'%') AND e.StartDate >= @startDate AND e.EndDate <= @endDate ORDER BY e.StartDate DESC,e.Name;";
 		}
 
 		public string Insert()

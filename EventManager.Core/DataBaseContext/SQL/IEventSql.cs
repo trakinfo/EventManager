@@ -6,7 +6,7 @@ namespace EventManager.Core.DataBaseContext.SQL
     {
 		//string SelectTicket(long idEvent, long idSector);
 		//string InsertTicket();
-		string SelectMany(DateTime startDate, DateTime endDate, string name);
+		//string SelectMany(DateTime startDate, DateTime endDate, string name);
 		string UpdateEventLocation();
 	}
 }

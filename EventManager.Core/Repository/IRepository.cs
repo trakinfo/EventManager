@@ -8,6 +8,7 @@ namespace EventManager.Core.Repository
     {
 		Task<T> GetAsync<T>(long id, GetData<T> GetRow);
 		Task<IEnumerable<T>> GetListAsync<T>(string name, GetData<T> GetRow);
+		Task<IEnumerable<T>> GetListAsync<T>(object[] sqlParamValue, DataParameters createParams, GetData<T> Get);
 		Task AddAsync(object[] sqlParamValues, DataParameters addParams);
 		Task AddManyAsync(ISet<object[]> sqlParamValue, DataParameters createParams);
 		Task DeleteAsync(object[] sqlParamValues, DataParameters delParams);

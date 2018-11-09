@@ -23,10 +23,10 @@ namespace EventManager.Infrastructure.Repository
 			//RefreshRepo();
 		}
 
-		public async Task<IEnumerable<Event>> GetListAsync(DateTime startDate, DateTime endDate, string name, GetData<Event> Get)
-		{
-			return await dbContext.FetchRecordSetAsync((sql as IEventSql).SelectMany(startDate, endDate, name), Get);
-		}
+		//public async Task<IEnumerable<Event>> GetListAsync(DateTime startDate, DateTime endDate, string name, GetData<Event> Get)
+		//{
+		//	return await dbContext.FetchRecordSetAsync(sql.SelectMany(), Get);
+		//}
 
 		//private void RefreshRepo()
 		//{
@@ -53,6 +53,13 @@ namespace EventManager.Infrastructure.Repository
 		//	}
 		//	return await Task.FromResult(location);
 		//}
+
+		public void CreateSelectParams(IDbCommand cmd)
+		{
+			cmd.Parameters.Add(dbContext.CreateParameter("@Name", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@StartDate", DbType.DateTime, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@EndDate", DbType.DateTime, cmd));
+		}
 
 		public void CreateInsertParams(IDbCommand cmd)
 		{

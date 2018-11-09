@@ -52,6 +52,42 @@ namespace EventManager.Infrastructure.DataBaseContext
 			}
 		}
 
+		public async Task<IEnumerable<T>> FetchRecordSetAsync<T>(string sqlString, object[] sqlParameterValue, DataParameters createParams, GetData<T> GetDataRow)
+		{
+			var HS = new HashSet<T>();
+			try
+			{
+				using (var conn = (MySqlConnection)GetConnection())
+				{
+					conn.Open();
+					var t = conn.BeginTransaction();
+					try
+					{
+						using (var cmd = new MySqlCommand { CommandText = sqlString, Connection = conn, Transaction = t })
+						{
+							createParams(cmd);
+							for (int i = 0; i < sqlParameterValue.Length; i++)
+								cmd.Parameters[i].Value = sqlParameterValue[i];
+							var R = await cmd.ExecuteReaderAsync();
+							while (R.Read()) HS.Add(GetDataRow(R));
+						}
+						t.Commit();
+					}
+					catch (MySqlException ex)
+					{
+						Console.WriteLine(ex.Message);
+						t.Rollback();
+					}
+				}
+				return await Task.FromResult(HS);
+			}
+			catch (Exception exe)
+			{
+				Console.WriteLine(exe.Message);
+				return await Task.FromResult(HS);
+			}
+		}
+
 		public async Task<T> FetchRecordAsync<T>(string sqlString, GetData<T> GetDataRow)
 		{
 			T DR = default(T);

@@ -15,6 +15,7 @@ namespace EventManager.Core.DataBaseContext
 		IDbConnection GetConnection();
 		IDataParameter CreateParameter(string name, DbType type, IDbCommand cmd);
 		Task<IEnumerable<T>> FetchRecordSetAsync<T>(string sqlString, GetData<T> GetDataRow);
+		Task<IEnumerable<T>> FetchRecordSetAsync<T>(string sqlString, object[] sqlParameterValue, DataParameters selectParams, GetData<T> GetDataRow);
 		Task<T> FetchRecordAsync<T>(string sqlString, GetData<T> GetDataRow);
 		Task<int> AddManyRecordsAsync(string sqlString,ISet<object[]> sqlParameterValue, DataParameters addParams);
 		Task AddRecordAsync(string sqlString, object[] sqlParameterValue, DataParameters addParams);
