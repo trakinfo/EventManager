@@ -9,7 +9,7 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 	{
 		public string Select(long id)
 		{
-			return $"SELECT a.ID, a.PlaceName, a.StreetName, a.PropertyNumber, a.ApartmentNumber, a.PostalCode, a.PostOffice, a.User,a.HostIP,a.Version FROM address a INNER JOIN location l ON a.ID=l.IdAddress WHERE l.ID={id};";
+			return $"SELECT a.ID, a.PlaceName, a.StreetName, a.PropertyNumber, a.ApartmentNumber, a.PostalCode, a.PostOffice, a.User,a.HostIP,a.Version FROM address a WHERE a.ID={id};";
 		}
 
 		public string SelectMany(string name)
@@ -28,11 +28,6 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 		}
 
 		public string Delete()
-		{
-			throw new NotImplementedException();
-		}
-
-		public string SelectMany()
 		{
 			throw new NotImplementedException();
 		}

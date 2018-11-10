@@ -56,7 +56,6 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 			return $"SELECT l.ID,l.Name,l.IdAddress,l.PhoneNumber,l.Email,l.www,l.User,l.HostIP,l.Version FROM location l WHERE l.Name LIKE '{name}%' ORDER BY l.Name;";
 		}
 
-
 		public string Insert()
 		{
 			return "INSERT INTO location VALUES(null,@Name,@IdAddress,@PhoneNumber,@Email,@www,@User,@HostIP,NULL);";
@@ -73,11 +72,6 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 		}
 
 		public string UpdateAddress()
-		{
-			throw new NotImplementedException();
-		}
-
-		public string SelectMany()
 		{
 			throw new NotImplementedException();
 		}

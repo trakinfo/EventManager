@@ -20,43 +20,10 @@ namespace EventManager.Infrastructure.Repository
 		{
 			_locationRepo = locationRepo;
 			_ticketRepo = ticketRepo;
-			//RefreshRepo();
 		}
-
-		//public async Task<IEnumerable<Event>> GetListAsync(DateTime startDate, DateTime endDate, string name, GetData<Event> Get)
-		//{
-		//	return await dbContext.FetchRecordSetAsync(sql.SelectMany(), Get);
-		//}
-
-		//private void RefreshRepo()
-		//{
-		//	contentList = GetListAsync(null, CreateEvent).Result;
-		//}
-
-		//public async Task<IEnumerable<Event>> GetList(DateTime startDate, DateTime endDate, string name)
-		//{
-		//	return await Task.FromResult(contentList.Where(e => e.Name.StartsWith(name)).Where(e => e.StartDate >= startDate && e.EndDate <= endDate));
-		//}
-
-		//public async Task<Event> Get(long id)
-		//{
-		//	return await Task.FromResult(contentList.Where(e => e.Id == id).FirstOrDefault());
-		//}
-
-		//async Task<Location> GetLocationAsync(long idEvent, long idLocation)
-		//{
-		//	var location = await locationRepository.GetAsync(idLocation, locationRepository.CreateLocation);
-
-		//	foreach (var S in location.Sectors)
-		//	{
-		//		S.Tickets = await GetTicketListAsync(idEvent, S.Id);
-		//	}
-		//	return await Task.FromResult(location);
-		//}
 
 		public void CreateSelectParams(IDbCommand cmd)
 		{
-			cmd.Parameters.Add(dbContext.CreateParameter("@Name", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("@StartDate", DbType.DateTime, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("@EndDate", DbType.DateTime, cmd));
 		}
@@ -83,26 +50,6 @@ namespace EventManager.Infrastructure.Repository
 			cmd.Parameters.Add(dbContext.CreateParameter("@ID", DbType.Int64, cmd));
 		}
 
-		//public async Task<int> AddTickets(object[] sqlParamValue, int seatingCount)
-		//{
-		//	var HS = new HashSet<object[]>();
-
-		//	for (int i = 0; i < seatingCount; i++)
-		//	{
-		//		sqlParamValue[3] = i + 1;
-		//		HS.Add(sqlParamValue.ToArray());
-		//	}
-		//	return await dbContext.AddManyRecordsAsync((sql as IEventSql).InsertTicket(), HS, CreateTicketParams);
-		//}
-
-		//private void CreateTicketParams(IDbCommand cmd)
-		//{
-		//	cmd.Parameters.Add(dbContext.CreateParameter("@IdEvent", DbType.Int64, cmd));
-		//	cmd.Parameters.Add(dbContext.CreateParameter("@IdSector", DbType.Int64, cmd));
-		//	cmd.Parameters.Add(dbContext.CreateParameter("@Price", DbType.Decimal, cmd));
-		//	cmd.Parameters.Add(dbContext.CreateParameter("@SeatingNumber", DbType.Int32, cmd));
-		//}
-
 		public Event CreateEvent(IDataReader R)
 		{
 			var idEvent = Convert.ToInt64(R["ID"]);
@@ -110,7 +57,6 @@ namespace EventManager.Infrastructure.Repository
 
 			if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
 			{
-				//location = _locationRepo.GetLocation(Convert.ToInt64(R["IdLocation"])).Result;
 				location = _locationRepo.GetAsync(Convert.ToInt64(R["IdLocation"]), _locationRepo.CreateLocation).Result;
 				var tickets = GetTicketList(idEvent);
 				foreach (var s in location.Sectors)
@@ -131,6 +77,7 @@ namespace EventManager.Infrastructure.Repository
 
 		IEnumerable<Ticket> GetTicketList(long idEvent)
 		{
+			var sqlParamValue = new object[] { idEvent };
 			var tickets = _ticketRepo.GetListAsync(idEvent, _ticketRepo.CreateTicket).Result;
 			return tickets;
 		}

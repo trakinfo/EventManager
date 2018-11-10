@@ -14,33 +14,7 @@ namespace EventManager.Infrastructure.Repository
 {
 	public class TicketRepository : Repository<Ticket>, ITicketRepository
 	{
-		//public DateSpan TicketDateSpan { get; set; } = new DateSpan(DateTime.MinValue, DateTime.MaxValue);
-
-		public TicketRepository(IDataBaseContext context, ITicketSql ticketSql) : base(context, ticketSql)
-		{
-			//RefreshRepo();
-			
-		}
-
-		//private void RefreshRepo()
-		//{
-		//	contentList = GetListAsync(null, CreateTicket).Result;
-		//}
-
-		//public async Task<Ticket> GetTicket(long id)
-		//{
-		//	return await Task.FromResult(contentList.Where(T => T.Id == id).FirstOrDefault());
-		//}
-
-		//public async Task<IEnumerable<Ticket>> GetTicketList()
-		//{
-		//	return await Task.FromResult(contentList);
-		//}
-
-		//public async Task<IEnumerable<Ticket>> GetTicketList(long idEvent,long idSector)
-		//{
-		//	return await Task.FromResult(contentList.Where(T => T.EventId==idEvent && T.SectorId==idSector));
-		//}
+		public TicketRepository(IDataBaseContext context, ITicketSql ticketSql) : base(context, ticketSql) { }
 
 		public async Task<IEnumerable<Ticket>> GetListAsync(long idEvent, GetData<Ticket> Get)
 		{
@@ -49,13 +23,11 @@ namespace EventManager.Infrastructure.Repository
 
 		public Ticket CreateTicket(IDataReader R)
 		{
-			//var id = Convert.ToInt64(R["ID"]);
 			return new Ticket(
 				Convert.ToInt64(R["ID"]),
 				Convert.ToInt32(R["SeatingNumber"]),
 				Convert.ToDecimal(R["Price"]),
 				R["UserId"].ToString(),
-				//Convert.ToInt64(R["IdEvent"]),
 				Convert.ToInt64(R["IdSector"]),
 				new Signature(
 					R["User"].ToString(),
@@ -63,6 +35,19 @@ namespace EventManager.Infrastructure.Repository
 					Convert.ToDateTime(R["Version"])
 					)
 				);
+		}
+
+		public async Task<int> AddTickets(object[] sqlParamValue, int seatingCount)
+		{
+			var HS = new HashSet<object[]>();
+
+			for (int i = 0; i < seatingCount; i++)
+			{
+				sqlParamValue[3] = i + 1;
+				HS.Add(sqlParamValue.ToArray());
+			}
+			return await AddManyAsync(sqlParamValue, CreateInsertParams);
+			//return await dbContext.AddManyRecordsAsync(sql.Insert(), HS, CreateTicketParams);
 		}
 
 		public void CreateInsertParams(IDbCommand cmd)

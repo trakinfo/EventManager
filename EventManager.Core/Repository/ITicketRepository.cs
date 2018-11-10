@@ -13,6 +13,7 @@ namespace EventManager.Core.Repository
 		//Task<Ticket> GetTicket(long id);
 		//Task<IEnumerable<Ticket>> GetTicketList();
 		Task<IEnumerable<Ticket>> GetListAsync(long idEvent, GetData<Ticket> Get);
+		//void CreateSelectParams(IDbCommand cmd);
 		void CreateInsertParams(IDbCommand cmd);
 		Ticket CreateTicket(IDataReader R);
 	}

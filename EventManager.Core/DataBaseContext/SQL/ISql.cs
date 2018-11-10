@@ -8,7 +8,6 @@ namespace EventManager.Core.DataBaseContext.SQL
     {
 		string Select(long id);
 		string SelectMany(string name);
-		string SelectMany();
 		string Insert();
 		string Update();
 		string Delete();

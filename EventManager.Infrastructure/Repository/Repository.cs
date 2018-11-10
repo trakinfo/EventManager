@@ -1,9 +1,7 @@
 ﻿using EventManager.Core.DataBaseContext;
 using EventManager.Core.DataBaseContext.SQL;
 using EventManager.Core.Repository;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace EventManager.Infrastructure.Repository
@@ -31,29 +29,29 @@ namespace EventManager.Infrastructure.Repository
 			return await dbContext.FetchRecordSetAsync(sql.SelectMany(name), Get);
 		}
 
-		public async Task<IEnumerable<T1>> GetListAsync<T1>(object[] sqlParamValue, DataParameters createParams, GetData<T1> Get)
+		public async Task<IEnumerable<T1>> GetListAsync<T1>(string name, object[] sqlParamValue, DataParameters createSelectParams, GetData<T1> Get)
 		{
-			return await dbContext.FetchRecordSetAsync(sql.SelectMany(),sqlParamValue, createParams, Get);
+			return await dbContext.FetchRecordSetAsync(sql.SelectMany(name), sqlParamValue, createSelectParams, Get);
 		}
 
-		public async Task AddAsync(object[] sqlParamValue, DataParameters createParams)
+		public async Task AddAsync(object[] sqlParamValue, DataParameters createInsertParams)
 		{
-			await dbContext.AddRecordAsync(sql.Insert(), sqlParamValue, createParams);
+			await dbContext.AddRecordAsync(sql.Insert(), sqlParamValue, createInsertParams);
 		}
 
-		public async Task AddManyAsync(ISet<object[]> sqlParamValue, DataParameters createParams)
+		public async Task AddManyAsync(ISet<object[]> sqlParamValue, DataParameters createInsertParams)
 		{
-			await dbContext.AddManyRecordsAsync(sql.Insert(), sqlParamValue, createParams);
+			await dbContext.AddManyRecordsAsync(sql.Insert(), sqlParamValue, createInsertParams);
 		}
 
-		public async Task UpdateAsync(object[] sqlParamValue, DataParameters createParams)
+		public async Task UpdateAsync(object[] sqlParamValue, DataParameters createUpdateParams)
 		{
-			await dbContext.UpdateRecordAsync(sql.Update(), sqlParamValue, createParams);
+			await dbContext.UpdateRecordAsync(sql.Update(), sqlParamValue, createUpdateParams);
 		}
 
-		public async Task DeleteAsync(object[] sqlParamValue, DataParameters createParams)
+		public async Task DeleteAsync(object[] sqlParamValue, DataParameters createDeleteParams)
 		{
-			await dbContext.RemoveRecordAsync(sql.Update(), sqlParamValue, createParams);
+			await dbContext.RemoveRecordAsync(sql.Delete(), sqlParamValue, createDeleteParams);
 		}
 
 	}
