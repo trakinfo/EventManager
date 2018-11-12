@@ -37,18 +37,10 @@ namespace EventManager.Infrastructure.Repository
 				);
 		}
 
-		public async Task<int> AddTickets(object[] sqlParamValue, int seatingCount)
-		{
-			var HS = new HashSet<object[]>();
-
-			for (int i = 0; i < seatingCount; i++)
-			{
-				sqlParamValue[3] = i + 1;
-				HS.Add(sqlParamValue.ToArray());
-			}
-			return await AddManyAsync(sqlParamValue, CreateInsertParams);
-			//return await dbContext.AddManyRecordsAsync(sql.Insert(), HS, CreateTicketParams);
-		}
+		//public async Task<int> AddTickets(ISet<object[]> sqlParamValue, int seatingCount)
+		//{
+		//	return await AddManyAsync(sqlParamValue, CreateInsertParams);
+		//}
 
 		public void CreateInsertParams(IDbCommand cmd)
 		{

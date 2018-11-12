@@ -1,4 +1,5 @@
 ﻿using EventManager.Infrastructure.Command.Event;
+using EventManager.Infrastructure.Command.Ticket;
 using EventManager.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -46,9 +47,17 @@ namespace EventManager.Api.Controllers
 		}
 
 		[HttpPost("{eventId}/tickets")]
-		public async Task<IActionResult> Post(long eventId)
+		public async Task<IActionResult> Post(long eventId, [FromBody] NewTicket newTicket)
 		{
-			var count = await _eventService.CreateTicketCollectionAsync(eventId);
+			var count = await _eventService.CreateTicketCollectionAsync(
+				eventId,
+				newTicket.StartRange,
+				newTicket.EndRange,
+				newTicket.SectorId,
+				newTicket.Price,
+				newTicket.Creator,
+				newTicket.HostIP
+				);
 			return Created(string.Empty, count);
 		}
 

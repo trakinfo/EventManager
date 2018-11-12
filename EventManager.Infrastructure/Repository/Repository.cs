@@ -39,19 +39,19 @@ namespace EventManager.Infrastructure.Repository
 			await dbContext.AddRecordAsync(sql.Insert(), sqlParamValue, createInsertParams);
 		}
 
-		public async Task AddManyAsync(ISet<object[]> sqlParamValue, DataParameters createInsertParams)
+		public async Task<int> AddManyAsync(ISet<object[]> sqlParamValue, DataParameters createInsertParams)
 		{
-			await dbContext.AddManyRecordsAsync(sql.Insert(), sqlParamValue, createInsertParams);
+			return await dbContext.AddManyRecordsAsync(sql.Insert(), sqlParamValue, createInsertParams);
 		}
 
-		public async Task UpdateAsync(object[] sqlParamValue, DataParameters createUpdateParams)
+		public async Task<int> UpdateAsync(object[] sqlParamValue, DataParameters createUpdateParams)
 		{
-			await dbContext.UpdateRecordAsync(sql.Update(), sqlParamValue, createUpdateParams);
+			return await dbContext.UpdateRecordAsync(sql.Update(), sqlParamValue, createUpdateParams);
 		}
 
-		public async Task DeleteAsync(object[] sqlParamValue, DataParameters createDeleteParams)
+		public async Task<int> DeleteAsync(object[] sqlParamValue, DataParameters createDeleteParams)
 		{
-			await dbContext.RemoveRecordAsync(sql.Delete(), sqlParamValue, createDeleteParams);
+			return await dbContext.RemoveRecordAsync(sql.Delete(), sqlParamValue, createDeleteParams);
 		}
 
 	}
