@@ -60,7 +60,7 @@ namespace EventManager.Api.Controllers
 				);
 			return Created(string.Empty, count);
 		}
-
+		//todo: sprawdzić działanie aktualizacji wydarzenia
 		[HttpPut("{eventId}")]
 		public async Task<IActionResult> Put(long eventId, [FromBody] NewEvent Event)
 		{
@@ -76,7 +76,7 @@ namespace EventManager.Api.Controllers
 				);
 			return NoContent();
 		}
-
+		//todo: sprawdzić działanie usuwania wydarzenia
 		[HttpDelete("{eventId}")]
 		public async Task<IActionResult> Delete(long eventId)
 		{
