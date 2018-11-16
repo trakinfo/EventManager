@@ -74,37 +74,19 @@ namespace EventManager.Infrastructure.Services
 
 				if (sectorId != null)
 				{
-					if (_event.Location.Sectors.Count(s => s.Id == sectorId) > 0)
-						ticketCount = await CreateTicketAsync(eventId, startRange, endRange, sectorId, price, creator, hostIP);
+					var sector = _event.Location.Sectors.Where(s => s.Id == sectorId).FirstOrDefault();
+					if (sector != null)
+						ticketCount = await _ticketRepo.CreateTicketAsync(eventId, startRange, endRange, sector, price, creator, hostIP);
 				}
 				else
 					foreach (var s in _event.Location.Sectors)
-					{
-						ticketCount += await CreateTicketAsync(eventId, s, creator, hostIP);
-					}
+						ticketCount += await _ticketRepo.CreateTicketAsync(eventId, s, creator, hostIP);
 			}
 			catch (Exception e)
 			{
 				Console.WriteLine(e.Message);
 			}
 			return ticketCount;
-		}
-
-		private async Task<int> CreateTicketAsync(long eventId, Sector s, string creator, string hostIP)
-		{
-			var sqlParamValue = new HashSet<object[]>();
-			for (int i = s.SeatingRangeStart; i <= s.SeatingRangeEnd; i++)
-			{
-				sqlParamValue.Add(new object[] { eventId, s.Id, s.SeatingPrice, i, creator, hostIP });
-
-			}
-			return await _ticketRepo.AddManyAsync(sqlParamValue, _ticketRepo.CreateInsertParams);
-		}
-
-		private async Task<int> CreateTicketAsync(long eventId, int? startRange, int? endRange, long? sectorId, decimal? price, string creator, string hostIP)
-		{
-			//todo: add tickets for selected sector and selected range
-			throw new NotImplementedException();
 		}
 
 		public async Task DeleteAsync(long id)

@@ -37,10 +37,31 @@ namespace EventManager.Infrastructure.Repository
 				);
 		}
 
-		//public async Task<int> AddTickets(ISet<object[]> sqlParamValue, int seatingCount)
-		//{
-		//	return await AddManyAsync(sqlParamValue, CreateInsertParams);
-		//}
+		public async Task<int> CreateTicketAsync(long eventId, Sector sector, string creator, string hostIP)
+		{
+			var sqlParamValue = new HashSet<object[]>();
+			for (int i = sector.SeatingRangeStart; i <= sector.SeatingRangeEnd; i++)
+			{
+				if (sector.Tickets.Where(t => t.SeatingNumber == i).Count() > 0) continue;
+				sqlParamValue.Add(new object[] { eventId, sector.Id, sector.SeatingPrice, i, creator, hostIP });
+			}
+			if (sqlParamValue.Count == 0) return 0;
+			return await AddManyAsync(sqlParamValue, CreateInsertParams);
+		}
+
+		public async Task<int> CreateTicketAsync(long eventId, int? startRange, int? endRange, Sector sector, decimal? price, string creator, string hostIP)
+		{
+			var sqlParamValue = new HashSet<object[]>();
+			var start = startRange ?? sector.SeatingRangeStart;
+			var end = endRange ?? sector.SeatingRangeEnd;
+			for (int i = start; i <= end; i++)
+			{
+				if (sector.Tickets.Where(t => t.SeatingNumber == i).Count() > 0) continue;
+				sqlParamValue.Add(new object[] { eventId, sector.Id, price ?? sector.SeatingPrice, i, creator, hostIP });
+			}
+			if (sqlParamValue.Count == 0) return 0;
+			return await AddManyAsync(sqlParamValue, CreateInsertParams);
+		}
 
 		public void CreateInsertParams(IDbCommand cmd)
 		{
