@@ -36,5 +36,10 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 		{
 			throw new NotImplementedException();
 		}
+
+		public string Puchase(long idTicket)
+		{
+			return $"UPDATE ticket SET UserId=@UserName, PurchaseDate=@PurchaseDate WHERE ID={idTicket};";
+		}
 	}
 }

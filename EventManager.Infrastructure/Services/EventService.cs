@@ -122,5 +122,11 @@ namespace EventManager.Infrastructure.Services
 				Console.WriteLine(e.Message);
 			}
 		}
+
+		public async Task BuyTicketAsync(long id, string userName, DateTime purchaseDate)
+		{
+			var SqlParams = new object[] { userName, purchaseDate };
+			await _ticketRepo.UpdateAsync(id, SqlParams, _ticketRepo.CreatePurchaseParams);
+		}
 	}
 }
