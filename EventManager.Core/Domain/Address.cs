@@ -12,11 +12,11 @@ namespace EventManager.Core.Domain
 		public string PostOffice { get; set; }
 
 		protected Address() { }
-		public Address(ulong id, string placeName, string streetName, string propertyNumber, string apartmentNumber, string  postalCode, string  postOffice, Signature creator)
+		public Address(long id, string placeName, string streetName, string propertyNumber, string apartmentNumber, string  postalCode, string  postOffice, Signature creator)
 		{
 			Add(id, placeName, streetName, propertyNumber, apartmentNumber, postalCode, postOffice, creator);
 		}
-		private void Add(ulong id, string placeName, string streetName, string propertyNumber, string apartmentNumber, string postalCode, string postOffice, Signature creator)
+		private void Add(long id, string placeName, string streetName, string propertyNumber, string apartmentNumber, string postalCode, string postOffice, Signature creator)
 		{
 			Id = id;
 			Creator = creator;
@@ -35,10 +35,11 @@ namespace EventManager.Core.Domain
 
 		public override string ToString()
 		{
-			var address = $"{PlaceName} ".TrimStart(" ".ToCharArray());
+			var address = $"{PlaceName}";
 
 			address += $", ul. {StreetName}".TrimEnd(", ul. ".ToCharArray());
-			address += $" {PropertyNumber}/{ApartmentNumber}".Trim(" /".ToCharArray());
+			address += $" {PropertyNumber}".TrimEnd(" ".ToCharArray());
+			address += $"/{ApartmentNumber}".TrimEnd("/".ToCharArray());
 			address += $", {PostalCode}".TrimEnd(", ".ToCharArray());
 			address += $" {PostOffice}".TrimEnd(" ".ToCharArray());
 

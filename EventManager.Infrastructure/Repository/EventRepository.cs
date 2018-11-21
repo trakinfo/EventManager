@@ -11,117 +11,58 @@ using System.Threading.Tasks;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class EventRepository : GenericRepository, IEventRepository
+	public class EventRepository : Repository<Event>, IEventRepository
 	{
-		//IDataBaseContext dbContext;
-		ILocationRepository locationRepository;
-		//IEventSql sql;
+		readonly ILocationRepository _locationRepo;
+		readonly ITicketRepository _ticketRepo;
 
-		public EventRepository(IDataBaseContext context, ILocationRepository locationRepo, IEventSql eventSql) : base(context,eventSql)
+		public EventRepository(ILocationRepository locationRepo, ITicketRepository ticketRepo, IDataBaseContext context, IEventSql eventSql) : base(context, eventSql)
 		{
-			//dbContext = context;
-			locationRepository = locationRepo;
-			//sql = eventSql;
-		}
-		//public async Task<Event> GetEventAsync(ulong eventId)
-		//{
-		//	var eventDR = dbContext.FetchRecordAsync(sql.SelectEvent(eventId), GetEvent);
-		//	return await eventDR;
-		//}
-
-		//public async Task<Event> GetEventAsync(string name)
-		//{
-		//	var eventDR = dbContext.FetchRecordAsync(sql.SelectEvent(name), GetEvent);
-		//	return await eventDR;
-		//}
-
-		//public async Task<IEnumerable<Event>> GetEventListAsync(string name = "")
-		//{
-		//	var events = await dbContext.FetchRecordSetAsync(sql.SelectEvents(name), GetEvent);
-		//	return await Task.FromResult(events.AsEnumerable());
-		//}
-
-		async Task<Location> GetLocationAsync(ulong idEvent, ulong idLocation)
-		{
-			var location = await locationRepository.GetAsync(idLocation, locationRepository.GetLocation);
-
-			foreach (var S in location.Sectors)
-			{
-				S.Tickets = await GetTicketListAsync(idEvent, S.Id);
-			}
-			return await Task.FromResult(location);
+			_locationRepo = locationRepo;
+			_ticketRepo = ticketRepo;
 		}
 
-		async Task<ISet<Ticket>> GetTicketListAsync(ulong idEvent, ulong idSector)
+		public void CreateSelectParams(IDbCommand cmd)
 		{
-			var tickets = dbContext.FetchRecordSetAsync((sql as IEventSql).SelectTicket(idEvent, idSector), GetTicket);
-			return await tickets;
+			cmd.Parameters.Add(dbContext.CreateParameter("@StartDate", DbType.DateTime, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@EndDate", DbType.DateTime, cmd));
 		}
 
-		//public async Task AddEventAsync(object[] paramValue)
-		//{
-		//	await dbContext.AddRecordAsync(sql.InsertEvent(), paramValue, CreateEventParams);
-		//}
-
-		//public async Task UpdateEventAsync(object[] paramValue)
-		//{
-		//	await dbContext.UpdateRecordAsync(sql.UpdateEvent(), paramValue, CreateUpdateParams);
-		//}
-
-		//public async Task DeleteEventAsync(object[] paramValue)
-		//{
-		//	await dbContext.RemoveRecordAsync(sql.DeleteEvent(), paramValue, CreateDeleteParams);
-		//}
-
-		public void CreateEventParams(IDbCommand cmd)
+		public void CreateInsertParams(IDbCommand cmd)
 		{
-			cmd.Parameters.Add(dbContext.CreateParameter("?Name", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?Description", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?IdLocation", DbType.Int64, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?StartDate", DbType.DateTime, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?EndDate", DbType.DateTime, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?User", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?HostIP", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@Name", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@Description", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@IdLocation", DbType.Int64, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@StartDate", DbType.DateTime, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@EndDate", DbType.DateTime, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@User", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@HostIP", DbType.String, cmd));
 		}
 
 		public void CreateUpdateParams(IDbCommand cmd)
 		{
-			cmd.Parameters.Add(dbContext.CreateParameter("?ID", DbType.Int64, cmd));
-			CreateEventParams(cmd);
+			cmd.Parameters.Add(dbContext.CreateParameter("@ID", DbType.Int64, cmd));
+			CreateInsertParams(cmd);
 		}
 
 		public void CreateDeleteParams(IDbCommand cmd)
 		{
-			cmd.Parameters.Add(dbContext.CreateParameter("?ID", DbType.Int64, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@ID", DbType.Int64, cmd));
 		}
 
-		public async Task<int> AddTickets(object[] sqlParamValue, uint seatingCount)
+		public Event CreateEvent(IDataReader R)
 		{
-			var HS = new HashSet<object[]>();
-
-			for (int i = 0; i < seatingCount; i++)
-			{
-				sqlParamValue[3] = i + 1;
-				HS.Add(sqlParamValue.ToArray());
-			}
-			return await dbContext.AddManyRecordsAsync((sql as IEventSql).InsertTicket(), HS, CreateTicketParams);
-		}
-
-		private void CreateTicketParams(IDbCommand cmd)
-		{
-			cmd.Parameters.Add(dbContext.CreateParameter("?IdEvent", DbType.Int64, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?IdSector", DbType.Int64, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?Price", DbType.Decimal, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?SeatingNumber", DbType.Int32, cmd));
-		}
-
-		public Event GetEvent(IDataReader R)
-		{
-			var idEvent = Convert.ToUInt64(R["ID"]);
+			var idEvent = Convert.ToInt64(R["ID"]);
 			Location location = null;
 
 			if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
-				location = GetLocationAsync(idEvent, Convert.ToUInt64(R["IdLocation"])).Result;
+			{
+				location = _locationRepo.GetAsync(Convert.ToInt64(R["IdLocation"]), _locationRepo.CreateLocation).Result;
+				var tickets = GetTicketList(idEvent);
+				foreach (var s in location.Sectors)
+					s.Tickets = tickets.Where(t => t.SectorId == s.Id);
+			}
+
 			return new Event
 				(
 					idEvent,
@@ -134,9 +75,18 @@ namespace EventManager.Infrastructure.Repository
 				);
 		}
 
-		Ticket GetTicket(IDataReader R)
+		IEnumerable<Ticket> GetTicketList(long idEvent)
 		{
-			return new Ticket(Convert.ToUInt64(R["ID"]), Convert.ToInt32(R["SeatingNumber"]), Convert.ToDecimal(R["Price"]), null);
+			var sqlParamValue = new object[] { idEvent };
+			var tickets = _ticketRepo.GetListAsync(idEvent, _ticketRepo.CreateTicket).Result;
+			return tickets;
 		}
+
+
+
+		//Ticket GetTicket(IDataReader R)
+		//{
+		//	return new Ticket(Convert.ToInt64(R["ID"]), Convert.ToInt32(R["SeatingNumber"]), Convert.ToDecimal(R["Price"]), null);
+		//}
 	}
 }

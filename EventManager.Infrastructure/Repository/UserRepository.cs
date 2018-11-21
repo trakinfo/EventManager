@@ -1,35 +1,26 @@
-﻿using EventManager.Core.Domain;
+﻿using EventManager.Core.DataBaseContext;
+using EventManager.Core.DataBaseContext.SQL;
+using EventManager.Core.Domain;
 using EventManager.Core.Repository;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class UserRepository : IUserRepository
+	public class UserRepository : Repository<User>, IUserRepository
 	{
-		public Task AddAsync(User user)
+		public UserRepository(IDataBaseContext context, IUserSql userSql) : base(context, userSql)
 		{
-			throw new NotImplementedException();
+			//RefreshRepo();
 		}
 
-		public Task DeleteAsync(long userId)
-		{
-			throw new NotImplementedException();
-		}
+		//private void RefreshRepo()
+		//{
+		//	contentList = UserList;
+		//}
 
-		public Task<User> GetAsync(long userId)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<User> GetAsync(string login)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task UpdateAsync(User user)
+		private User CreateUser(IDataReader R)
 		{
 			throw new NotImplementedException();
 		}

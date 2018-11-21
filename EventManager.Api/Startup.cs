@@ -26,15 +26,25 @@ namespace EventManager.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-			services.Add(new ServiceDescriptor(typeof(IDataBaseContext), new MySqlContext(Configuration.GetConnectionString("MySqlConnection"))));
-			//services.AddSingleton<IDataBaseContext, MySqlContext>();
+			//services.Add(new ServiceDescriptor(typeof(IDataBaseContext), new MySqlContext(Configuration.GetConnectionString("MySqlConnection"))));
+			services.AddTransient<IDataBaseContext>(s => new MySqlContext(Configuration.GetConnectionString("MySqlConnection")));
+			
 			services.AddScoped<IUserRepository, UserRepository>();
 			services.AddScoped<IEventRepository, EventRepository>();
 			services.AddScoped<ILocationRepository, LocationRepository>();
+			services.AddScoped<IAddressRepository, AddressRepository>();
+			services.AddScoped<ISectorRepository, SectorRepository>();
+			services.AddScoped<ITicketRepository, TicketRepository>();
+
 			services.AddScoped<IEventService, EventService>();
 			services.AddScoped<ILocationService, LocationService>();
-			services.AddSingleton<IEventSql, EventSql>();
-			services.AddSingleton<ILocationSql, LocationSql>();
+
+			services.AddScoped<ILocationSql, LocationSql>();
+			services.AddScoped<IAddressSql, AddressSql>();
+			services.AddScoped<ISectorSql, SectorSql>();
+			services.AddScoped<ITicketSql, TicketSql>();
+			services.AddScoped<IEventSql, EventSql>();
+
 			services.AddSingleton(AutoMapperConfig.Initialize());
 		}
 

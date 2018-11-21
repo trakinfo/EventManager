@@ -18,11 +18,11 @@ namespace EventManager.Core.Domain
 
 
 		protected Event() { }
-		public Event(ulong id, string name, string description, Location location, DateTime startDate, DateTime endDate, Signature creator)
+		public Event(long id, string name, string description, Location location, DateTime startDate, DateTime endDate, Signature creator)
 		{
 			Add(id,name, description, location, startDate, endDate, creator);
 		}
-		void Add(ulong id, string name, string description, Location location, DateTime startDate, DateTime endDate, Signature creator)
+		void Add(long id, string name, string description, Location location, DateTime startDate, DateTime endDate, Signature creator)
 		{
 			Id = id;
 			Creator = creator;

@@ -11,78 +11,70 @@ using EventManager.Core.Repository;
 
 namespace EventManager.Infrastructure.Repository
 {
-	public class LocationRepository : GenericRepository, ILocationRepository
+	public class LocationRepository : Repository<Location>, ILocationRepository
 	{
-		public LocationRepository(IDataBaseContext context, ILocationSql locationSql) : base(context, locationSql) { }
-
-		async Task<Address> GetLocationAddressAsync(ulong idLocation)
+		readonly IAddressRepository _addressRepo;
+		readonly ISectorRepository _sectorRepo;
+		public LocationRepository(IDataBaseContext context, ILocationSql locationSql, IAddressRepository addressRepo, ISectorRepository sectorRepo) : base(context, locationSql)
 		{
-			var address = await dbContext.FetchRecordAsync(((ILocationSql)sql).SelectAddress(idLocation), GetAddress);
-			return await Task.FromResult(address);
+			_addressRepo = addressRepo;
+			_sectorRepo = sectorRepo;
+			//RefreshRepo();
 		}
 
-		async Task<ISet<Sector>> GetSectorListAsync(ulong idLocation)
-		{
-			var sectors = await dbContext.FetchRecordSetAsync(((ILocationSql)sql).SelectSector(idLocation), GetSectorModel);
-			return await Task.FromResult(sectors);
-		}
+		//private void RefreshRepo()
+		//{
+		//	contentList = GetListAsync(null, CreateLocation).Result;
+		//}
 
-		public Location GetLocation(IDataReader R)
+		//public async Task<Location> GetLocation(long idLocation)
+		//{
+		//	var sectors = _sectorRepo.GetSectorList(idLocation).Result;
+		//	var l = contentList.Where(L => L.Id == idLocation).FirstOrDefault();
+		//	var location = new Location(l.Id, l.Name, l.Address, sectors, l.PhoneNumber, l.Email, l.WWW, l.Creator);
+		//	return await Task.FromResult(location);
+		//} 
+
+		//public async Task<IEnumerable<Location>> GetLocationList(string name)
+		//{
+		//	return await Task.FromResult(contentList.Where(L => L.Name.StartsWith(name)));
+		//}
+
+		public Location CreateLocation(IDataReader R)
 		{
-			var idLocation = Convert.ToUInt64(R["ID"]);
+			var idLocation = Convert.ToInt64(R["ID"]);
 			Address address = null;
 
 			if (!string.IsNullOrEmpty(R["IdAddress"].ToString()))
-				address = GetLocationAddressAsync(idLocation).Result;
+				address = _addressRepo.GetAsync(Convert.ToInt64(R["IdAddress"]), _addressRepo.CreateAddress).Result;
 
 			return new Location
 				(
 					idLocation,
 					R["Name"].ToString(),
 					address,
-					GetSectorListAsync(idLocation).Result,
+					_sectorRepo.GetListAsync(idLocation, _sectorRepo.CreateSector).Result,
 					R["PhoneNumber"].ToString(),
 					R["Email"].ToString(),
 					R["www"].ToString(),
-					new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
+					new Signature
+					(
+						R["User"].ToString(),
+						R["HostIP"].ToString(),
+						Convert.ToDateTime(R["Version"])
+					)
 				);
 		}
 
-		private Address GetAddress(IDataReader R)
+		public void CreateInsertParams(IDbCommand cmd)
 		{
-			return new Address(Convert.ToUInt64(R["ID"]), R["PlaceName"].ToString(), R["StreetName"].ToString(), R["PropertyNumber"].ToString(), R["ApartmentNumber"].ToString(), R["PostalCode"].ToString(), R["PostOffice"].ToString(),null);
-			
-		}
-
-		private Sector GetSectorModel(IDataReader S)
-		{
-			return new Sector(Convert.ToUInt64(S["ID"]), S["Name"].ToString(), S["Description"].ToString(), Convert.ToUInt32(S["SeatingRangeStart"]), Convert.ToUInt32(S["SeatingRangeEnd"]), Convert.ToUInt32(S["SeatingPrice"]),null);
-		}
-
-		public void CreateLocationParams(IDbCommand cmd)
-		{
-			cmd.Parameters.Add(dbContext.CreateParameter("?Name", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?IdAddress", DbType.Int64, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?PhoneNumber", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?Email", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?www", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?User", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?HostIP", DbType.String, cmd));
-		}
-		public void CreateAddressParams(IDbCommand cmd)
-		{
-			cmd.Parameters.Add(dbContext.CreateParameter("?PlaceName", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?StreetName", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?PropertyNumber", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?ApartmentNumber", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?PostalCode", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?PostOffice", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?User", DbType.String, cmd));
-			cmd.Parameters.Add(dbContext.CreateParameter("?HostIP", DbType.String, cmd));
-		}
-		public async Task AddAddressAsync(object[] sqlParamValues)
-		{
-			await dbContext.AddRecordAsync(((ILocationSql)sql).InsertAddress(), sqlParamValues, CreateAddressParams);
+			cmd.Parameters.Add(dbContext.CreateParameter("@Name", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@IdAddress", DbType.Int64, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@PhoneNumber", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@Email", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@www", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@User", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@HostIP", DbType.String, cmd));
 		}
 	}
 }

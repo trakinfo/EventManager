@@ -10,15 +10,9 @@ namespace EventManager.Core.Repository
 {
     public interface ILocationRepository : IRepository
     {
-		//ILocationSql sql { get; }
-		Location GetLocation(IDataReader Reader);
-		void CreateLocationParams(IDbCommand cmd);
-		void CreateAddressParams(IDbCommand cmd);
-		Task AddAddressAsync(object[] sqlParamValues);
-		//Task<Location> GetAsync(ulong LocationId);
-		//Task<IEnumerable<Location>> GetListAsync(string name = "");
-		//Task AddAsync(object[] sqlParamValue);
-		//Task UpdateAsync(object[] sqlParamValue);
-		//Task DeleteAsync(object[] sqlParamValue);
+		//Task<Location> GetLocation(long idLocation);
+		//Task<IEnumerable<Location>> GetLocationList(string name);
+		Location CreateLocation(IDataReader Reader);
+		void CreateInsertParams(IDbCommand cmd);
 	}
 }

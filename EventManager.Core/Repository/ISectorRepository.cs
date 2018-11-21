@@ -8,15 +8,12 @@ using System.Threading.Tasks;
 
 namespace EventManager.Core.Repository
 {
-    public interface IEventRepository : IRepository
-    {
-		//Task<Event> Get(long id);
-		//Task<IEnumerable<Event>> GetListAsync(DateTime startDate, DateTime endDate, string name, GetData<Event> Get);
-		//Task<int> AddTickets(object[] sqlParamValue, int seatingCount);
-		Event CreateEvent(IDataReader R);
-		void CreateSelectParams(IDbCommand cmd);
+	public interface ISectorRepository : IRepository
+	{
 		void CreateInsertParams(IDbCommand cmd);
 		void CreateUpdateParams(IDbCommand cmd);
 		void CreateDeleteParams(IDbCommand cmd);
+		Task<IEnumerable<Sector>> GetListAsync(long idLocation, GetData<Sector> Get);
+		Sector CreateSector(IDataReader R);
 	}
 }

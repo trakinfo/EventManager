@@ -21,11 +21,11 @@ namespace EventManager.Core.Domain
 
 		protected User() { }
 
-		public User(ulong id, string login, string password, string firstName, string lastName, UserRole role, UserStatus status, Signature creator)
+		public User(long id, string login, string password, string firstName, string lastName, UserRole role, UserStatus status, Signature creator)
 		{
 			AddUser(id, login, password, firstName, lastName, role, status, creator);
 		}
-		private void AddUser(ulong id, string login, string password, string firstName, string lastName, UserRole role, UserStatus status, Signature creator)
+		private void AddUser(long id, string login, string password, string firstName, string lastName, UserRole role, UserStatus status, Signature creator)
 		{
 			Id = id;
 			Login = login;

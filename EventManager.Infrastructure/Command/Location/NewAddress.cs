@@ -12,5 +12,7 @@ namespace EventManager.Infrastructure.Command.Location
 		public string ApartmentNumber { get; set; }
 		public string PostalCode { get; set; }
 		public string PostOffice { get; set; }
+		public string Creator { get; set; }
+		public string HostIP { get; set; }
 	}
 }

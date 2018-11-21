@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EventManager.Core.DataBaseContext.SQL
 {
-    public interface IEventSql : ISql
+	public interface IEventSql : ISql
     {
-		//string SelectEvents(string name);
-		//string SelectEvent(ulong id);
-		//string SelectEvent(string name);
-		string SelectTicket(ulong idEvent, ulong idSector);
-		//string InsertEvent();
-		//string UpdateEvent();
+		//string SelectTicket(long idEvent, long idSector);
+		//string InsertTicket();
+		//string SelectMany(DateTime startDate, DateTime endDate, string name);
 		string UpdateEventLocation();
-		//string DeleteEvent();
-		string InsertTicket();
 	}
 }

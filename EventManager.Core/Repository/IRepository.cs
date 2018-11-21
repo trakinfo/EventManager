@@ -1,17 +1,17 @@
 ﻿using EventManager.Core.DataBaseContext;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace EventManager.Core.Repository
 {
-    public interface IRepository
+	public interface IRepository
     {
-		Task<T> GetAsync<T>(ulong id, GetData<T> GetRow);
+		Task<T> GetAsync<T>(long id, GetData<T> GetRow);
 		Task<IEnumerable<T>> GetListAsync<T>(string name, GetData<T> GetRow);
-		Task AddAsync<T>(object[] sqlParamValues, AddDataParameters AddParams);
-		Task DeleteAsync<T>(object[] sqlParamValues, AddDataParameters AddParams);
-		Task UpdateAsync<T>(object[] sqlParamValues, AddDataParameters AddParams);
+		Task<IEnumerable<T>> GetListAsync<T>(string name, object[] sqlParamValue, DataParameters createParams, GetData<T> Get);
+		Task AddAsync(object[] sqlParamValues, DataParameters addParams);
+		Task<int> AddManyAsync(ISet<object[]> sqlParamValue, DataParameters createParams);
+		Task<int> DeleteAsync(object[] sqlParamValues, DataParameters delParams);
+		Task<int> UpdateAsync(object[] sqlParamValues, DataParameters updateParams);
 	}
 }

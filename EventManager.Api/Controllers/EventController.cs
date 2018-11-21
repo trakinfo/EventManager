@@ -1,6 +1,8 @@
 ﻿using EventManager.Infrastructure.Command.Event;
+using EventManager.Infrastructure.Command.Ticket;
 using EventManager.Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace EventManager.Api.Controllers
@@ -9,23 +11,26 @@ namespace EventManager.Api.Controllers
 	public class EventController : Controller
 	{
 		readonly IEventService _eventService;
+
 		public EventController(IEventService eventService)
 		{
 			_eventService = eventService;
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Get(string name = "")
+		public async Task<IActionResult> Get(DateTime? startDate, DateTime? endDate, string name="")
 		{
-			var events = await _eventService.BrowseAsync(name);
+			var events = await _eventService.GetList(startDate ?? DateTime.Now , endDate ?? DateTime.MaxValue, name);
 			return Json(events);
 		}
+
 		[HttpGet("{eventId}")]
-		public async Task<IActionResult> Get(ulong eventId)
+		public async Task<IActionResult> Get(long eventId)
 		{
-			var _event = await _eventService.GetAsync(eventId, _eventService.GetEvent);
+			var _event = await _eventService.Get(eventId);
 			return Json(_event);
 		}
+
 		[HttpPost]
 		public async Task<IActionResult> Post([FromBody] NewEvent newEvent)
 		{
@@ -42,14 +47,22 @@ namespace EventManager.Api.Controllers
 		}
 
 		[HttpPost("{eventId}/tickets")]
-		public async Task<IActionResult> Post(ulong eventId)
+		public async Task<IActionResult> Post(long eventId, [FromBody] NewTicket newTicket)
 		{
-			var count = await _eventService.CreateTicketCollectionAsync(eventId);
+			var count = await _eventService.CreateTicketCollectionAsync(
+				eventId,
+				newTicket.StartRange,
+				newTicket.EndRange,
+				newTicket.SectorId,
+				newTicket.Price,
+				newTicket.Creator,
+				newTicket.HostIP
+				);
 			return Created(string.Empty, count);
 		}
-
+		//todo: sprawdzić działanie aktualizacji wydarzenia
 		[HttpPut("{eventId}")]
-		public async Task<IActionResult> Put(ulong eventId, [FromBody] NewEvent Event)
+		public async Task<IActionResult> Put(long eventId, [FromBody] NewEvent Event)
 		{
 			await _eventService.UpdateAsync(
 				eventId,
@@ -63,9 +76,9 @@ namespace EventManager.Api.Controllers
 				);
 			return NoContent();
 		}
-
+		//todo: sprawdzić działanie usuwania wydarzenia
 		[HttpDelete("{eventId}")]
-		public async Task<IActionResult> Delete(ulong eventId)
+		public async Task<IActionResult> Delete(long eventId)
 		{
 			await _eventService.DeleteAsync(eventId);
 			return NoContent();

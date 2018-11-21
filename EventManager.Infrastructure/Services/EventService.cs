@@ -1,47 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using EventManager.Core.DataBaseContext;
-using EventManager.Core.DataBaseContext.SQL;
 using EventManager.Core.Domain;
-using EventManager.Core.Globals;
 using EventManager.Core.Repository;
 using EventManager.Infrastructure.DTO;
-using EventManager.Infrastructure.Services.Generic;
-
 namespace EventManager.Infrastructure.Services
 {
-	public class EventService : Service, IEventService
+	public class EventService : IEventService
 	{
-		//readonly IEventRepository _eventRepository;
+		readonly IEventRepository _eventRepo;
+		readonly ITicketRepository _ticketRepo;
 		readonly IMapper _mapper;
 
-		public EventService(IDataBaseContext context, IMapper mapper, IEventSql eventSql) : base(context, eventSql)
+		public EventService(IEventRepository eventRepo, ITicketRepository ticketRepo, IMapper mapper)
 		{
+			_eventRepo = eventRepo;
+			_ticketRepo = ticketRepo;
 			_mapper = mapper;
 		}
 
-		//public async Task<EventDto> GetAsync(ulong id)
-		//{
-		//	try
-		//	{
-		//		var _event = await GetAsync(id, GetEvent);
-		//		return _mapper.Map<EventDto>(_event);
-		//	}
-		//	catch (Exception e)
-		//	{
-		//		Console.WriteLine(e.Message);
-		//		throw;
-		//	}
-		//}
-
-		public async Task<IEnumerable<EventDto>> BrowseAsync(string name = null)
+		public async Task<EventDto> Get(long id)
 		{
 			try
 			{
-				var events = await _eventRepository.GetListAsync(name, _eventRepository.GetEvent);
+				var _event = await _eventRepo.GetAsync(id, _eventRepo.CreateEvent);
+				return _mapper.Map<EventDto>(_event);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<EventDto>> GetList(DateTime startDate, DateTime endDate, string name = null)
+		{
+			try
+			{
+				var sqlParamValue = new object[] { startDate, endDate };
+				var events = await _eventRepo.GetListAsync(name, sqlParamValue, _eventRepo.CreateSelectParams, _eventRepo.CreateEvent);
 				return _mapper.Map<IEnumerable<EventDto>>(events);
 			}
 			catch (Exception e)
@@ -51,12 +50,12 @@ namespace EventManager.Infrastructure.Services
 			}
 		}
 
-		public async Task CreateAsync(string name, string description, ulong? idLocation, DateTime startDate, DateTime endDate, string creator, string hostIP)
+		public async Task CreateAsync(string name, string description, long? idLocation, DateTime startDate, DateTime endDate, string creator, string hostIP)
 		{
 			try
 			{
 				var sqlParamValue = new object[] { name, description, idLocation, startDate, endDate, creator, hostIP };
-				await _eventRepository.AddAsync<Event>(sqlParamValue, _eventRepository.CreateEventParams);
+				await _eventRepo.AddAsync(sqlParamValue, _eventRepo.CreateInsertParams);
 			}
 
 			catch (Exception e)
@@ -65,21 +64,23 @@ namespace EventManager.Infrastructure.Services
 			}
 		}
 
-
-		public async Task<int> CreateTicketCollectionAsync(ulong eventId)
+		public async Task<int> CreateTicketCollectionAsync(long eventId, int? startRange, int? endRange, long? sectorId, decimal? price, string creator, string hostIP)
 		{
 			int ticketCount = 0;
 			try
 			{
-				var _event = await _eventRepository.GetAsync(eventId,_eventRepository.GetEvent);
+				var _event = await _eventRepo.GetAsync(eventId, _eventRepo.CreateEvent);
 				if (_event.Location == null || _event.Location.Sectors == null) return 0;
 
-				var HS = new HashSet<Ticket>();
-				foreach (var S in _event.Location.Sectors)
+				if (sectorId != null)
 				{
-					var sqlParamValue = new object[4] { eventId, S.Id, S.SeatingPrice, null };
-					ticketCount += await _eventRepository.AddTickets(sqlParamValue, S.SeatingCount);
+					var sector = _event.Location.Sectors.Where(s => s.Id == sectorId).FirstOrDefault();
+					if (sector != null)
+						ticketCount = await _ticketRepo.CreateTicketAsync(eventId, startRange, endRange, sector, price, creator, hostIP);
 				}
+				else
+					foreach (var s in _event.Location.Sectors)
+						ticketCount += await _ticketRepo.CreateTicketAsync(eventId, s, creator, hostIP);
 			}
 			catch (Exception e)
 			{
@@ -88,13 +89,13 @@ namespace EventManager.Infrastructure.Services
 			return ticketCount;
 		}
 
-		public async Task DeleteAsync(ulong id)
+		public async Task DeleteAsync(long id)
 		{
 			try
 			{
 				var sqlParamValue = new object[1] { id };
 
-				await _eventRepository.DeleteAsync<Event>(sqlParamValue,_eventRepository.CreateDeleteParams);
+				await _eventRepo.DeleteAsync(sqlParamValue, _eventRepo.CreateDeleteParams);
 			}
 
 			catch (Exception e)
@@ -108,37 +109,18 @@ namespace EventManager.Infrastructure.Services
 			throw new NotImplementedException();
 		}
 
-		public async Task UpdateAsync(ulong id, string name, string description, ulong? idLocation, DateTime startDate, DateTime endDate, string modifier, string hostIP)
+		public async Task UpdateAsync(long id, string name, string description, long? idLocation, DateTime startDate, DateTime endDate, string modifier, string hostIP)
 		{
 			try
 			{
 				var SqlParams = new object[] { id, name, description, idLocation, startDate, endDate, modifier, hostIP };
-				await _eventRepository.UpdateAsync<Event>(SqlParams,_eventRepository.CreateUpdateParams);
+				await _eventRepo.UpdateAsync(SqlParams, _eventRepo.CreateUpdateParams);
 			}
 
 			catch (Exception e)
 			{
 				Console.WriteLine(e.Message);
 			}
-		}
-
-		public EventDto GetEvent(IDataReader R)
-		{
-			var idEvent = Convert.ToUInt64(R["ID"]);
-			Location location = null;
-
-			if (!string.IsNullOrEmpty(R["IdLocation"].ToString()))
-				location = GetLocationAsync(idEvent, Convert.ToUInt64(R["IdLocation"])).Result;
-			return new EventDto
-				(
-					idEvent,
-					R["Name"].ToString(),
-					R["Description"].ToString(),
-					location,
-					Convert.ToDateTime(R["StartDate"]),
-					Convert.ToDateTime(R["EndDate"]),
-					new Signature(R["User"].ToString(), R["HostIP"].ToString(), Convert.ToDateTime(R["Version"]))
-				);
 		}
 	}
 }

@@ -12,12 +12,12 @@ namespace EventManager.Core.Domain
 		public string Email { get; protected set; }
 		public string WWW { get; protected set; }
 
-		public Location() { }
-		public Location(ulong id, string name, Address address, IEnumerable<Sector> sectors, string phoneNmuber, string email, string www, Signature creator)
+		protected Location() { }
+		public Location(long id, string name, Address address, IEnumerable<Sector> sectors, string phoneNmuber, string email, string www, Signature creator)
 		{
 			Add(id, name, address, sectors, phoneNmuber, email, www, creator);
 		}
-		private void Add(ulong id, string name, Address address, IEnumerable<Sector> sectors, string phoneNmuber, string email, string www, Signature creator)
+		private void Add(long id, string name, Address address, IEnumerable<Sector> sectors, string phoneNmuber, string email, string www, Signature creator)
 		{
 			Id = id;
 			Creator = creator;
