@@ -43,7 +43,7 @@ namespace EventManager.Api.Controllers
 				newEvent.Creator,
 				newEvent.HostIP
 				);
-			return Created(string.Empty, null);
+			return Ok();
 		}
 
 		[HttpPost("{eventId}/tickets")]
@@ -80,12 +80,12 @@ namespace EventManager.Api.Controllers
 		[HttpPut("tickets/puchase")]
 		public async Task<IActionResult> Purchase([FromBody] BuyTicket ticket)
 		{
-			await _eventService.BuyTicketAsync(
+			var count = await _eventService.BuyTicketAsync(
 				ticket.Id,
 				ticket.UserName,
 				ticket.PuchaseDate
 				);
-			return NoContent();
+			return Ok();
 		}
 
 		[HttpDelete("{eventId}")]

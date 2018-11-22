@@ -123,10 +123,10 @@ namespace EventManager.Infrastructure.Services
 			}
 		}
 
-		public async Task BuyTicketAsync(long id, string userName, DateTime purchaseDate)
+		public async Task<int> BuyTicketAsync(long id, string userName, DateTime purchaseDate)
 		{
-			var SqlParams = new object[] { userName, purchaseDate };
-			await _ticketRepo.UpdateAsync(id, SqlParams, _ticketRepo.CreatePurchaseParams);
+			var SqlParams = new object[] {id, userName, purchaseDate };
+			return await _ticketRepo.PurchaseAsync(SqlParams, _ticketRepo.CreatePurchaseParams);
 		}
 	}
 }

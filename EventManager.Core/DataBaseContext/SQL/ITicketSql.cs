@@ -7,6 +7,6 @@ namespace EventManager.Core.DataBaseContext.SQL
 	public interface ITicketSql : ISql
 	{
 		string SelectMany(long idEvent);
-		string Puchase(long idTicket);
+		string Puchase();
 	}
 }

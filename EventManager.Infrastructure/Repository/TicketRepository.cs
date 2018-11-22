@@ -21,9 +21,9 @@ namespace EventManager.Infrastructure.Repository
 			return await dbContext.FetchRecordSetAsync((sql as ITicketSql).SelectMany(idEvent), Get);
 		}
 
-		public async Task<int> UpdateAsync(long ticketId, object[] sqlParamValue, DataParameters createUpdateParams)
+		public async Task<int> PurchaseAsync(object[] sqlParamValue, DataParameters createUpdateParams)
 		{
-			return await dbContext.UpdateRecordAsync((sql as ITicketSql).Puchase(ticketId), sqlParamValue, createUpdateParams);
+			return await dbContext.UpdateRecordAsync((sql as ITicketSql).Puchase(), sqlParamValue, createUpdateParams);
 		}
 
 		public Ticket CreateTicket(IDataReader R)
@@ -80,6 +80,7 @@ namespace EventManager.Infrastructure.Repository
 
 		public void CreatePurchaseParams(IDbCommand cmd)
 		{
+			cmd.Parameters.Add(dbContext.CreateParameter("@ID", DbType.Int64, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("@UserName", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("@PurchaseDate", DbType.DateTime, cmd));
 		}
