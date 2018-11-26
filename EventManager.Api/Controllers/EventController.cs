@@ -83,7 +83,9 @@ namespace EventManager.Api.Controllers
 			var count = await _eventService.BuyTicketAsync(
 				ticket.Id,
 				ticket.UserName,
-				ticket.PuchaseDate
+				ticket.PuchaseDate,
+				ticket.User,
+				ticket.HostIP
 				);
 			return Ok();
 		}

@@ -127,19 +127,19 @@ namespace EventManager.Infrastructure.DataBaseContext
 				var T = conn.BeginTransaction();
 				var cmd = CreateCommand(conn, T, CommandType.Text, sqlString);
 				createParams(cmd);
+				int recordAffected = 0;
 				try
 				{
-					int recordAffected = 0;
 					foreach (var p in sqlParamValue) recordAffected += await ExecuteCommandAsync(cmd, p);
 					T.Commit();
-					return recordAffected;
 				}
 				catch (MySqlException ex)
 				{
 					Console.WriteLine(ex.Message);
 					T.Rollback();
-					return 0;
+					//return 0;
 				}
+				return recordAffected;
 			}
 		}
 
@@ -185,9 +185,22 @@ namespace EventManager.Infrastructure.DataBaseContext
 		{
 			using (cmd)
 			{
-				for (int i = 0; i < sqlParamValue.Length; i++)
-					((MySqlCommand)cmd).Parameters[i].Value = sqlParamValue[i];
-				return await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
+				int count=0;
+				try
+				{
+					for (int i = 0; i < sqlParamValue.Length; i++)
+						((MySqlCommand)cmd).Parameters[i].Value = sqlParamValue[i];
+					count = await ((MySqlCommand)cmd).ExecuteNonQueryAsync();
+				}
+				catch (MySqlException ex)
+				{
+					switch (ex.Number)
+					{
+						case 1062:
+							return 0;
+					}
+				}
+				return count;
 			}
 		}
 		public IDataParameter CreateParameter(string name, DbType type, IDbCommand cmd)

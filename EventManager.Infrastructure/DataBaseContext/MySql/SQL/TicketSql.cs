@@ -15,17 +15,17 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 		public string SelectMany(string name)
 		{
 			//return $"SELECT t.ID,t.SeatingNumber,t.Price,t.UserId,t.PurchaseDate,t.IdEvent,t.IdSector,t.User,t.HostIP,t.Version FROM ticket t WHERE t.UserId LIKE '{name}%';";
-			return $"ELECT t.ID,t.SeatingNumber,t.Price,pt.IdUser,pt.PurchaseDate,pt.PaymentStatus,t.IdEvent,t.IdSector,t.User,t.HostIP,t.Version FROM ticket t LEFT JOIN purchasedTicket pt ON pt.IdTicket=t.ID;";
+			return $"SELECT t.ID,t.SeatingNumber,t.Price,pt.IdUser,pt.PurchaseDate,pt.PaymentStatus,t.IdEvent,t.IdSector,t.User,t.HostIP,t.Version FROM ticket t LEFT JOIN purchasedTicket pt ON pt.IdTicket=t.ID;";
 		}
 
 		public string SelectMany(long idEvent)
 		{
-			return $"SELECT t.ID,t.SeatingNumber,t.Price,t.UserId,t.PurchaseDate,t.IdSector,t.User,t.HostIP,t.Version FROM ticket t WHERE t.IdEvent={idEvent};";
+			return $"SELECT t.ID,t.SeatingNumber,t.Price,pt.IdUser,pt.PurchaseDate,pt.PaymentStatus,t.IdSector,t.User,t.HostIP,t.Version FROM ticket t LEFT JOIN purchasedTicket pt ON pt.IdTicket=t.ID WHERE t.IdEvent={idEvent};";
 		}
 
 		public string Insert()
 		{
-			return "INSERT INTO ticket VALUES(null,@IdSector,@IdEvent,null,@SeatingNumber,@Price,null,@User,@HostIP,null);";
+			return "INSERT INTO ticket VALUES(null,@IdSector,@IdEvent,@SeatingNumber,@Price,@User,@HostIP,null);";
 		}
 
 		public string Update()
@@ -40,7 +40,8 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 
 		public string Puchase()
 		{
-			return $"UPDATE ticket SET UserId=@UserName, PurchaseDate=@PurchaseDate WHERE ID=@ID;";
+			//return $"UPDATE ticket SET UserId=@UserName, PurchaseDate=@PurchaseDate WHERE ID=@ID;";
+			return $"INSERT INTO purchasedTicket VALUES(@ID,@UserName,@PurchaseDate,1,@User,@HostIP,null);";
 		}
 	}
 }

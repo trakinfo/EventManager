@@ -31,7 +31,7 @@ namespace EventManager.Infrastructure.Services
 			catch (Exception e)
 			{
 				Console.WriteLine(e.Message);
-				throw;
+				return null;
 			}
 		}
 
@@ -46,7 +46,7 @@ namespace EventManager.Infrastructure.Services
 			catch (Exception e)
 			{
 				Console.WriteLine(e.Message);
-				throw;
+				return null;
 			}
 		}
 
@@ -123,10 +123,14 @@ namespace EventManager.Infrastructure.Services
 			}
 		}
 
-		public async Task<int> BuyTicketAsync(long[] id, string userName, DateTime purchaseDate)
+		public async Task<int> BuyTicketAsync(long[] idList, string userName, DateTime purchaseDate, string modifier, string hostIP)
 		{
-			var SqlParams = new object[] {id, userName, purchaseDate };
-			return await _ticketRepo.PurchaseAsync(SqlParams, _ticketRepo.CreatePurchaseParams);
+			var sqlParams = new HashSet<object[]>();
+			foreach (var id in idList)
+			{
+				sqlParams.Add(new object[] { id, userName, purchaseDate, modifier, hostIP });
+			}
+			return await _ticketRepo.PurchaseAsync(sqlParams, _ticketRepo.CreatePurchaseParams);
 		}
 	}
 }

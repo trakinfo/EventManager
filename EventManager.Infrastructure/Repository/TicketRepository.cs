@@ -21,9 +21,9 @@ namespace EventManager.Infrastructure.Repository
 			return await dbContext.FetchRecordSetAsync((sql as ITicketSql).SelectMany(idEvent), Get);
 		}
 
-		public async Task<int> PurchaseAsync(object[] sqlParamValue, DataParameters createUpdateParams)
+		public async Task<int> PurchaseAsync(ISet<object[]> sqlParamValue, DataParameters createUpdateParams)
 		{
-			return await dbContext.UpdateRecordAsync((sql as ITicketSql).Puchase(), sqlParamValue, createUpdateParams);
+			return await dbContext.AddManyRecordsAsync((sql as ITicketSql).Puchase(), sqlParamValue, createUpdateParams);
 		}
 
 		public Ticket CreateTicket(IDataReader R)
@@ -32,7 +32,7 @@ namespace EventManager.Infrastructure.Repository
 				Convert.ToInt64(R["ID"]),
 				Convert.ToInt32(R["SeatingNumber"]),
 				Convert.ToDecimal(R["Price"]),
-				R["UserId"].ToString(),
+				R["IdUser"].ToString(),
 				Convert.ToInt64(R["IdSector"]),
 				new Signature(
 					R["User"].ToString(),
@@ -83,6 +83,8 @@ namespace EventManager.Infrastructure.Repository
 			cmd.Parameters.Add(dbContext.CreateParameter("@ID", DbType.Int64, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("@UserName", DbType.String, cmd));
 			cmd.Parameters.Add(dbContext.CreateParameter("@PurchaseDate", DbType.DateTime, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@User", DbType.String, cmd));
+			cmd.Parameters.Add(dbContext.CreateParameter("@HostIP", DbType.String, cmd));
 		}
 	}
 }
