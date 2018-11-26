@@ -9,12 +9,13 @@ namespace EventManager.Infrastructure.DataBaseContext.MySql.SQL
 	{
 		public string Select(long id)
 		{
-			return $"SELECT t.ID,t.SeatingNumber,t.Price,t.UserId,t.PurchaseDate,t.IdEvent,t.IdSector,t.User,t.HostIP,t.Version FROM ticket t INNER JOIN event e ON e.ID=t.IdEvent WHERE t.ID={id};";
+			return $"SELECT t.ID,t.SeatingNumber,t.Price,t.IdEvent,t.IdSector,t.User,t.HostIP,t.Version FROM ticket t WHERE t.ID={id};";
 		}
 
 		public string SelectMany(string name)
 		{
-			return $"SELECT t.ID,t.SeatingNumber,t.Price,t.UserId,t.PurchaseDate,t.IdEvent,t.IdSector,t.User,t.HostIP,t.Version FROM ticket t WHERE t.UserId LIKE '{name}%';";
+			//return $"SELECT t.ID,t.SeatingNumber,t.Price,t.UserId,t.PurchaseDate,t.IdEvent,t.IdSector,t.User,t.HostIP,t.Version FROM ticket t WHERE t.UserId LIKE '{name}%';";
+			return $"ELECT t.ID,t.SeatingNumber,t.Price,pt.IdUser,pt.PurchaseDate,pt.PaymentStatus,t.IdEvent,t.IdSector,t.User,t.HostIP,t.Version FROM ticket t LEFT JOIN purchasedTicket pt ON pt.IdTicket=t.ID;";
 		}
 
 		public string SelectMany(long idEvent)
