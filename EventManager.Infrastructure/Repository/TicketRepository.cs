@@ -9,12 +9,16 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace EventManager.Infrastructure.Repository
 {
 	public class TicketRepository : Repository<Ticket>, ITicketRepository
 	{
-		public TicketRepository(IDataBaseContext context, ITicketSql ticketSql) : base(context, ticketSql) { }
+		public TicketRepository(IDataBaseContext context, ITicketSql ticketSql) : base(context, ticketSql)
+		{
+
+		}
 
 		public async Task<IEnumerable<Ticket>> GetListAsync(long idEvent, GetData<Ticket> Get)
 		{
@@ -28,11 +32,18 @@ namespace EventManager.Infrastructure.Repository
 
 		public Ticket CreateTicket(IDataReader R)
 		{
+			DateTime? purchaseDate = null;
+			Enum.TryParse(R["PaymentStatus"].ToString(), out TicketStatus paymentStatus);
+			if (!R.IsDBNull(R.GetOrdinal("PurchaseDate")))
+				purchaseDate = Convert.ToDateTime(R["PurchaseDate"]);
+			
 			return new Ticket(
 				Convert.ToInt64(R["ID"]),
 				Convert.ToInt32(R["SeatingNumber"]),
 				Convert.ToDecimal(R["Price"]),
 				R["IdUser"].ToString(),
+				purchaseDate,
+				paymentStatus,
 				Convert.ToInt64(R["IdSector"]),
 				new Signature(
 					R["User"].ToString(),

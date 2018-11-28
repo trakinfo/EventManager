@@ -198,6 +198,8 @@ namespace EventManager.Infrastructure.DataBaseContext
 					{
 						case 1062:
 							return 0;
+						default:
+							throw;
 					}
 				}
 				return count;
